@@ -1,7 +1,11 @@
+#! /bin/bash 
+#
 # Owner: Solomon Xie
 # Email: 14041622+solomonxie@users.noreply.github.com
 # Enviroment: Ubuntu
 #
+
+set -x
 
 mkdir ~/.vim
 export VIM="~/.vim"

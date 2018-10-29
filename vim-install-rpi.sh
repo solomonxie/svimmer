@@ -1,3 +1,5 @@
+#! /bin/bash 
+#
 # Owner: Solomon Xie
 # Email: 14041622+solomonxie@users.noreply.github.com
 # Enviroment: Raspberry Pi (Raspbian)
@@ -5,6 +7,7 @@
 #
 # =======SETING UP VIM =======
 
+set -x
 
 mkdir ~/.vim
 export VIM=~/.vim
