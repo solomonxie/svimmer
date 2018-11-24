@@ -2,11 +2,19 @@
 #
 # MAINTAINER: Solomon Xie <14041622+solomonxie@users.noreply.github.com>
 # Enviroment: Ubuntu / Raspbian / MacOS Sierra
+#
 # Commands:
 #   1. Get in VIM
 #   2. :PluginInstall
 #   3. If there's permission problem: $ sudo chown -R $USER:$USER ~/.vim
 #   4. :PluginInstall
+#
+# Run:
+#   $ ./install_vim.sh --distro ubuntu
+# Debug:
+#   $ bashdb ./install_vim.sh --distro ubuntu
+
+
 
 set -ax
 
