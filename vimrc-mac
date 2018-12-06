@@ -4,56 +4,70 @@
 " Preload dependencies:
 "     # [Plugins Manager: Vundle]
 "       $ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"     # [Plugin dependencies]
+"     # [Plug  dependencies]
 "       $ brew install ctags
 "       $ brew install --HEAD universal-ctags/universal-ctags/universal-ctags
 " Manual commands (type in vim, sodu mode required):
 "     :PluginInstall
 
 
-" [VUNDLE DIFINITIONS MUST BE ON THE TOP]
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-    Plugin 'VundleVim/Vundle.vim'
+" [Plugins Manager vim-plug]
+call plug#begin('~/.vim/plugged')
     "<<STATUS-BAR>>
-        "Plugin 'itchyny/lightline.vim' "beautiful status line
-        "Plugin 'Lokaltog/vim-powerline' "fancy status line (python needed)
-        Plugin 'vim-airline/vim-airline'
-        Plugin 'vim-airline/vim-airline-themes'
+        "Plug 'itchyny/lightline.vim' "beautiful status line
+        "Plug 'Lokaltog/vim-powerline' "fancy status line (python needed)
+        Plug 'vim-airline/vim-airline'
+        Plug 'vim-airline/vim-airline-themes'
+
     "<<Git>>
-        "Plugin 'tpope/vim-fugitive'    " easy commands to do git
-    "<<Nerdtree>>
-        Plugin 'scrooloose/nerdtree'          " File tree manager
-        Plugin 'Xuyuanp/nerdtree-git-plugin'  " display git status within Nerdtree
-        Plugin 'jistr/vim-nerdtree-tabs'      " enhance nerdtree's tabs
-        Plugin 'ryanoasis/vim-devicons'       " add beautiful icons besides files
-        "Plugin 'tiagofumo/vim-nerdtree-syntax-highlight' " enhance devicons
+        "Plug 'tpope/vim-fugitive'    " easy commands to do git
+
+    "<<File Browser>>
+        " NERDTREE
+        Plug 'scrooloose/nerdtree'          " File tree manager
+        Plug 'Xuyuanp/nerdtree-git-plugin'  " display git status within Nerdtree
+        Plug 'jistr/vim-nerdtree-tabs'      " enhance nerdtree's tabs
+        Plug 'ryanoasis/vim-devicons'       " add beautiful icons besides files
+        "Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " enhance devicons
+        " COMMAND-T
+        Plug 'wincent/command-t'
+
     "<<Snippets>> (python required)
-        Plugin 'MarcWeber/vim-addon-mw-utils'
-        Plugin 'tomtom/tlib_vim'
-        Plugin 'garbas/vim-snipmate'
-        "Plugin 'honza/vim-snippets' "some common snippets (python)
+        Plug 'MarcWeber/vim-addon-mw-utils'
+        Plug 'tomtom/tlib_vim'
+        Plug 'garbas/vim-snipmate'
+        "Plug 'honza/vim-snippets' "some common snippets (python)
+
     "<<Search-Tools>>
-        "Plugin 'easymotion/vim-easymotion'
+        "Plug 'easymotion/vim-easymotion'
+
     "<<Syntax>>
-        "Plugin 'vim-syntastic/syntastic'
+        "Plug 'vim-syntastic/syntastic'
+
     "<<Surround>>
-        "Plugin 'tpope/vim-surround'
+        "Plug 'tpope/vim-surround'
+
     "<<Session>>
-        Plugin 'tpope/vim-obsession'
-    "<<Autocomplete>>
-        Plugin 'ervandew/supertab'
-        "Plugin 'valloric/youcompleteme'   "Not working
+        Plug 'tpope/vim-obsession'
+
+    "<<Completion>>
+        "Plug 'ervandew/supertab'
+        "Plug 'valloric/youcompleteme'
+        "Plug 'davidhalter/jedi-vim'
+
     "<<Tags>>
-        Plugin 'majutsushi/tagbar'
+        "Plug 'majutsushi/tagbar'
+
     "<<Folding>>
-        Plugin 'tmhedberg/SimpylFold'
+        Plug 'tmhedberg/SimpylFold'
+
     "<<Indentation>>
-        "Plugin 'nathanaelkane/vim-indent-guides'
-        Plugin 'Yggdroot/indentLine'
+        "Plug 'nathanaelkane/vim-indent-guides'
+        Plug  'Yggdroot/indentLine'
+
     "<<Language-Specific>>
-        "Plugin 'python-mode/python-mode'
-call vundle#end()
+        "Plug 'python-mode/python-mode'
+call plug#end()
 
 
 " General Settings ==================={{{
@@ -77,6 +91,10 @@ call vundle#end()
     set expandtab "用space替代tab的输入 取消的话 就用set noexpandtab "不用space替代tab的输入
     set encoding=utf8  "设置默认编码
     retab "打开文件时自动转换所有tab为空格
+" }}}
+
+" Advanced Settings =============={{{
+    let g:jedi#force_py_version=2.7
 " }}}
 
 
@@ -112,7 +130,7 @@ call vundle#end()
     "<Leader key>
         let mapleader = ','
     "<Plugins>
-        nnoremap <leader>i :PluginInstall<CR>
+        nnoremap <leader>i :PlugInstall<CR>
     "<Escape key>
         inoremap <C-c> <Esc>:nohl<CR><ESC>
         nnoremap <C-c> <ESC>:nohl<CR><ESC>
