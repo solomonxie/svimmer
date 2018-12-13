@@ -57,13 +57,13 @@ call plug#begin('~/.vim/plugged')
         "Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}   "not working
         "work
         "Plug 'rkulla/pydiction'   " not work as expected
-        if has('nvim')
-            Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-        else
-            Plug 'Shougo/deoplete.nvim'
-            Plug 'roxma/nvim-yarp'
-            Plug 'roxma/vim-hug-neovim-rpc'
-        endif
+        "if has('nvim')
+        "    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        "else
+        "    Plug 'Shougo/deoplete.nvim'
+        "    Plug 'roxma/nvim-yarp'
+        "    Plug 'roxma/vim-hug-neovim-rpc'
+        "endif
 
     "<<Tags>>
         Plug 'majutsushi/tagbar'   " (ctags required)
@@ -264,12 +264,12 @@ call plug#end()
 " }
 
 " <Deoplete>--------------{
-    let g:deoplete#enable_at_startup = 1
-    " Set multiple options
-    call deoplete#custom#option({
-    \ 'auto_complete_delay': 200,
-    \ 'smart_case': v:true,
-    \ })
+   " let g:deoplete#enable_at_startup = 1
+   " " Set multiple options
+   " call deoplete#custom#option({
+   " \ 'auto_complete_delay': 200,
+   " \ 'smart_case': v:true,
+   " \ })
 " }
 
 
