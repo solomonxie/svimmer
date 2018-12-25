@@ -1,3 +1,5 @@
+" -------------[ STANDARD VIMRC ]---------------
+"
 " MAINTAINER: Solomon Xie <14041622+solomonxie@users.noreply.github.com>
 " Enviroment: MacOS Sierra / Raspbian / Ubuntu
 "
@@ -224,7 +226,7 @@ call plug#end()
         syntax enable
 
     " <Color Scheme>  --> Overwriting Alert!
-    if has_mac
+        if has_mac
             set termguicolors   ">> Not compatiple with many themes
             "colorscheme material-monokai ">> Super slow, has block color comment
             colorscheme gruvbox ">> grubox is slow for old machine
@@ -285,7 +287,7 @@ call plug#end()
 " }
 
 
-" [   cls.provider_name Mappings / Bindings   ]----------------------------{
+" [   Key Mappings / Bindings   ]----------------------------{
     "<Leader key>
         let mapleader = ','
 
