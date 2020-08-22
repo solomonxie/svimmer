@@ -1,1 +1,1 @@
-vimrc.vim
+/Users/solomonxie/dotfiles/vim/nvimrc.vim
