@@ -1,6 +1,5 @@
 " -------------[ STANDARD VIMRC ]---------------
 "
-" MAINTAINER: Solomon Xie <14041622+solomonxie@users.noreply.github.com>
 " Enviroment: MacOS Sierra / Raspbian / Ubuntu
 "
 " Dependencies:
