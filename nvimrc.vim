@@ -87,6 +87,8 @@ call plug#begin('~/vim_plugged')
     "{NodeJS}
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
+    "{Misc}
+        source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
