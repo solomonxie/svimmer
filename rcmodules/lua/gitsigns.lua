@@ -15,7 +15,7 @@ if string.find(vim.o['runtimepath'], 'gitsigns')  then
         numhl = true, -- Toggle with `:Gitsigns toggle_numhl`
         linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
         word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
-        keymaps = {
+        -- keymaps = {
             -- Default keymap options
             -- noremap = true,
             -- ['n ]c'] = { expr = true, "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'"},
@@ -32,9 +32,9 @@ if string.find(vim.o['runtimepath'], 'gitsigns')  then
             -- ['n <leader>hU'] = '<cmd>Gitsigns reset_buffer_index<CR>',
 
             -- Text objects
-            ['o ih'] = ':<C-U>Gitsigns select_hunk<CR>',
-            ['x ih'] = ':<C-U>Gitsigns select_hunk<CR>'
-        },
+            -- ['o ih'] = ':<C-U>Gitsigns select_hunk<CR>',
+            -- ['x ih'] = ':<C-U>Gitsigns select_hunk<CR>'
+        -- },
         watch_gitdir = {
             interval = 1000,
             follow_files = true
@@ -65,5 +65,8 @@ if string.find(vim.o['runtimepath'], 'gitsigns')  then
         yadm = {
             enable = false
         },
+        -- on_attach = funciton()
+        --     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+        -- end,
     }
 end

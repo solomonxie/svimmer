@@ -1,18 +1,21 @@
+-- :help ibl.config
 if string.find(vim.o['runtimepath'], 'blankline') then
-    -- vim.opt.termguicolors = true
-    -- vim.cmd [[highlight IndentBlanklineIndent1 guifg=#E06C75 gui=nocombine]]
-    -- vim.cmd [[highlight IndentBlanklineIndent2 guifg=#E5C07B gui=nocombine]]
-    -- vim.cmd [[highlight IndentBlanklineIndent3 guifg=#98C379 gui=nocombine]]
-    -- vim.cmd [[highlight IndentBlanklineIndent4 guifg=#56B6C2 gui=nocombine]]
-    -- vim.cmd [[highlight IndentBlanklineIndent5 guifg=#61AFEF gui=nocombine]]
-    -- vim.cmd [[highlight IndentBlanklineIndent6 guifg=#C678DD gui=nocombine]]
 
-    -- vim.opt.list = true
-    -- vim.opt.listchars:append("space:⋅")
-    -- vim.opt.listchars:append("eol:↴")
+    require('ibl').setup {
+        indent = {
+            char = "▏",
+            tab_char = { "a", "b", "c" },
+            -- highlight = { "Function", "Label" },
+            smart_indent_cap = true,
+            priority = 2,
+            repeat_linebreak = false,
+        },
+        whitespace = {
+            remove_blankline_trail = false,
+        },
+        scope = { enabled = false },  -- highlight current scope
+        -- show_trailing_blankline_indent = true,
 
-    require('indent_blankline').setup {
-        show_trailing_blankline_indent = true,
         -- space_char_blankline = " ",
         -- show_current_context = true,
         -- show_current_context_start = true,
@@ -25,4 +28,10 @@ if string.find(vim.o['runtimepath'], 'blankline') then
         --     "IndentBlanklineIndent6",
         -- },
     }
+
+    local hooks = require("ibl.hooks")
+    hooks.register(
+        hooks.type.WHITESPACE,
+        hooks.builtin.hide_first_space_indent_level
+    )
 end
