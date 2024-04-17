@@ -27,7 +27,7 @@ let mapleader = ","
 " $ brew install --HEAD universal-ctags/universal-ctags/universal-ctags
 " $ pip install neovim
 " $ pip install pynvim
-" $ pip install python-lsp-server pycodestyle
+" $ pip install python-lsp-server[all] pycodestyle
 " $ pip install python-language-server
 " $ pip install flake8==3.9.2  # 4.0 no longer respect user config file
 " $ npm install -g neovim
@@ -115,7 +115,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua

@@ -16,7 +16,8 @@ let g:node_host_prog = '~/virtualnode/venv/bin/neovim-node-host'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Default
 let g:loaded_python_provider = 0
-let g:python3_host_prog = '~/virtualenv/venv/bin/python'
+" let g:python3_host_prog = '~/virtualenv/venv/bin/python'
+let g:python3_host_prog = '~/virtualenv/venv_nvim/bin/python'  "SHOULD BE INDEPENDENT
 let g:python_host_prog = '~/virtualenv/venv2/bin/python'
 
 
