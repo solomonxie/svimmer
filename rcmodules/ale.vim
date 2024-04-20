@@ -24,6 +24,7 @@ nnoremap K :ALEHover<CR>
 let g:ale_completion_enabled = 0  "Disable completion
 let g:airline#extensions#ale#enabled = 1  "Enable error message in AirLine
 let g:ale_virtualtext_cursor = 1
+let g:ale_python_auto_virtualenv = 1
 
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
