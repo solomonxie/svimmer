@@ -2,14 +2,14 @@
 " IMPORTANT: WON'T WORK PROPERLY IF LINTERS AREN'T LSP BASED OR NOT INSTALLED GLOBALLY
 Plug 'dense-analysis/ale'
 
-nnoremap <Leader>d :ALEGoToDefinition<CR>
-nnoremap <Leader>r :ALERename<CR>
-nnoremap <Leader>u :ALEFindReferences<CR>
-nnoremap <C-p> :ALEPreviousWrap<CR>
-nnoremap <C-n> :ALENextWrap<CR>
-nnoremap <Leader>a :ALEPopulateLocList<CR>
-nnoremap <Leader>x :ALEFix<CR>
-nnoremap K :ALEHover<CR>
+" nnoremap <Leader>d :ALEGoToDefinition<CR>
+" nnoremap <Leader>r :ALERename<CR>
+" nnoremap <Leader>u :ALEFindReferences<CR>
+" nnoremap <C-p> :ALEPreviousWrap<CR>
+" nnoremap <C-n> :ALENextWrap<CR>
+" nnoremap <Leader>a :ALEPopulateLocList<CR>
+" nnoremap <Leader>x :ALEFix<CR>
+" nnoremap K :ALEHover<CR>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -102,6 +102,7 @@ let g:ale_linters = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace']
 \ }
 
+let g:ale_history_enabled = 1
 " ===ALE LINT GENRAL===
 let g:ale_lint_delay = 200
 let g:ale_lint_on_enter = 1
@@ -127,7 +128,7 @@ let g:ale_python_mypy_options = '--ignore-missing-imports'
 " ==Pylint==
 let g:ale_python_pylint_options = '--rcfile=~/.config/pylintrc'
 
-" ===pyright===
+" ===Pyright===
 " REF: https://github.com/microsoft/pyright/blob/main/docs/settings.md
 let g:ale_python_pyright_config = {
 \ 'pyright': {
@@ -145,6 +146,11 @@ let g:ale_python_pyright_config = {
 \ },
 \}
 
+" ===Ruff===
+" HELP: :help ale-python-ruff
+" HELP: pip install ruff
+let g:ale_python_ruff_format_executable = '/Users/solomonxie/virtualenv/venv/bin/ruff'
+let g:ale_python_ruff_format_options = '--ignore F401'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   FIXERS                                   "

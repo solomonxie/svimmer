@@ -75,6 +75,7 @@ nnoremap fb :Buffers<CR>
 nnoremap fl :BLines<CR>
 nnoremap ft :BTags<CR>
 nnoremap fh :History:<CR>
+nnoremap fc :History:<CR>
 nnoremap fm :Marks<CR>
 " nnoremap tc :History:<CR>
 " nnoremap th :History<CR>

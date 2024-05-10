@@ -175,3 +175,16 @@
     nnoremap ff :silent execute "let @/=expand('%:t')<Bar>silent execute 'Lexplore' expand('%:h')<Bar>normal n"<CR>
     nnoremap <Leader>f :Lexplore .<CR>
 " }
+
+
+
+" [ COMMANDS ]----------------{
+    command! Cwd echo expand('%')
+    command! CwdCopy let @+ = expand('%') | echo 'Copied: ' @+
+    command! C let @+ = expand('%') | echo 'Copied: ' @+
+    command! Pwd echo expand('%:p')
+    command! PwdCopy let @+ = expand('%:p') | echo 'Copied: ' @+
+    command! P let @+ = expand('%:p') | echo 'Copied: ' @+
+    command! FilenameCopy let @+ = expand('%:t') | echo 'Copied: ' @+
+    command! F let @+ = expand('%:t') | echo 'Copied: ' @+
+" }

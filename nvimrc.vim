@@ -29,9 +29,12 @@ let mapleader = ","
 " $ pip install pynvim
 " $ pip install python-lsp-server[all] pycodestyle
 " $ pip install python-language-server
+" $ pip install pyright  # requires npm install neovim typescript
 " $ pip install flake8==3.9.2  # 4.0 no longer respect user config file
 " $ npm install -g neovim
-" $ npm install -g typescript
+" $ npm install -g vim-language-server
+" $ npm install -g typescript typescript-language-server
+" $ npm install -g bash-language-server
 " For more missing dependencies:
 " :checkhealth
 
@@ -86,6 +89,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/autopairs.vim  "Brakets/Quotes
         " source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{NEOVIM + LANGUAGE SERVER + LUA}
+        " ESSENTIAL! ->
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim
@@ -124,7 +128,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
