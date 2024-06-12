@@ -1,4 +1,7 @@
-local lspc = require('lspconfig')
+if string.find(vim.o['runtimepath'], 'lspconfig') then
+    return
+end
+local lspc = require "lspconfig"
 
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -34,4 +37,3 @@ lspc["vimls"].setup{
         }
     }
 }
-

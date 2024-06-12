@@ -1,5 +1,7 @@
-local lspc = require('lspconfig')
-if not lspc then return nil end
+if string.find(vim.o['runtimepath'], 'lspconfig') or string.find(vim.o['runtimepath'], 'cmp_nvim_lsp') then
+    return
+end
+local lspc = require "lspconfig"
 
 local on_attach_general = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -21,7 +23,7 @@ lspc["pylsp"].setup{
             init_options = { lint = false },
             debounce = 100,
             single_file_support = true,
-            configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
+            -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             plugins = {
                 jedi_completion = { include_params = true },
                 -- flake8 = {enabled = true, config = vim.fn.expand("~/.config/flake8")},
@@ -41,9 +43,9 @@ lspc["pylsp"].setup{
 
 -- -- REF: https://github.com/emanspeaks/pyls-flake8/
 -- -- $ pip install pyls-flake8
--- lspc["pylsp-flake8"].setup{
---     on_attach=on_attach_general,
--- }
+lspc["pylsp-flake8"].setup{
+    on_attach=on_attach_general,
+}
 
 -- -- REF: https://github.com/pappasam/jedi-language-server
 -- -- REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#jedi_language_server

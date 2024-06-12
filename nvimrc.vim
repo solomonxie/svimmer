@@ -25,8 +25,7 @@ let mapleader = ","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " $ brew install ctags
 " $ brew install --HEAD universal-ctags/universal-ctags/universal-ctags
-" $ pip install neovim
-" $ pip install pynvim
+" $ pip install pynvim neovim
 " $ pip install python-lsp-server[all] pycodestyle
 " $ pip install python-language-server
 " $ pip install pyright  # requires npm install neovim typescript
@@ -114,29 +113,23 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                LUA CONFIGS                                 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MUST BE LOADED AFTER VIM-PLUG MODULES
+" MUST BE LOADED AFTER PLUGINS
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
 
-"Other plugins
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                           LANGUAGE SERVERS (LSP)                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               IMPORT MODULES                               "
