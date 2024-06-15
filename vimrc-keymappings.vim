@@ -214,3 +214,17 @@ endif
 " inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]"
 " inoremap <expr> ' strpart(getline('.'), col('.')-1, 1) == "\'" ? "\<Right>" : "\'\'\<Left>"
 " inoremap <expr> " strpart(getline('.'), col('.')-1, 1) == "\"" ? "\<Right>" : "\"\"\<Left>"
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                  QUICKFIX                                  "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" nnoremap <leader>co :copen<CR>
+" nnoremap <leader>cc :cclose<CR>
+" nnoremap <leader>cn :cnext<CR>
+" nnoremap <leader>cp :cprev<CR>
+" nnoremap <leader>c1 :cc 1<CR>
+" nnoremap <leader>c2 :cc 2<CR>
+" nnoremap <leader>c3 :cc 3<CR>
+" nnoremap <leader>c4 :cc 4<CR>
+" nnoremap <leader>c5 :cc 5<CR>

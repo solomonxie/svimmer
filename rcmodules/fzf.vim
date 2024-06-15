@@ -1,13 +1,5 @@
 "REF: https://github.com/junegunn/fzf.vim
 "
-" This is the default extra key bindings
-let g:fzf_action = {
-    \ 'ctrl-t': 'tab split',
-    \ 'ctrl-x': 'split',
-    \ 'ctrl-v': 'vsplit' ,
-    \ 'ctrl-e': 'edit' ,
-\}
-
 " let g:fzf_layout = { 'down': '~40%' }  " down | up | left | right
 " let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 
@@ -68,6 +60,20 @@ function! SpecifyFileFinderFolder(cmd)
     endif
 endfunction
 
+command! -bang -nargs=* FzfQuickfix call s:FzfQuickfix(<q-args>)
+function! s:FzfQuickfix(query) abort
+    let command = 'rg --vimgrep --no-heading --smart-case ' . shellescape(a:query)
+    let result = system(command)
+    let lines = split(result, "\n")
+    call setqflist(map(lines, '{"filename": v:val, "lnum": str2nr(split(v:val, ":")[1]), "col": str2nr(split(v:val, ":")[2]), "text": join(split(v:val, ":")[3:], ":")}'))
+    copen
+endfunction
+
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val, "lnum": 1 }'))
+  copen
+endfunction
+
 "">> KEY MAPPINGS
 nnoremap fd :Files<CR>
 nnoremap fa :Ag<CR>
@@ -86,6 +92,18 @@ nnoremap FD :call SpecifyFileFinderFolder("Files")<CR>
 nnoremap FA :call SpecifyFileFinderFolder("FZFRg")<CR>
 " nnoremap FC :Commands<CR>
 " nnoremap gC :<C-f>
+
+" This is the default extra key bindings
+let g:fzf_action = {
+    \ 'ctrl-x': function('s:build_quickfix_list'),
+\}
+" let g:fzf_action = {
+"     \ 'ctrl-t': 'tab split',
+"     \ 'ctrl-x': 'split',
+"     \ 'ctrl-v': 'vsplit' ,
+"     \ 'ctrl-e': 'edit' ,
+" \}
+
 
 ">> Alter options
 " let g:x_fzf_opts = {'options': [
