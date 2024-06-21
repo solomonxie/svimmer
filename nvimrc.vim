@@ -120,7 +120,8 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/mason.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
