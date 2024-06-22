@@ -66,7 +66,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/netrw.vim
         " source ~/myconf/dotfiles/vim/rcmodules/vinegar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
-        source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
         source ~/myconf/dotfiles/vim/rcmodules/ctags.vim  "300ms+, 99% CPU
         source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+
         " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR
@@ -121,7 +121,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/mason.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/mason.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua

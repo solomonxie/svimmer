@@ -4,7 +4,7 @@ if string.find(vim.o['runtimepath'], 'blankline') then
     require('ibl').setup {
         indent = {
             char = "▏",
-            tab_char = { "a", "b", "c" },
+            -- tab_char = { "a", "b", "c" },
             -- highlight = { "Function", "Label" },
             smart_indent_cap = true,
             priority = 2,
