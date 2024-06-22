@@ -1,4 +1,4 @@
-if string.find(vim.o['runtimepath'], 'lspconfig') then
+if not string.find(vim.o['runtimepath'], 'lspconfig') then
     return
 end
 local lspc = require "lspconfig"

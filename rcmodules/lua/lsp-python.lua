@@ -1,4 +1,4 @@
-if string.find(vim.o['runtimepath'], 'lspconfig') or string.find(vim.o['runtimepath'], 'cmp_nvim_lsp') then
+if not string.find(vim.o['runtimepath'], 'lspconfig') or not string.find(vim.o['runtimepath'], 'cmp_nvim_lsp') then
     return
 end
 local lspc = require "lspconfig"
@@ -23,6 +23,7 @@ lspc["pylsp"].setup{
             init_options = { lint = false },
             debounce = 100,
             single_file_support = true,
+            skip_token_initialization=true,
             -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             plugins = {
                 jedi_completion = { include_params = true },

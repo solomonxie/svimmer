@@ -20,9 +20,12 @@ checkhealth:
 install-mac: checkhealth_mac
 	brew --version
 	brew install vim
-	brew install neovim
 	brew install ctags
 	# brew install --HEAD universal-ctags/universal-ctags/universal-ctags
+	# Install neovim 0.9.0 (least bugs on mac):
+	wget https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-macos.tar.gz
+	tar xvzf nvim-macos.tar.gz
+	mv nvim-macos ~/nvim-macos
 
 install-debian: checkhealth_debian
 	sudo apt-get --version
