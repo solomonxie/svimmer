@@ -1,7 +1,7 @@
 --REF: https://github.com/hrsh7th/nvim-cmp
 
 -- SUPPORTED SOURCES: https://github.com/topics/nvim-cmp
-if not string.find(vim.o['runtimepath'], 'lspconfig') or not string.find(vim.o['runtimepath'], 'cmp')  then
+if not string.find(vim.o['runtimepath'], 'cmp')  then
     return
 end
 local lspc = require('lspconfig')
@@ -77,10 +77,10 @@ cmp.setup.cmdline(':', {
 -- -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-lspc['pylsp'].setup { capabilities = capabilities }
+-- lspc['pylsp'].setup { capabilities = capabilities }
 -- -- lspc['jedi_language_server'].setup { capabilities = capabilities }
-lspc['vimls'].setup { capabilities = capabilities }
-lspc['tsserver'].setup { capabilities = capabilities }
+-- lspc['vimls'].setup { capabilities = capabilities }
+-- lspc['tsserver'].setup { capabilities = capabilities }
 
 -- Dictionary
 -- require("cmp_dictionary").setup({

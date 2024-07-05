@@ -1,4 +1,4 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') or not string.find(vim.o['runtimepath'], 'nvim-lsp-installer')  then
+if not string.find(vim.o['runtimepath'], 'nvim-lsp-installer')  then
     return
 end
 

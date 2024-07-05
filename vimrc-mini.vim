@@ -25,6 +25,10 @@
     set expandtab
     set encoding=utf8
     retab
+
+    "[Auto reload current file]
+    set autoread
+    au FocusGained,FocusLost,BufEnter,BufLeave,VimEnter,VimLeave * checktime
 " }
 
 

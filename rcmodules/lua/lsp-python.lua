@@ -1,21 +1,28 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') or not string.find(vim.o['runtimepath'], 'cmp_nvim_lsp') then
-    return
-end
 local lspc = require "lspconfig"
-
 local on_attach_general = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
 -- REF: https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md
--- $ pip install python-lsp-server
+-- $ pip install python-lsp-server[all]
 -- $ pip install pycodestyle
-local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- local has_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+-- if has_cmp_nvim_lsp then
+--     -- vim.notify("Found cmp_nvim_lsp", vim.log.levels.INFO)
+--     cmp_capabilities = cmp_nvim_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities())
+--     cmp_capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- else
+--     -- vim.notify("Not found cmp_nvim_lsp", vim.log.levels.INFO)
+--     cmp_capabilities = nil
+-- end
+local conf_pylint_path = vim.fn.expand("/tmp/pylintrc")
+local conf_falke8_path = vim.fn.expand("~/.config/flake8")
 lspc["pylsp"].setup{
     on_attach=on_attach_general,
-    capabilities=capabilities,
+    capabilities=cmp_capabilities,
     settings = {
         pylsp = {
             cmd = { "pylsp" },
@@ -27,10 +34,14 @@ lspc["pylsp"].setup{
             -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             plugins = {
                 jedi_completion = { include_params = true },
-                -- flake8 = {enabled = true, config = vim.fn.expand("~/.config/flake8")},
+                -- flake8 = { enabled = true, config = conf_falke8_path  },
+                flake8 = { enabled = false },
                 -- pylsp_mypy =  { enabled = true },
                 -- pycodestyle =  { enabled = true },
-                -- pylint =  { enabled = true },
+                pylint =  {
+                    enabled = true,
+                    -- args = { "--rcfile", conf_pylint_path },
+                },
                 -- pyflakes =  { enabled = true }
             }
         }
@@ -44,9 +55,9 @@ lspc["pylsp"].setup{
 
 -- -- REF: https://github.com/emanspeaks/pyls-flake8/
 -- -- $ pip install pyls-flake8
-lspc["pylsp-flake8"].setup{
-    on_attach=on_attach_general,
-}
+-- lspc["pylsp-flake8"].setup{  -- have to use this to cover another flake8 which I can't find where it is
+--     on_attach=on_attach_general,
+-- }
 
 -- -- REF: https://github.com/pappasam/jedi-language-server
 -- -- REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#jedi_language_server
