@@ -248,10 +248,6 @@ autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
     set tags=./tags;,tags;./.git/tags;,../.git/tags
 
 
-"Set syntax
-autocmd FileType *.conf,*.config,*.cfg,*.ini set syntax=cfg
-
-
 "IMPORTANT: FOR OPENNING LARGE FILE
 let g:large_file_size = 10000000  "10MB
 autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file_size | set noswapfile | syntax clear | endif
