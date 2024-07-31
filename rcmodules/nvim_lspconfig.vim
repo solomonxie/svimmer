@@ -29,7 +29,6 @@ nnoremap <Leader>a :lua vim.diagnostic.set_loclist()<CR>
 nnoremap <Leader>x :lua vim.lsp.buf.formatting()<CR>
 nnoremap K :lua vim.lsp.buf.hover()<CR>
 
-
 " RUN AFTER ALL PLUGINS ARE LOADED:
 " augroup LoadLspClients  "SLOW!!! COLD START!!!
 "     autocmd!
