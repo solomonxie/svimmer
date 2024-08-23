@@ -79,7 +79,8 @@ cnoremap ,. <ESC>
 
 " Word Selection
 nnoremap <Space> viw
-nnoremap v<Space> viW
+nnoremap g<Space> viW
+nnoremap <leader><Space> 0vg_
 
 " Highlight
 nnoremap  / :set hlsearch<cr>/

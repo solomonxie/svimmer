@@ -29,6 +29,7 @@ let mapleader = ","
 " $ pip install python-lsp-server[all] pycodestyle
 " $ pip install python-language-server
 " $ pip install pyright  # requires npm install neovim typescript
+" $ pip install pylint mypy
 " $ pip install flake8==3.9.2  # 4.0 no longer respect user config file
 " $ npm install -g neovim
 " $ npm install -g vim-language-server
@@ -77,7 +78,7 @@ call plug#begin('~/vim_plugged')
     "{Completion | Usages | Definitions}
         " source ~/myconf/dotfiles/vim/rcmodules/replace.vim
         source ~/myconf/dotfiles/vim/rcmodules/fzf.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Linting
+        source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Async linting
         " source ~/myconf/dotfiles/vim/rcmodules/deoplete.vim
         source ~/myconf/dotfiles/vim/rcmodules/ultisnips.vim
         source ~/myconf/dotfiles/vim/rcmodules/anyjump.vim

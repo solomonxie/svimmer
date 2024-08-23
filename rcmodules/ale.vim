@@ -1,5 +1,7 @@
 " REF: https://github.com/dense-analysis/ale
 " IMPORTANT: WON'T WORK PROPERLY IF LINTERS AREN'T LSP BASED OR NOT INSTALLED GLOBALLY
+" NOTE: WHY NOT <lspconfig> ? ALE is async by nature, and works well for many
+
 Plug 'dense-analysis/ale'
 
 " nnoremap <Leader>d :ALEGoToDefinition<CR>
@@ -21,6 +23,9 @@ Plug 'dense-analysis/ale'
 " $ npm install -g typescript
 
 
+let g:ale_lint_on_text_changed = 'always'  "never|always
+" ^ The most important feature, check buffer on REAL-TIME instead of on file-save
+
 let g:ale_completion_enabled = 0  "Disable completion
 let g:airline#extensions#ale#enabled = 1  "Enable error message in AirLine
 let g:ale_virtualtext_cursor = 1
@@ -31,8 +36,6 @@ let g:ale_sign_warning = 'W'
 let g:ale_set_highlights = 1
 let b:ale_warn_about_trailing_whitespace = 1
 
-" Only lint on save
-let g:ale_lint_on_text_changed = 'always'  "never|always
 " let g:ale_lint_on_insert_leave = 0
 " let g:ale_lint_on_enter = 0
 
@@ -92,15 +95,16 @@ hi! ALEVirtualTextInfo ctermfg=226
 
 " =======================Custom args to linters / fixers==========================
 
-" Make it 'g:' to only run linters I specified
 let g:ale_linters = {
+\   'python': ['pylsp', 'pylint'],
 \   'sh': ['language_server'],
-\   'python': ['pyright', 'flake8'],
 \   'vim': ['vimls'],
 \   'dockerfile': ['dockerfile_lint'],
 \   'javascript': ['tsserver', 'eslint'],
 \   '*': ['remove_trailing_lines', 'trim_whitespace']
 \ }
+" NOTE: Make it "g:" to only run linters I specified
+" NOTE: Python: mypy is for typehint checking, pylsp for overall pep8 checking
 
 let g:ale_history_enabled = 1
 " ===ALE LINT GENRAL===
@@ -126,7 +130,7 @@ let g:ale_python_mypy_options = '--ignore-missing-imports'
 " let g:ale_python_mypy_options = '--follow-imports skip'
 
 " ==Pylint==
-let g:ale_python_pylint_options = '--rcfile=~/.config/pylintrc'
+let g:ale_python_pylint_options = expand('--rcfile=~/.config/pylintrc')
 
 " ===Pyright===
 " REF: https://github.com/microsoft/pyright/blob/main/docs/settings.md

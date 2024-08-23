@@ -18,8 +18,10 @@ end
 --     -- vim.notify("Not found cmp_nvim_lsp", vim.log.levels.INFO)
 --     cmp_capabilities = nil
 -- end
-local conf_pylint_path = vim.fn.expand("/tmp/pylintrc")
+
+local conf_pylint_path = vim.fn.expand("~/.config/pylintrc")
 local conf_falke8_path = vim.fn.expand("~/.config/flake8")
+
 lspc["pylsp"].setup{
     on_attach=on_attach_general,
     capabilities=cmp_capabilities,
@@ -27,23 +29,21 @@ lspc["pylsp"].setup{
         pylsp = {
             cmd = { "pylsp" },
             filetypes = {"python"},
-            init_options = { lint = false },
             debounce = 100,
             single_file_support = true,
             skip_token_initialization=true,
-            -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
+            -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
+            init_options = { lint = false },
             plugins = {
-                jedi_completion = { include_params = true },
-                -- flake8 = { enabled = true, config = conf_falke8_path  },
-                flake8 = { enabled = false },
-                -- pylsp_mypy =  { enabled = true },
-                -- pycodestyle =  { enabled = true },
-                pylint =  {
-                    enabled = true,
-                    -- args = { "--rcfile", conf_pylint_path },
-                },
-                -- pyflakes =  { enabled = true }
-            }
+                pylint =  { enabled = false, args = { "--rcfile", conf_pylint_path } },
+                flake8 = { enabled = false, config = conf_falke8_path  },
+                pylsp_mypy =  { enabled = false },
+                mypy =  { enabled = false },
+                pycodestyle =  { enabled = false },
+                pyflakes =  { enabled = false },
+                jedi_completion = { enabled = true, include_params = true },  -- Important for completion
+            },
+            -- ^ Have to specifically everything "enabled=false" otherwise enabled by default
         }
     }
 }
