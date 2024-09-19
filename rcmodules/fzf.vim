@@ -75,7 +75,7 @@ function! s:build_quickfix_list(lines)
 endfunction
 
 "">> KEY MAPPINGS
-nnoremap fd :GFiles<CR>
+nnoremap fd :Files<CR>
 nnoremap fa :Ag<CR>
 nnoremap fb :Buffers<CR>
 nnoremap fl :BLines<CR>
