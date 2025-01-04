@@ -26,7 +26,7 @@ require('gitsigns').setup {
     },
     current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
     sign_priority = 6,
-    update_debounce = 100,
+    update_debounce = 1000,
     status_formatter = nil, -- Use default
     max_file_length = 10000,
     preview_config = {

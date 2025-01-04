@@ -27,10 +27,14 @@ Plug 'tweekmonster/startuptime.vim'   "VIM loading analysis
 " :noautocmd qall!
 
 
-" ====================================================
-" profile start /tmp/vim_profile.log
-" profile func *
-" profile file *
+" ========== HOW TO PROFILE ANY ACTION =========
+" :profile start /tmp/nvim_profile.log
+" :profile func *
+" :profile file *
+" do something...
+" :profile pause
+" do something else...
+" :profile stop
 
 " " PUT THESE LINES AT THE BOTTOM OF VIMRC
 " " :profile pause

@@ -51,7 +51,7 @@ let mapleader = ","
 
 call plug#begin('~/vim_plugged')
     "{Common}
-        source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim
+        source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
         source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "IMPORTANT!
         source ~/myconf/dotfiles/vim/rcmodules/misc.vim
         source ~/myconf/dotfiles/vim/rcmodules/hop.vim
@@ -122,7 +122,6 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/mason.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
@@ -131,6 +130,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
