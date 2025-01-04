@@ -20,8 +20,8 @@ cmp.setup({
     },
     sources = cmp.config.sources(
         {
-            { name = 'nvim_lsp' },
-            { name = 'ultisnips' }, -- For ultisnips users.
+            { name = 'nvim_lsp' },  -- Any LSP installed by Mason will be used
+            { name = 'ultisnips' },
             { name = 'buffer' },
             { name = 'path' },
         },

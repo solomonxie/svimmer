@@ -91,6 +91,7 @@ call plug#begin('~/vim_plugged')
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " ESSENTIAL! ->
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
+        source ~/myconf/dotfiles/vim/rcmodules/nvim_mason.vim  "Modern LSP Installer
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -119,8 +120,9 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
@@ -129,8 +131,8 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

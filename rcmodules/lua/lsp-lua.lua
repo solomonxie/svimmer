@@ -7,6 +7,8 @@ local on_attach = function(_, bufnr)
 end
 
 
+-- NOTE >>>>>> lua_ls IS SLOW, 10s+ TO LOAD, BE PATIENT...
+
 -- REF: https://github.com/sumneko/lua-language-server
 -- $ brew install lua-language-server
 -- :LspInstall lua_ls
@@ -21,6 +23,7 @@ lspc["lua_ls"].setup{
             },
             diagnostics = {
                 globals = {'vim'},
+                disable = { 'lowercase-global', 'unused-local', 'undefined-global' }
             },
             workspace = {
                 library = vim.api.nvim_get_runtime_file("", true),
