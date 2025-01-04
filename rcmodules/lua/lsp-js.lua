@@ -8,9 +8,7 @@ local on_attach = function(_, bufnr)
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
-
--- $ npm install -g typescript typescript-language-server
-lspc["tsserver"].setup{
+lspc['ts_ls'].setup{
     on_attach=on_attach,
     settings = {
         tsserver = {

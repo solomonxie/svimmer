@@ -132,7 +132,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

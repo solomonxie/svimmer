@@ -3,7 +3,15 @@ if not string.find(vim.o['runtimepath'], 'lspconfig') then
 end
 local lspc = require 'lspconfig'
 
-local my_lsp_servers = { 'pylsp', 'vimls', 'html', 'cssls', 'ts_ls', 'sqlls', 'lua_ls' }
+local my_lsp_servers = {
+    'pylsp',
+    'vimls',
+    'html',
+    'cssls',
+    'ts_ls',
+    'sqlls',
+    'lua_ls'
+}
 
 require('mason').setup()
 require('mason-lspconfig').setup {
