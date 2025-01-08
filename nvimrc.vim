@@ -113,26 +113,32 @@ call plug#begin('~/vim_plugged')
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                LUA CONFIGS                                 "
+"              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MUST BE LOADED AFTER PLUGINS
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
+
+" === LSP ===
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
+"Universal LSP Installer
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua  "Replaced by Mason
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
+
+" === Special features ===
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
+
+" === Experiments ===
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -10,6 +10,7 @@ local my_lsp_servers = {
     'cssls',
     'ts_ls',
     'sqlls',
+    'emmet_ls',
     'lua_ls'
 }
 
