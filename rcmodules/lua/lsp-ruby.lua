@@ -5,6 +5,7 @@
 -- Dependencies:
 -- $ export PATH="$HOME/.rbenv/versions/3.3.0/bin:$PATH"
 -- $ gem install phashion -v '1.2.0'
+-- or :MasonInstall solargraph
 local lspc = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local handlers = {

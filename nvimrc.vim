@@ -130,9 +130,10 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 
 " === Special features ===
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua

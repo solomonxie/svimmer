@@ -24,7 +24,7 @@ Plug 'tweekmonster/startuptime.vim'   "VIM loading analysis
 " :profile file *
 " " At this point do slow actions
 " :profile pause
-" :noautocmd qall!
+" :qall!
 
 
 " ========== HOW TO PROFILE ANY ACTION =========
@@ -38,9 +38,9 @@ Plug 'tweekmonster/startuptime.vim'   "VIM loading analysis
 
 " " PUT THESE LINES AT THE BOTTOM OF VIMRC
 " " :profile pause
-" " :noautocmd qall!
+" " :qall!
 " augroup PauseProfiling
 "     autocmd!
 "     autocmd VimEnter * profile pause
-"     " autocmd VimEnter * noautocmd qall!
+"     " autocmd VimEnter * qall!
 " augroup end
