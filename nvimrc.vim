@@ -99,8 +99,8 @@ call plug#begin('~/vim_plugged')
     "{Git}
         source ~/myconf/dotfiles/vim/rcmodules/tig.vim
         " source ~/myconf/dotfiles/vim/rcmodules/fugitive.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/gitgutter.vim  "50ms+
-        source ~/myconf/dotfiles/vim/rcmodules/gitsigns.vim  "BLAZING FAST: 0.2262ms
+        source ~/myconf/dotfiles/vim/rcmodules/gitgutter.vim  "50ms+
+        " source ~/myconf/dotfiles/vim/rcmodules/gitsigns.vim  "BLAZING FAST: 0.2262ms
         " source ~/myconf/dotfiles/vim/rcmodules/blame.vim
     "{Python}
         " source ~/myconf/dotfiles/vim/rcmodules/jedi.vim
@@ -133,7 +133,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 
 " === Special features ===
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua  "Super slow when quitting or closing buffer
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
