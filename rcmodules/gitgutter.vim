@@ -22,9 +22,12 @@ let g:gitgutter_preview_win_floating = 1  "for vim compatible let g:gitgutter_te
 
 
 " UI
-let g:gitgutter_sign_added = '▎'
-let g:gitgutter_sign_modified = '▎'
-let g:gitgutter_sign_removed = '▎'
+let g:gitgutter_sign_added = '▎'  "The char '▎' is shown as a highlight bar
+let g:gitgutter_sign_modified = '▎'  "The char '▎' is shown as a highlight bar
+let g:gitgutter_sign_removed = '▎'  "The char '▎' is shown as a highlight bar
+" let g:gitgutter_sign_added = '+'
+" let g:gitgutter_sign_modified = '~'
+" let g:gitgutter_sign_removed = '-'
 highlight GitGutterAdd guifg=green ctermfg=green
 highlight GitGutterChange guifg=yellow ctermfg=yellow
 highlight GitGutterDelete guifg=red ctermfg=red

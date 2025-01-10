@@ -2,5 +2,5 @@
 if not string.find(vim.o['runtimepath'], 'mason')  then
     return
 end
-    
+
 require("mason").setup()

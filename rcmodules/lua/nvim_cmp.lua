@@ -23,7 +23,7 @@ cmp.setup({
             { name = 'nvim_lsp' },  -- Any LSP installed by Mason will be used
             { name = 'ultisnips' },
             { name = 'buffer' },
-            { name = 'path' },
+            { name = 'path', keyword_length = 2 },
         },
         {
             -- { name = 'treesitter' },  -- Buggy
