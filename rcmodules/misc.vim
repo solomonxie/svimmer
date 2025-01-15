@@ -107,3 +107,5 @@ Plug 'kizza/actionmenu.nvim'  "Popup Context Menu
 "REF: https://github.com/kshenoy/vim-signature
 Plug 'kshenoy/vim-signature'
 " nnoremap fm :SignatureListBufferMarks<CR>
+
+" Plug 'tpope/vim-obsession'  "Messing up the buffer behaviors

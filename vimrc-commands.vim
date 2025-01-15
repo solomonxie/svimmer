@@ -58,6 +58,7 @@
         autocmd!
         " autocmd VimLeave,FocusLost * if len(getbufinfo({'buflisted':1}))>=2 | call SaveSession() | endif
         autocmd VimLeave,FocusLost * if len(getbufinfo({'buflisted':1}))>=2 | call SaveSessionSimple() | endif
+        " autocmd VimLeave,FocusLost * if len(getbufinfo({'buflisted':1}))>=2 | silent! call SaveSessionByObsession() | endif
     augroup end
 
     augroup persistent_folds

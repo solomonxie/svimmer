@@ -130,7 +130,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 
 " === Special features ===
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua  "Super slow when quitting or closing buffer
@@ -178,6 +178,7 @@ set shell=/bin/sh
 " Persistent Session Options
 set sessionoptions-=options    " do not store global and local values in a session
 set sessionoptions-=folds      " do not store folds
+" set sessionoptions-=buffers      " do not store closed buffers with :bd
 " set sessionoptions=blank,buffers,curdir,tabpages,winsize,terminal
 
 "Avoid annoying continuation of comment (:help fo-table)

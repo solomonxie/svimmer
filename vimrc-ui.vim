@@ -86,6 +86,7 @@ endfunction
     autocmd BufRead *.json.gz set filetype=json
     autocmd BufRead *.sh,envfile*,.bashrc*,.zshrc* set filetype=bash
     autocmd BufRead *.ini,*rc,*.service,*.conf,*.config,*.cfg set syntax=dosini  "syntax=cfg
+    autocmd BufRead requirements*.txt set syntax=requirements
 
     let python_highlight_all = 1  "FOR vim/syntax/python.vim (FROM WEB)
 "<FileType>

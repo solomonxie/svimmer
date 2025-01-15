@@ -114,6 +114,14 @@ function! SaveSessionSimple()
 endfunction
 
 
+function! SaveSessionByObsession()
+    echom "SAVING SESSION BY FILES..."
+    let session_path = GetSessionPath()
+    execute "Obsession! " . session_path
+    echom "SAVED SESSION TO: " . session_path
+endfunction
+
+
 function! LoadSession()
     let session_path = GetSessionPath()
     execute "source " . session_path

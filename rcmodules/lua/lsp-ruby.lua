@@ -16,6 +16,10 @@ local handlers = {
     )
 }
 
+-- lspc['ruby_lsp'].setup{
+--     -- Not working...
+-- }
+
 lspc['solargraph'].setup{
   cmd = { 'solargraph', 'stdio' },
   filetypes = {
