@@ -61,11 +61,11 @@
         " autocmd VimLeave,FocusLost * if len(getbufinfo({'buflisted':1}))>=2 | silent! call SaveSessionByObsession() | endif
     augroup end
 
-    augroup persistent_folds
-        autocmd!
-        autocmd BufWinLeave * silent! mkview
-        autocmd BufWinEnter * silent! loadview
-    augroup END
+    " augroup persistent_folds "Will messup with cwd and jump history!!!
+    "     autocmd!
+    "     autocmd BufWinLeave * silent! mkview
+    "     autocmd BufWinEnter * silent! loadview
+    " augroup END
 "}
 
 

@@ -251,6 +251,7 @@ autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
 "<Buffer>
     "Change pwd/current-dir
     " set autochdir " Automatically change current directory
+    set noautochdir " Dynamic cwd might messup after navigating to diff subfolders
     "autocmd BufEnter * cd %:p:h  "Auto change 'pwd' to current folder when enter a buffer
     set splitright  "Default split at right
     "set splitbelow  "Default split at right
