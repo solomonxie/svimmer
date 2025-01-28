@@ -231,7 +231,7 @@ set isfname-==  "When using 'gf', ignore '=' as part of the file name
 
 "IMPORTANT: NeoVim's Shada (viminfo) shares all session marks/jumplist/buffers, which is super annoying
 set shada=""
-"set viminfo='100,f1
+set viminfo='100,f1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         ADVANCED BUILT-IN SETTINGS                         "
