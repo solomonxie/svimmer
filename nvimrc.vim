@@ -142,6 +142,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 
 " === Experiments ===
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/llm.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               IMPORT MODULES                               "
