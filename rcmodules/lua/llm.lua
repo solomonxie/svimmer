@@ -21,10 +21,11 @@ require('gen').setup({
         -- Start DeepSeek server if not already running
         pcall(io.popen, 'ollama serve > /dev/null 2>&1 &')
     end,
-    command = function(options)
-        local body = {model = options.model, stream = true}
-        return "curl --silent --no-buffer -X POST http://" .. options.host .. ":" .. options.port .. "/api/chat -d $body"
-    end,
+    -- command = function(options)
+    --     local body = {model = options.model, stream = true}
+    --     return "curl --silent --no-buffer -X POST http://" .. options.host .. ":" .. options.port .. "/api/chat -d $body"
+    -- end,
+    -- context = 1024 * 1024,  -- Adjust the context length as needed
     -- system_prompt = 'You are an AI assistant inside Neovim. You understand Neovim commands, keybindings, buffers, and Vimscript/Lua configuration. Provide responses tailored for Neovim users.',
     debug = false,  -- Print errors and command run.
 })
