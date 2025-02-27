@@ -4,7 +4,7 @@
 -- Change model: :lua require('gen').select_model()
 
 require('gen').setup({
-    model = 'deepseek-r1:1.5b',  -- $ ollama list  # show available models
+    model = 'mistral',  -- $ ollama list  # show available models
     host = 'localhost',  -- The host running the DeepSeek service.
     port = '11434',  -- The port on which the DeepSeek service is listening.
     display_mode = 'float',  -- Display mode: 'float', 'split', or 'horizontal-split'.

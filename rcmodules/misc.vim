@@ -15,6 +15,7 @@ Plug 'bronson/vim-visual-star-search'
 
 "REF: https://github.com/tpope/vim-commentary
 Plug 'tpope/vim-commentary'  "Blazing fast!!
+autocmd FileType sql setlocal commentstring=--\ %s
 
 " Plug 'bronson/vim-trailing-whitespace'
 
