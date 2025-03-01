@@ -78,7 +78,7 @@
 
 " [  Persistent undo  ]--------{
     set undofile "Maintain UNDO history between sessions
-    set undodir=/tmp/vim/undo//
+    set undodir=/tmp/vim_undo//
     if !isdirectory(&undodir)
        silent! call mkdir(&undodir, 'p')
     endif
