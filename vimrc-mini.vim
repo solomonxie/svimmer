@@ -66,7 +66,7 @@
 " [  Swap files  ]--------{
     " set swapfile    "enable swap file
     set noswapfile  "Disable swap
-    set directory=/tmp/vim/swap//    "set swp file directory.
+    set directory=/tmp/vim_swap//    "set swp file directory.
     " ▼ update also check cursor-holds and other functions, bit expensive one.
     set updatetime=60000   "save swap file every amount of ms
     set updatecount=200     "save swp file every amount of characters
