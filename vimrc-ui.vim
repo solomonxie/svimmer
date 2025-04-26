@@ -183,6 +183,10 @@ endfunction
     " highlight! CursorLine cterm=underline ctermfg=NONE ctermbg=236  "Dark Magenta
     " highlight! CursorLineNR cterm=NONE ctermfg=NONE ctermbg=89  "Pink
 
+" =={TRAILING WHITESPACE}==
+highlight TrailingWhitespace ctermbg=red guibg=red
+autocmd BufRead,BufNewFile * match TrailingWhitespace /\s\+$/
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               PLUGIN RELATED                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -72,6 +72,8 @@
 "[Prettify/Formatting]--------------------------{
     command! JsonPrettify :% !python -m json.tool
     command! SqlPrettify :% !python -m sqlparse.format --reindent --keywords upper --identifiers lower
+
+    command! RemoveTrailingWhitespace %s/\s\+$//e
 "}
 
 

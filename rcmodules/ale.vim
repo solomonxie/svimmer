@@ -101,10 +101,12 @@ let g:ale_linters = {
 \   'vim': ['vimls'],
 \   'dockerfile': ['dockerfile_lint'],
 \   'javascript': ['tsserver', 'eslint'],
+\   'ruby': [],
 \   '*': ['remove_trailing_lines', 'trim_whitespace']
 \ }
 " NOTE: Make it "g:" to only run linters I specified
 " NOTE: Python: mypy is for typehint checking, pylsp for overall pep8 checking
+" NOTE: the "ruby: []" will disable it using tons of ruby slow processes for each buffer (e.g., brakeman)
 
 let g:ale_history_enabled = 1
 " ===ALE LINT GENRAL===
