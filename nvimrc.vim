@@ -108,6 +108,8 @@ call plug#begin('~/vim_plugged')
     "{NodeJS}
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
+    "{AI}
+        source ~/myconf/dotfiles/vim/rcmodules/copilot.vim
     "{Misc}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
         source ~/myconf/dotfiles/vim/rcmodules/llm.vim
@@ -143,6 +145,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
 " === Experiments ===
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/llm.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/copilot.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               IMPORT MODULES                               "
