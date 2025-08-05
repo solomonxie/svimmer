@@ -160,7 +160,6 @@ if filereadable(expand('~/.config/vimrc-local.vim'))
     source ~/.config/vimrc-local.vim
 endif
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         GENERAL BUILT-IN SETTINGS                          "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

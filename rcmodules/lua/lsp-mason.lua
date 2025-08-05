@@ -1,10 +1,13 @@
 if not string.find(vim.o['runtimepath'], 'lspconfig') then
     return
 end
+if not string.find(vim.o['runtimepath'], 'mason') then
+    return
+end
 local lspc = require 'lspconfig'
 
 local my_lsp_servers = {
-    'pylsp',
+    -- 'pylsp',
     'vimls',
     'html',
     'cssls',

@@ -143,6 +143,8 @@ endfunction
     "> or
     "highlight ColorColumn ctermbg=lightgrey guibg=lightgrey
 
+    set jumpoptions-=clean  "After nvim 0.10.+, Ctrl-O can't jump back (buffer removed from jumplist) (REF: issues/28968)
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                HIGHLIGHTING                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
