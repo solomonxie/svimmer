@@ -26,6 +26,7 @@ install-mac: checkhealth_mac
 	wget https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-macos.tar.gz
 	tar xvzf nvim-macos.tar.gz
 	mv nvim-macos ~/nvim-macos
+	sudo xattr -rd com.apple.quarantine ~/nvim-macos
 
 install-debian: checkhealth_debian
 	sudo apt-get --version
