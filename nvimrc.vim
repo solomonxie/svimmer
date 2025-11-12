@@ -37,6 +37,8 @@ let mapleader = ","
 " $ npm install -g bash-language-server
 " For more missing dependencies:
 " :checkhealth
+" On MacOS, grand permission for entire Neovim program:
+" $ sudo xattr -r -d com.apple.quarantine ~/nvim-macos-0.11.4/
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                        VIM-PLUG MANAGER FOR PLUGINS                        "

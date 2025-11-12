@@ -1,8 +1,3 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') then
-    return
-end
-local lspc = require 'lspconfig'
-
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -15,7 +10,10 @@ end
 -- $ brew install lua-language-server
 -- OR:
 -- :MasonInstall lua_ls
-lspc['lua_ls'].setup{
+if not string.find(vim.o['runtimepath'], 'lua_ls') then
+    return
+end
+vim.lsp.config['lua_ls'].setup{
     on_attach=on_attach,
     settings = {
         Lua = {

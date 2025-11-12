@@ -1,13 +1,12 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') then
+if not string.find(vim.o['runtimepath'], 'emmet_ls') then
     return
 end
-local lspc = require 'lspconfig'
 local configs = require 'lspconfig/configs'
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-lspc['emmet_ls'].setup({
+vim.lsp.config['emmet_ls'].setup({
     -- on_attach = on_attach,
     capabilities = capabilities,
     filetypes = { 'css', 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'sass', 'scss', 'svelte', 'pug', 'typescriptreact', 'vue' },

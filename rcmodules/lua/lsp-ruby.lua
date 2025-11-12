@@ -6,7 +6,6 @@
 -- $ export PATH="$HOME/.rbenv/versions/3.3.0/bin:$PATH"
 -- $ gem install phashion -v '1.2.0'
 -- or :MasonInstall solargraph
-local lspc = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local handlers = {
     ['textDocument/publishDiagnostics'] = vim.lsp.with(
@@ -16,11 +15,11 @@ local handlers = {
     )
 }
 
--- lspc['ruby_lsp'].setup{
+-- vim.lsp.config['ruby_lsp'].setup{
 --     -- Not working...
 -- }
 
-lspc['solargraph'].setup{
+vim.lsp.config['solargraph'].setup{
   cmd = { 'solargraph', 'stdio' },
   filetypes = {
       "ruby"
@@ -28,7 +27,7 @@ lspc['solargraph'].setup{
   flags = {
       debounce_text_changes = 150
   },
-  root_dir = lspc.util.root_pattern('Gemfile', '.git', '.'),
+  root_dir = vim.lsp.config.util.root_pattern('Gemfile', '.git', '.'),
   capabilities = capabilities,
   handlers = handlers,
   settings = {

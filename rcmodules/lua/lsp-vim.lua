@@ -1,7 +1,6 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') then
+if not string.find(vim.o['runtimepath'], 'vimls') then
     return
 end
-local lspc = require "lspconfig"
 
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end

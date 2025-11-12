@@ -1,8 +1,6 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') then
+if not string.find(vim.o['runtimepath'], 'sqlls') then
     return
 end
-local lspc = require 'lspconfig'
-
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -13,7 +11,7 @@ end
 -- $ npm i -g sql-language-server
 -- OR:
 -- :MasonInstall sqlls
-lspc['sqlls'].setup{
+vim.lsp.config['sqlls'].setup{
     on_attach=on_attach,
     cmd = { 'sql-language-server', 'up', '--method', 'stdio' },
     filetypes = { 'sql', 'mysql' },

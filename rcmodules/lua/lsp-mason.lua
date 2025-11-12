@@ -1,10 +1,6 @@
-if not string.find(vim.o['runtimepath'], 'lspconfig') then
-    return
-end
 if not string.find(vim.o['runtimepath'], 'mason') then
     return
 end
-local lspc = require 'lspconfig'
 
 local my_lsp_servers = {
     -- 'pylsp',
@@ -25,8 +21,8 @@ require('mason-lspconfig').setup {
 
 -- Initially setup LSP servers
 -- NOTE: Will not override existing setups, and can be overridden by later setups
-for _, lsp in ipairs(my_lsp_servers) do
-    if not lspc[lsp].manager then
-        lspc[lsp].setup {}
-    end
-end
+-- for _, lsp in ipairs(my_lsp_servers) do
+--     if not vim.lsp.config[lsp].manager then
+--         vim.lsp.config[lsp].setup {}
+--     end
+-- end

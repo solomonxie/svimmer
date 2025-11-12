@@ -1,4 +1,3 @@
-local lspc = require "lspconfig"
 local on_attach_general = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -22,7 +21,10 @@ end
 local conf_pylint_path = vim.fn.expand("~/.config/pylintrc")
 local conf_falke8_path = vim.fn.expand("~/.config/flake8")
 
-lspc["pylsp"].setup{
+if not string.find(vim.o['runtimepath'], 'pylsp') then
+    return
+end
+vim.lsp.config["pylsp"].setup{
     on_attach=on_attach_general,
     capabilities=cmp_capabilities,
     settings = {
@@ -49,20 +51,20 @@ lspc["pylsp"].setup{
 }
 
 -- -- REF: https://github.com/sourcery-ai/sourcery
--- lspc["sourcery"].setup{
+-- vim.lsp.config["sourcery"].setup{
 --     on_attach=on_attach_general,
 -- }
 
 -- -- REF: https://github.com/emanspeaks/pyls-flake8/
 -- -- $ pip install pyls-flake8
--- lspc["pylsp-flake8"].setup{  -- have to use this to cover another flake8 which I can't find where it is
+-- vim.lsp.config["pylsp-flake8"].setup{  -- have to use this to cover another flake8 which I can't find where it is
 --     on_attach=on_attach_general,
 -- }
 
 -- -- REF: https://github.com/pappasam/jedi-language-server
 -- -- REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#jedi_language_server
 -- -- $ pip install jedi-language-server
--- lspc["jedi_language_server"].setup{
+-- vim.lsp.config["jedi_language_server"].setup{
 --     on_attach=on_attach_general,
 --     cmd = {"jedi-language-server"},
 --     filetypes = {"python"},
@@ -72,7 +74,7 @@ lspc["pylsp"].setup{
 --     },
 -- }
 
--- lspc["pyright"].setup{
+-- vim.lsp.config["pyright"].setup{
 --     on_attach=on_attach_general,
 --     cmd = { "pyright-langserver", "--stdio" },
 --     filetypes = { "python" },
@@ -89,7 +91,7 @@ lspc["pylsp"].setup{
 -- }
 
 -- -- $ npm install -g diagnostic-languageserver
--- lspc.diagnosticls.setup {
+-- vim.lsp.config.diagnosticls.setup {
 --     filetypes = { "python" },
 --     init_options = {
 --         filetypes = {
@@ -130,7 +132,7 @@ lspc["pylsp"].setup{
 -- -- REF: https://github.com/microsoft/pyright
 -- -- REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#pyright
 -- -- $ npm -g install pyright
--- lspc["pyright"].setup{
+-- vim.lsp.config["pyright"].setup{
 --     on_attach=on_attach_general,
 --     cmd = {"pyright-python-langserver", "--stdio"},
 --     filetypes = {"python"},
