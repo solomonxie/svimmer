@@ -113,8 +113,8 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
 for path in g:lua_configs
-    echom 'loading Lua config: ' . path
-    " execute 'luafile ' . path |redraw  "Redraw prevent echo popup message
+    " echom 'loading Lua config: ' . path |redraw  "Redraw prevent echo popup message
+    execute 'luafile ' . path
 endfor
 
 
