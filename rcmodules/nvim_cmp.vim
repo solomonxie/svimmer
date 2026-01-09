@@ -7,6 +7,8 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-omni'
 
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua']
+
 
 " More completion sources
 " Plug 'f3fora/cmp-spell'

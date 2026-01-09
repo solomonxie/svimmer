@@ -1,6 +1,10 @@
 -- REF: https://github.com/David-Kunz/gen.nvim
 -- Default prompts: https://github.com/David-Kunz/gen.nvim/blob/main/lua/gen/prompts.lua
 
+if not string.find(vim.o['runtimepath'], 'gen')  then
+    return
+end
+
 -- Change model: :lua require('gen').select_model()
 
 require('gen').setup({

@@ -1,3 +1,7 @@
+" Instructions: https://github.com/github/copilot.vim
+" Authentication: do ":Copilot setup" then follow instructions to jump to browser
+" Verify: $ cat ~/.config/github-copilot/apps.json
+
 Plug 'github/copilot.vim'
 
 " Set keymap for accept copilot suggestion

@@ -51,6 +51,8 @@ let mapleader = ","
 "     echo 'Done.'
 " endif
 
+let g:lua_configs = []  "Append if a plugin module requires a Lua config after all plugins are loaded
+
 call plug#begin('~/vim_plugged')
     "{Common}
         source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
@@ -69,7 +71,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/netrw.vim
         " source ~/myconf/dotfiles/vim/rcmodules/vinegar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
-        source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
         " source ~/myconf/dotfiles/vim/rcmodules/ctags.vim  "300ms+, 99% CPU
         source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+
         " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR
@@ -111,43 +113,26 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
     "{AI}
+        source ~/myconf/dotfiles/vim/rcmodules/llm.vim  "Local LLM (Ollama)
         source ~/myconf/dotfiles/vim/rcmodules/copilot.vim
     "{Misc}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
-        source ~/myconf/dotfiles/vim/rcmodules/llm.vim
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc.lua
+" let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/copilot.lua']
+for path in g:lua_configs
+    echom 'loading Lua config: ' . path
+    execute 'luafile ' . path
+    redraw
+endfor
 
-" === LSP ===
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua
-"Universal LSP Installer
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua  "Replaced by Mason
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
-
-" === Special features ===
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua  "Super slow when quitting or closing buffer
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/whichkey.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/blankline.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
-
-" === Experiments ===
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/schedule.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/llm.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/copilot.lua
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               IMPORT MODULES                               "

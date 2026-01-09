@@ -3,14 +3,15 @@ if not string.find(vim.o['runtimepath'], 'mason') then
 end
 
 local my_lsp_servers = {
-    -- 'pylsp',
+    'pylsp',
     'vimls',
     'html',
     'cssls',
     'ts_ls',
     'sqlls',
     'emmet_ls',
-    'lua_ls'
+    'clangd',
+    'lua_ls',
 }
 
 require('mason').setup()
