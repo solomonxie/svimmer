@@ -114,21 +114,22 @@ call plug#end()
 " let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
 for path in g:lua_configs
     echom 'loading Lua config: ' . path
-    execute 'luafile ' . path
-    redraw  "Redraw prevent echo popup message
+    " execute 'luafile ' . path |redraw  "Redraw prevent echo popup message
 endfor
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               IMPORT MODULES                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+source ~/myconf/dotfiles/vim/vimrc-basic.vim
 source ~/myconf/dotfiles/vim/vimrc-functions.vim
 source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/ui.lua
-source ~/myconf/dotfiles/vim/vimrc-basic.vim
 " source ~/myconf/dotfiles/vim/rcmodules/schedules.vim
+
+
 if filereadable(expand('~/.config/vimrc-local.vim'))
     source ~/.config/vimrc-local.vim
 endif
