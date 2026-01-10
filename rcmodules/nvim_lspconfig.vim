@@ -36,7 +36,6 @@ nnoremap K :lua vim.lsp.buf.hover()<CR>
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/gitsigns.lua
-"     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-installer.lua
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/cmp.lua
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/lspsaga.lua
 "     autocmd VimEnter * luafile ~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua

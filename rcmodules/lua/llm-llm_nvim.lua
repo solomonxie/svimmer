@@ -2,11 +2,6 @@
 --   $ vim ~/.global.env then add `LLM_KEY=<YOUR_API_KEY>`
 --   $ vim ~/.vimrc-local.vim then add `lua vim.env.OPENAI_API_KEY = "sk-xxxx"`
 
-if not string.find(vim.o['runtimepath'], 'llm.nvim')  then
-    return
-end
-
-
 require('llm').setup({
     prompt = 'You are a professional programmer.',
 
@@ -75,8 +70,8 @@ require('llm').setup({
                     -- url = 'https://xxx',
                     -- model = 'xxx'
                     -- api_type = ''
-                },
-                -- ...
             },
+            -- ...
         },
-    })
+    },
+})

@@ -6,7 +6,7 @@ nnoremap <LocalLeader>d :UndotreeToggle<CR>:UndotreeFocus<CR>
 Plug 'machakann/vim-highlightedyank', {'commit': '285a614'}
 let g:highlightedyank_highlight_duration = 1000
 
-Plug 'bronson/vim-visual-star-search'
+Plug 'bronson/vim-visual-star-search', {'commit': '7c32edb'}
 
 "REF: https://github.com/kassio/neoterm
 " Plug 'kassio/neoterm'  "For Terminal

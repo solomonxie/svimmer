@@ -45,6 +45,7 @@ let g:lua_configs = []  "Append if a plugin module requires a Lua config after a
 call plug#begin('~/vim_plugged')
     "{Common}
         source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
+        source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "Important
         source ~/myconf/dotfiles/vim/rcmodules/misc.vim
         source ~/myconf/dotfiles/vim/rcmodules/hop.vim
     "{UI}
@@ -83,7 +84,7 @@ call plug#begin('~/vim_plugged')
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " ESSENTIAL! ->
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_mason.vim  "Modern LSP Installer
+        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -101,12 +102,20 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
     "{AI}
-        source ~/myconf/dotfiles/vim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
+        source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
         " source ~/myconf/dotfiles/vim/rcmodules/llm-llm_nvim.vim  "Complex settings, buggy UI
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-gp.vim  "Ugly design, not easy to use
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-codecompanion.vim  "Not yet knowing how to autocomplete
     "{Misc}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
 call plug#end()
+
+
+" Some plugins require env variables (vim/neovim does not take env from shell)
+silent! source ~/.vimrc-env.vim
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
@@ -126,7 +135,7 @@ source ~/myconf/dotfiles/vim/vimrc-functions.vim
 source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/ui.lua
-source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "Important for Python
 
+
+"Local overrides if there's any
 silent! source ~/.vimrc-local.vim
