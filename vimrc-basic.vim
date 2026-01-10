@@ -1,3 +1,4 @@
+
 " HAS TO DEFINE LEADER ASAP BECAUSE KMAP BEFORE THAT IS NOT WORKING
 let mapleader = ","
 " let maplocalleader = ""
@@ -187,3 +188,8 @@ autocmd BufEnter * set foldmethod=manual
     "autocmd FileType c setl ofu=ccomplete#CompleteCpp
     "autocmd FileType css setl ofu=csscomplete#CompleteCSS
 " }
+
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

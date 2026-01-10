@@ -1,4 +1,3 @@
-" https://github.com/pechorin/any-jump.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     Any Jump - Reference/Usage search                      "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -9,7 +8,8 @@
 "Based on syntax rules for 40 languages and fast regexp engines like ripgrep and ag.
 "Required rg or ag to be installed.
 
-Plug 'pechorin/any-jump.vim'
+"REF: https://github.com/pechorin/any-jump.vim
+Plug 'pechorin/any-jump.vim', {'commit': 'f95674d'}
 
 " KEY MAPPINGS
 nnoremap fu :AnyJump<CR>
@@ -38,3 +38,7 @@ let g:any_jump_window_height_ratio = 0.6
 let g:any_jump_window_top_offset   = 4
 
 " let g:any_jump_keyword_match_cursor_mode', 'word'
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

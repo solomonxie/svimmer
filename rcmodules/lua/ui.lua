@@ -29,3 +29,8 @@ local diagnostic_config = {
 }
 
 vim.diagnostic.config(diagnostic_config)
+
+
+
+-- ============= End of File ==================
+print('Loaded ' .. vim.fn.expand('<sfile>:5'))

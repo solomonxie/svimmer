@@ -62,3 +62,7 @@ let g:python3_host_prog = '~/virtualenv/venv/bin/python'
 "     endif
 "     echo 'Use Python: ' . pylink
 " endif
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

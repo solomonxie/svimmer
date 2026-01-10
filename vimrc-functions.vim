@@ -343,3 +343,7 @@ function! ToggleVerbose()
         set verbosefile=
     endif
 endfunction
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

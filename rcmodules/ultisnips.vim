@@ -1,6 +1,8 @@
 " REF: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
-Plug 'SirVer/ultisnips'  " Track the engine.
-Plug 'honza/vim-snippets'  " Snippets are separated from the engine.
+Plug 'SirVer/ultisnips', {'commit': 'b22a86f'}  " Track the engine.
+
+" REF: https://github.com/honza/vim-snippets
+Plug 'honza/vim-snippets', {'commit': 'ededcf7'}  " Snippets are separated from the engine.
 
 " Could be buggy if not specifying the Python version
 let g:UltiSnipsUsePythonVersion=3
@@ -24,3 +26,7 @@ let g:UltiSnipsSnippetDirectories=[expand('~/vim_plugged/vim-snippets/UltiSnips/
     "     autocmd InsertEnter * call plug#load('ultisnips') | autocmd! load_ultisnips
     " augroup END
 " }
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

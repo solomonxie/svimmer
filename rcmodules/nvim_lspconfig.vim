@@ -1,8 +1,8 @@
 " REF: https://github.com/neovim/nvim-lspconfig
-Plug 'neovim/nvim-lspconfig'
+Plug 'neovim/nvim-lspconfig', {'commit': '92ee7d4'}
 " Plug 'williamboman/nvim-lsp-installer'  "Archived, use mason.nvim instead
 " Plug 'williamboman/mason.nvim'
-Plug 'nvim-lua/plenary.nvim'  "Func Dependencies for many Lua plugins
+Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}  "Func Dependencies for many Lua plugins
 
 " AVAILABLE LANGUAGE SERVERS:
 " REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
@@ -54,3 +54,7 @@ nnoremap K :lua vim.lsp.buf.hover()<CR>
 
 " =====> more settings in =========>
 " ./vim/rcmodules/lua/*.lua
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

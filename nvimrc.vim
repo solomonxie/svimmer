@@ -45,7 +45,6 @@ let g:lua_configs = []  "Append if a plugin module requires a Lua config after a
 call plug#begin('~/vim_plugged')
     "{Common}
         source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "IMPORTANT!
         source ~/myconf/dotfiles/vim/rcmodules/misc.vim
         source ~/myconf/dotfiles/vim/rcmodules/hop.vim
     "{UI}
@@ -102,8 +101,9 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
     "{AI}
-        source ~/myconf/dotfiles/vim/rcmodules/llm.vim  "For local LLMs (Ollama)
-        source ~/myconf/dotfiles/vim/rcmodules/copilot.vim
+        source ~/myconf/dotfiles/vim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-llm_nvim.vim  "Complex settings, buggy UI
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
     "{Misc}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
 call plug#end()
@@ -113,8 +113,8 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
 for path in g:lua_configs
-    " echom 'loading Lua config: ' . path |redraw  "Redraw prevent echo popup message
     execute 'luafile ' . path
+    echom 'Loaded Lua config: ' . path |redraw  "Redraw prevent echo popup message
 endfor
 
 
@@ -127,9 +127,6 @@ source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/ui.lua
-" source ~/myconf/dotfiles/vim/rcmodules/schedules.vim
+source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "Important for Python
 
-
-if filereadable(expand('~/.config/vimrc-local.vim'))
-    source ~/.config/vimrc-local.vim
-endif
+silent! source ~/.vimrc-local.vim

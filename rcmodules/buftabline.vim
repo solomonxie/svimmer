@@ -1,5 +1,5 @@
 "REF: https://github.com/ap/vim-buftabline
-Plug 'ap/vim-buftabline'
+Plug 'ap/vim-buftabline', {'commit': '6cdb6ae'}
 
 let g:buftabline_show = 1  "only if there are at least two buffers
 let g:buftabline_numbers = 2
@@ -33,3 +33,7 @@ highlight BufTabLineModifiedHidden ctermfg=0 ctermbg=222
 "hi default link BufTabLineModifiedCurrent BufTabLineCurrent
 "hi default link BufTabLineModifiedActive BufTabLineActive
 "hi default link BufTabLineModifiedHidden BufTabLineHidden
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

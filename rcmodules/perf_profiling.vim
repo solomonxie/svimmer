@@ -11,7 +11,7 @@
 
 
 " REF: https://github.com/tweekmonster/startuptime.vim
-Plug 'tweekmonster/startuptime.vim'   "VIM loading analysis
+Plug 'tweekmonster/startuptime.vim', {'commit': 'dfa57f5'}   "VIM loading analysis
 
 "REF: https://github.com/lewis6991/impatient.nvim
 "Optimize Lua module loading time
@@ -44,3 +44,7 @@ Plug 'tweekmonster/startuptime.vim'   "VIM loading analysis
 "     autocmd VimEnter * profile pause
 "     " autocmd VimEnter * qall!
 " augroup end
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

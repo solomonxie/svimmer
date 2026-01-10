@@ -170,6 +170,10 @@ let g:fzf_action = {
 
 " MUST BE PLACED AFTER SETTINGS
 "REF: https://github.com/junegunn/fzf.vim
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }, {'commit': '3f94bcb'}
+Plug 'junegunn/fzf.vim', {'commit': 'ddc14a6'}
 " Plug 'chengzeyi/fzf-preview.vim'
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

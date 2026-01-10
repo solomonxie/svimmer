@@ -80,3 +80,7 @@
 "[Reload Vimrc]--------------------------{
     command! SO :source ~/myconf/dotfiles/vim/nvimrc.vim
 "}
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

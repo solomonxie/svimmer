@@ -4,4 +4,6 @@
 
 " if executable('git') && executable('tig')
 " endif
-Plug 'iberianpig/tig-explorer.vim' "faster/prettier (tig required)
+
+"REF: https://github.com/iberianpig/tig-explorer.vim
+Plug 'iberianpig/tig-explorer.vim', {'commit': 'ac49ff1'}  "faster/prettier (tig required)

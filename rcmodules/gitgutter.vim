@@ -1,11 +1,12 @@
-" https://github.com/airblade/vim-gitgutter
 " DESC: SHOWS A GIT DIFF IN THE SIGN COLUMN. IT SHOWS WHICH LINES HAVE BEEN ADDED, MODIFIED, OR REMOVED.
 "
 " {{{{{{SUPER SLOW FOR BIG JSON FILES!!!!!!}}}}}}
 "
 " if executable('git')
 " endif
-Plug 'airblade/vim-gitgutter'  "Shwo diff inline
+
+"REF: https://github.com/airblade/vim-gitgutter
+Plug 'airblade/vim-gitgutter', {'commit': '0acb772'}  "Shwo diff inline
 
 set updatetime=100
 let g:gitgutter_enabled = 1
@@ -54,3 +55,7 @@ function! Disable_plugins()
         execute "GitGutterDisable"
     endif
 endfunction
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

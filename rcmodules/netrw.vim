@@ -47,3 +47,7 @@ aug END
 
 " ===> More mappings inside netrw ->
 " vim/after/ftplugin/netrw.vim
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

@@ -1,6 +1,6 @@
 "REF: https://github.com/majutsushi/tagbar
 if executable('ctags')
-    Plug 'majutsushi/tagbar', {'on': ['TagbarToggle', 'TagbarJumpNext', 'TagbarJumpPrev']}
+    Plug 'majutsushi/tagbar', {'on': ['TagbarToggle', 'TagbarJumpNext', 'TagbarJumpPrev']}, {'commit': '7bfffca'}
     " >> KEY MAPPINGS
     noremap gt :TagbarToggle<CR>
     noremap g] :TagbarJumpNext<CR>
@@ -50,3 +50,7 @@ if executable('ctags')
 
     let g:airline#extensions#tagbar#enabled = 0
 endif
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

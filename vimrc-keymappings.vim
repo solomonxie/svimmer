@@ -229,3 +229,8 @@ endif
 " nnoremap <leader>c3 :cc 3<CR>
 " nnoremap <leader>c4 :cc 4<CR>
 " nnoremap <leader>c5 :cc 5<CR>
+
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

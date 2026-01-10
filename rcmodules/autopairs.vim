@@ -1,5 +1,5 @@
-" https://github.com/jiangmiao/auto-pairs
-Plug 'jiangmiao/auto-pairs' "Smartest (bug:)
+"REF: https://github.com/jiangmiao/auto-pairs
+Plug 'jiangmiao/auto-pairs', {'commit': '39f06b8'} "Smartest (bug:)
 
 " KEY MAPPINGS
 "imap <C-d> <Meta>
@@ -16,3 +16,7 @@ let g:AutoPairsMapCR = 0  "Insert a new indented line (buggy for deeper level)
 let g:AutoPairsCenterLine = 0
 let g:AutoPairsMapSpace = 0
 " let g:AutoPairsShortcutToggle = '<M-i>'  " Default to <M-p>
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

@@ -5,7 +5,7 @@
 
 "LOAD SIGNIFICANTLY FASTER
 "REF: https://github.com/preservim/nerdtree/issues/276
-Plug 'git@github.com:scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'] }
+Plug 'git@github.com:scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'] }, {'commit': '690d061'}
 
 " Plug 'scrooloose/nerdtree'  ", {'on': ['NERDTree', 'NERDTreeFind', 'NERDTreeToggle']}
 " Plug 'jistr/vim-nerdtree-tabs'      " enhance nerdtree's tabs
@@ -123,3 +123,7 @@ if &runtimepath =~ 'nerdtree-syntax-highlight'
     " let g:NERDTreeDisableExactMatchHighlight = 1
     " let g:NERDTreeDisablePatternMatchHighlight = 1
 endif
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

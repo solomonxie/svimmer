@@ -1,9 +1,9 @@
 " https://github.com/mbbill/undotree
-Plug 'mbbill/undotree'
+Plug 'mbbill/undotree', {'commit': '178d19e'}
 nnoremap <LocalLeader>d :UndotreeToggle<CR>:UndotreeFocus<CR>
 
 "REF: https://github.com/machakann/vim-highlightedyank
-Plug 'machakann/vim-highlightedyank'
+Plug 'machakann/vim-highlightedyank', {'commit': '285a614'}
 let g:highlightedyank_highlight_duration = 1000
 
 Plug 'bronson/vim-visual-star-search'
@@ -14,7 +14,7 @@ Plug 'bronson/vim-visual-star-search'
 " Plug 'tomtom/tcomment_vim'  "2ms
 
 "REF: https://github.com/tpope/vim-commentary
-Plug 'tpope/vim-commentary'  "Blazing fast!!
+Plug 'tpope/vim-commentary', {'commit': '64a654e'}  "Blazing fast!!
 autocmd FileType sql setlocal commentstring=--\ %s
 
 " Plug 'bronson/vim-trailing-whitespace'
@@ -23,7 +23,7 @@ autocmd FileType sql setlocal commentstring=--\ %s
 " Plug 'wsdjeg/vim-fetch'  "Open/Edit file from reference: /path/to/file:190:3
 
 "REF: https://github.com/rbgrouleff/bclose.vim
-Plug 'rbgrouleff/bclose.vim'  "CLOSE BUF WITHOUT CLOSING WINDOW
+Plug 'rbgrouleff/bclose.vim', {'commit': '99018b4'}  "CLOSE BUF WITHOUT CLOSING WINDOW
 
 
 "REF: https://github.com/nathom/filetype.nvim (buggy for higher nvim version)
@@ -31,10 +31,10 @@ Plug 'rbgrouleff/bclose.vim'  "CLOSE BUF WITHOUT CLOSING WINDOW
 " let g:did_load_filetypes = 1
 
 "REF: https://github.com/tpope/vim-surround
-Plug 'tpope/vim-surround'  "Add brackets/quotesAdd brackets/quotes
+Plug 'tpope/vim-surround', {'commit': '3d188ed'}  "Add brackets/quotesAdd brackets/quotes
 
 "REF: https://github.com/kizza/actionmenu.nvim
-Plug 'kizza/actionmenu.nvim'  "Popup Context Menu
+Plug 'kizza/actionmenu.nvim', {'commit': 'e8d547b'}  "Popup Context Menu
 
 
 "REF: https://github.com/andymass/vim-matchup
@@ -106,7 +106,13 @@ Plug 'kizza/actionmenu.nvim'  "Popup Context Menu
 "Plug 'mg979/vim-visual-multi'
 
 "REF: https://github.com/kshenoy/vim-signature
-Plug 'kshenoy/vim-signature'
+Plug 'kshenoy/vim-signature', {'commit': '6bc3dd1'}
 " nnoremap fm :SignatureListBufferMarks<CR>
 
 " Plug 'tpope/vim-obsession'  "Messing up the buffer behaviors
+
+
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

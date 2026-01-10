@@ -1,6 +1,6 @@
 "REF: https://github.com/itchyny/lightline.vim
 "REF: https://github.com/itchyny/lightline.vim/blob/master/colorscheme.md
-Plug 'itchyny/lightline.vim'
+Plug 'itchyny/lightline.vim', {'commit': 'e358557'}
 
 set noshowmode  "hide --INSERT--
 set laststatus=2 " startup the lightline.vim
@@ -78,3 +78,7 @@ function! LightLineSelectionInfo() abort
     let l:select_info = 'S:' . l:line_count
     return l:select_info
 endfunction
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

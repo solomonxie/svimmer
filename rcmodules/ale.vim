@@ -2,7 +2,7 @@
 " IMPORTANT: WON'T WORK PROPERLY IF LINTERS AREN'T LSP BASED OR NOT INSTALLED GLOBALLY
 " NOTE: WHY NOT <lspconfig> ? ALE is async by nature, and works well for many
 
-Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale', {'commit': '8eb4803'}
 
 " nnoremap <Leader>d :ALEGoToDefinition<CR>
 " nnoremap <Leader>r :ALERename<CR>
@@ -193,3 +193,7 @@ function CheckHealthALE()
     endif
 endfunction
 " autocmd BufReadPre * call CheckHealthALE()
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw

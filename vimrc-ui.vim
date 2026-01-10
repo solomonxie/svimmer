@@ -195,3 +195,7 @@ autocmd BufRead,BufNewFile * match TrailingWhitespace /\s\+$/
 " THIS IS REQUIRED BY PLUGIN TO LOAD AFTER SETTING COLORSCHEME
 
 highlight HighlightedyankRegion cterm=reverse gui=reverse
+
+
+" ============= End of File ==================
+echom 'Loaded ' . expand('<sfile>:t') |redraw
