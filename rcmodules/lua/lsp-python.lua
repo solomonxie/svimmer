@@ -1,3 +1,9 @@
+-- -- Check environment (Very fast, only check $PATH variable)
+-- if vim.fn.executable('pylsp') ~= 1 then
+--     print('LSP: pylsp not installed, please do $ pip install python-lsp-server[all]')
+--     return
+-- end
+
 local on_attach_general = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -18,7 +24,8 @@ end
 --     cmp_capabilities = nil
 -- end
 
-vim.lsp.config['pylsp'].setup({
+-- REF: https://github.com/python-lsp/python-lsp-server
+vim.lsp.config('pylsp', {
     on_attach=on_attach_general,
     -- capabilities=cmp_capabilities,
     settings = {

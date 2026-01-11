@@ -10,7 +10,7 @@ local on_attach = function(_, bufnr)
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
-vim.lsp.config['lua_ls'].setup({
+vim.lsp.config('lua_ls', {
     on_attach=on_attach,
     settings = {
         Lua = {

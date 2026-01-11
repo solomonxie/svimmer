@@ -2,6 +2,7 @@
 " Authentication: do ":Copilot setup" then follow instructions to jump to browser
 " Verify: $ cat ~/.config/github-copilot/apps.json
 Plug 'github/copilot.vim', {'commit': 'a12fd56'}
+Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
 
 " Set keymap for accept copilot suggestion
 " nnoremap <silent> <C-l> <Plug>(copilot-accept)

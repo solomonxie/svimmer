@@ -9,7 +9,7 @@ local on_attach = function(_, bufnr)
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
-vim.lsp.config['vimls'].setup({
+vim.lsp.config('vimls', {
     on_attach=on_attach,
     settings = {
         vimls = {

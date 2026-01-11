@@ -1,8 +1,5 @@
 " REF: https://github.com/neovim/nvim-lspconfig
 Plug 'neovim/nvim-lspconfig', {'tag': 'v2.5.0'}
-" Plug 'williamboman/nvim-lsp-installer'  "Archived, use mason.nvim instead
-" Plug 'williamboman/mason.nvim'
-Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}  "Func Dependencies for many Lua plugins
 
 " AVAILABLE LANGUAGE SERVERS:
 " REF: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md

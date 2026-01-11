@@ -84,7 +84,7 @@ call plug#begin('~/vim_plugged')
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " LSP
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
-        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "!Modern LSP Installer, all languages are here
+        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer, all languages
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -102,7 +102,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
     "{AI}
-        source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
         " source ~/myconf/dotfiles/vim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
         " source ~/myconf/dotfiles/vim/rcmodules/llm-llm_nvim.vim  "Complex settings, buggy UI
         " source ~/myconf/dotfiles/vim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
@@ -120,21 +120,8 @@ silent! source ~/.vimrc-env.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
 
-" LSP:
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
-
-" Misc:
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-
-" Dynamic:
 for path in g:lua_configs
     echom 'Loading Lua config: ' . path |redraw  "Redraw prevent echo popup message
     execute 'luafile ' . path

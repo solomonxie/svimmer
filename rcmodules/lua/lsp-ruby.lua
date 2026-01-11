@@ -15,11 +15,11 @@ local handlers = {
     )
 }
 
--- vim.lsp.config['ruby_lsp'].setup{
+-- vim.lsp.config('ruby_lsp', {
 --     -- Not working...
 -- }
 
-vim.lsp.config['solargraph'].setup{
+vim.lsp.config('solargraph', {
   cmd = { 'solargraph', 'stdio' },
   filetypes = {
       "ruby"
@@ -42,7 +42,7 @@ vim.lsp.config['solargraph'].setup{
       symbols = true
     }
   }
-}
+})
 
 
 ------------------------------------------------------------------------
