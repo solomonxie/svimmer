@@ -83,8 +83,8 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " LSP
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
-        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer, all languages
+        source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
+        " source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer, all languages
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -120,6 +120,18 @@ silent! source ~/.vimrc-env.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" LSPs:
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua']
+" Misc:
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+
 let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
 
 for path in g:lua_configs

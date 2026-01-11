@@ -1,6 +1,6 @@
 -- -- Check environment (Very fast, only check $PATH variable)
 -- if vim.fn.executable('pylsp') ~= 1 then
---     print('LSP: pylsp not installed, please do $ pip install python-lsp-server[all]')
+--     print('LSP server not installed, please do $ pip install python-lsp-server[all]')
 --     return
 -- end
 

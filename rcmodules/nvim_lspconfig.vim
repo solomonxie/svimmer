@@ -48,9 +48,6 @@ nnoremap K :lua vim.lsp.buf.hover()<CR>
 
 " -- See `:help vim.lsp.*` for documentation on any of the below functions
 
-" =====> more settings in =========>
-" ./vim/rcmodules/lua/*.lua
-
 
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw
