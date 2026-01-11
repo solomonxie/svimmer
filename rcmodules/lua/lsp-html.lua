@@ -1,9 +1,7 @@
-if not string.find(vim.o['runtimepath'], 'emmet_ls') then
-    return
-end
-local configs = require 'lspconfig/configs'
-local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+local configs = require 'lspconfig/configs'
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 vim.lsp.config['emmet_ls'].setup({

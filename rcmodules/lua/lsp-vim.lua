@@ -1,17 +1,15 @@
-if not string.find(vim.o['runtimepath'], 'vimls') then
-    return
-end
+-- Setup:
+--   $ npm install -g vim-language-server
+--   $ npm i -g bash-language-server
+--   $ npm install -g typescript typescript-language-server
+--   $ pip install python-lsp-server
 
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
--- $ npm install -g vim-language-server
--- $ npm i -g bash-language-server
--- $ npm install -g typescript typescript-language-server
--- $ pip install python-lsp-server
-lspc["vimls"].setup{
+vim.lsp.config['vimls'].setup({
     on_attach=on_attach,
     settings = {
         vimls = {
@@ -35,4 +33,4 @@ lspc["vimls"].setup{
             }
         }
     }
-}
+})

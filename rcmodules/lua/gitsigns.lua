@@ -1,10 +1,6 @@
 --REF: https://github.com/lewis6991/gitsigns.nvim
 
-if not string.find(vim.o['runtimepath'], 'gitsigns')  then
-    return
-end
-
-require('gitsigns').setup {
+require('gitsigns').setup({
     signs_staged_enable = true,
     signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
     numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
@@ -37,4 +33,4 @@ require('gitsigns').setup {
         row = 0,
         col = 1
     },
-}
+})

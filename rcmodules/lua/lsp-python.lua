@@ -18,15 +18,9 @@ end
 --     cmp_capabilities = nil
 -- end
 
-local conf_pylint_path = vim.fn.expand("~/.config/pylintrc")
-local conf_falke8_path = vim.fn.expand("~/.config/flake8")
-
-if not string.find(vim.o['runtimepath'], 'pylsp') then
-    return
-end
-vim.lsp.config["pylsp"].setup{
+vim.lsp.config['pylsp'].setup({
     on_attach=on_attach_general,
-    capabilities=cmp_capabilities,
+    -- capabilities=cmp_capabilities,
     settings = {
         pylsp = {
             cmd = { "pylsp" },
@@ -37,8 +31,8 @@ vim.lsp.config["pylsp"].setup{
             -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             init_options = { lint = false },
             plugins = {
-                pylint =  { enabled = false, args = { "--rcfile", conf_pylint_path } },
-                flake8 = { enabled = false, config = conf_falke8_path  },
+                pylint =  { enabled = false, args = { "--rcfile", vim.fn.expand("~/.config/pylintrc") } },
+                flake8 = { enabled = false, config = vim.fn.expand("~/.config/flake8")  },
                 pylsp_mypy =  { enabled = false },
                 mypy =  { enabled = false },
                 pycodestyle =  { enabled = false },
@@ -48,7 +42,7 @@ vim.lsp.config["pylsp"].setup{
             -- ^ Have to specifically everything "enabled=false" otherwise enabled by default
         }
     }
-}
+})
 
 -- -- REF: https://github.com/sourcery-ai/sourcery
 -- vim.lsp.config["sourcery"].setup{

@@ -1,9 +1,5 @@
 --REF: https://github.com/nvim-treesitter/nvim-treesitter
-if not string.find(vim.o['runtimepath'], 'nvim-treesitter') then
-    return
-end
-
-require "nvim-treesitter.configs".setup {
+require('nvim-treesitter.configs').setup({
     playground = {
         -- GENERAL
         enable = true,
@@ -36,4 +32,4 @@ require "nvim-treesitter.configs".setup {
             additional_vim_regex_highlighting = false,
         },
     }
-}
+})

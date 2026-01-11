@@ -1,9 +1,5 @@
 -- :help ibl.config
-if not string.find(vim.o['runtimepath'], 'blankline') then
-    return
-end
-
-require('ibl').setup {
+require('ibl').setup({
     indent = {
         char = "▏",
         -- tab_char = { "a", "b", "c" },
@@ -29,7 +25,7 @@ require('ibl').setup {
     --     "IndentBlanklineIndent5",
     --     "IndentBlanklineIndent6",
     -- },
-}
+})
 
 local hooks = require("ibl.hooks")
 hooks.register(

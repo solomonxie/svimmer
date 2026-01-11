@@ -1,13 +1,9 @@
-if not string.find(vim.o['runtimepath'], 'ts_ls') then
-    return
-end
-
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
-lspc['ts_ls'].setup{
+vim.lsp.config['ts_ls'].setup({
     on_attach=on_attach,
     settings = {
         tsserver = {
@@ -19,4 +15,4 @@ lspc['ts_ls'].setup{
             -- root_dir = root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
         }
     }
-}
+})

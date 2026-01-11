@@ -1,9 +1,6 @@
 --REF: https://github.com/hrsh7th/nvim-cmp
 
 -- SUPPORTED SOURCES: https://github.com/topics/nvim-cmp
-if not string.find(vim.o['runtimepath'], 'cmp')  then
-    return
-end
 
 local cmp = require('cmp')
 

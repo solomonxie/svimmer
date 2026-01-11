@@ -82,11 +82,11 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/autopairs.vim  "Brakets/Quotes
         " source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{NEOVIM + LANGUAGE SERVER + LUA}
-        " ESSENTIAL! ->
+        " LSP
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim
-        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer
+        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "!Modern LSP Installer, all languages are here
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
         " source ~/myconf/dotfiles/vim/rcmodules/lspsaga.vim  "Buggy
     "{Git}
@@ -120,10 +120,24 @@ silent! source ~/.vimrc-env.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
+
+" LSP:
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
+" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+
+" Misc:
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
+
+" Dynamic:
 for path in g:lua_configs
+    echom 'Loading Lua config: ' . path |redraw  "Redraw prevent echo popup message
     execute 'luafile ' . path
-    echom 'Loaded Lua config: ' . path |redraw  "Redraw prevent echo popup message
 endfor
 
 
