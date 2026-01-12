@@ -10,5 +10,9 @@
 " 2. :PlugInstall
 " 3. :TSInstall python javascript bash json
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+Plug 'nvim-treesitter/nvim-treesitter', {'tag': 'v0.10.0'}
 Plug 'nvim-treesitter/playground'
+
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua']

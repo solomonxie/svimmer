@@ -83,7 +83,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/coq.vim
         " source ~/myconf/dotfiles/vim/rcmodules/ncm2.vim
         source ~/myconf/dotfiles/vim/rcmodules/autopairs.vim  "Brakets/Quotes
-        " source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
+        source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{Language Servers - LSP}
         " LSP
         source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages

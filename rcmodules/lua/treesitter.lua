@@ -1,5 +1,22 @@
 --REF: https://github.com/nvim-treesitter/nvim-treesitter
 require('nvim-treesitter.configs').setup({
+
+    -- Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+    textobjects = {
+        select = {
+            enable = true,
+            lookahead = true, -- Automatically jump forward to textobj
+            keymaps = {
+                ["af"] = "@function.outer",  -- type `vaf` to select whole function
+                ["if"] = "@function.inner",
+                ["ac"] = "@class.outer",  -- type `vac` to select whole class
+                ["ic"] = "@class.inner",
+            },
+        },
+    },
+
+
+    -- Plug 'nvim-treesitter/playground'
     playground = {
         -- GENERAL
         enable = true,
