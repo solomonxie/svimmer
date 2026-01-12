@@ -1,8 +1,12 @@
-" Instructions: https://github.com/github/copilot.vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                            copilot.vim (tpope)                             "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" REF: https://github.com/github/copilot.vim
+Plug 'github/copilot.vim', {'tag': 'v1.59.0'}  "Develooped by Tpope
+
 " Authentication: do ":Copilot setup" then follow instructions to jump to browser
 " Verify: $ cat ~/.config/github-copilot/apps.json
-Plug 'github/copilot.vim', {'commit': 'a12fd56'}
-Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
+
 
 " Set keymap for accept copilot suggestion
 " nnoremap <silent> <C-l> <Plug>(copilot-accept)
@@ -12,12 +16,18 @@ Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
 
 " let g:copilot_enabled = 0  "Disable by default, do `:Copilot enable` to use
 
-"REF: https://github.com/CopilotC-Nvim/CopilotChat.nvim
-Plug 'CopilotC-Nvim/CopilotChat.nvim', {'commit': '21bdecb'}  "Require nvim>0.10
 
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                           CopilotChat.nvim                                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"REF: https://github.com/CopilotC-Nvim/CopilotChat.nvim
+" Plug 'CopilotC-Nvim/CopilotChat.nvim', {'commit': '21bdecb'}  "Require nvim>0.10
+" Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-copilot.lua']
+" let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-copilot.lua']
 
 
 " ============= End of File ==================
