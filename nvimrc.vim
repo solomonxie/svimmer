@@ -8,6 +8,9 @@
 "----------------------------------------------------
 "------Modularized Neovim Configuration File---------
 
+" DEFINE AT TOP BEFORE PLUGINS REGISTER
+let mapleader = ","
+" let maplocalleader = ""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                            INSTALL DEPENDENCIES                            "
