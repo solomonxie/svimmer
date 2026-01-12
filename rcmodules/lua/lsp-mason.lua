@@ -22,6 +22,7 @@ require('mason-lspconfig').setup({
 
 -- Init LSP models (we can still override each later)
 for _, lsp in ipairs(my_lsp_servers) do
+    vim.lsp.enable(lsp)  --New syntax after nvim v0.11
     vim.lsp.config(lsp, {})  --New syntax after nvim v0.11
 end
 

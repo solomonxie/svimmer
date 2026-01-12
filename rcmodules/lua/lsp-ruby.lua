@@ -7,18 +7,12 @@
 -- $ gem install phashion -v '1.2.0'
 -- or :MasonInstall solargraph
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local handlers = {
-    ['textDocument/publishDiagnostics'] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics, {
-            virtual_text = true
-        }
-    )
-}
 
 -- vim.lsp.config('ruby_lsp', {
 --     -- Not working...
 -- }
 
+vim.lsp.enable('solargraph')
 vim.lsp.config('solargraph', {
   cmd = { 'solargraph', 'stdio' },
   filetypes = {
@@ -29,7 +23,6 @@ vim.lsp.config('solargraph', {
   },
   root_dir = vim.lsp.config.util.root_pattern('Gemfile', '.git', '.'),
   capabilities = capabilities,
-  handlers = handlers,
   settings = {
     solargraph = {
       autoformat = false,

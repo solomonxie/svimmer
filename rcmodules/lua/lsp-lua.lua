@@ -5,16 +5,17 @@
 --   :MasonInstall lua_ls
 -- NOTE >>>>>> lua_ls IS SLOW, 20s+ TO LOAD, BE PATIENT...
 
-if vim.fn.executable('lua-language-server') ~= 1 then
-    print('LSP server not installed, please do $ brew install lua-language-server')
-    return
-end
+-- if vim.fn.executable('lua-language-server') ~= 1 then
+--     print('LSP server not installed, please do $ brew install lua-language-server')
+--     return
+-- end
 
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 end
 
+vim.lsp.enable('lua_ls')
 vim.lsp.config('lua_ls', {
     on_attach=on_attach,
     settings = {
@@ -39,7 +40,6 @@ vim.lsp.config('lua_ls', {
             telemetry = {
                 enable = false,
             },
-
         },
     }
 })
