@@ -6,3 +6,5 @@ if vim.fn.executable('clangd') ~= 1 then
 end
 
 vim.lsp.config('clangd', {})
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

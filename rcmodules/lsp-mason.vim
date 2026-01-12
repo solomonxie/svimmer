@@ -18,4 +18,4 @@ let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua']
 
 
 " ============= End of File ==================
-echom 'Loaded ' . expand('<sfile>:t') |redraw
+echom 'Loaded ' . expand('<sfile>:t')

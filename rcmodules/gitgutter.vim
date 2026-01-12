@@ -5,8 +5,9 @@
 " if executable('git')
 " endif
 
+"Feature: Shwo diff inline
 "REF: https://github.com/airblade/vim-gitgutter
-Plug 'airblade/vim-gitgutter', {'commit': '0acb772'}  "Shwo diff inline
+Plug 'airblade/vim-gitgutter', {'commit': '0acb772'}
 
 set updatetime=100
 let g:gitgutter_enabled = 1

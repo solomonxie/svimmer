@@ -1,6 +1,4 @@
 
-local configs = require 'lspconfig/configs'
-
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
@@ -17,3 +15,5 @@ vim.lsp.config('emmet_ls', {
       },
     }
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

@@ -75,3 +75,5 @@ require('llm').setup({
         },
     },
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

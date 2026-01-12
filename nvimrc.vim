@@ -84,11 +84,12 @@ call plug#begin('~/vim_plugged')
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " LSP
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
-        " source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "Modern LSP Installer, all languages
+        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
         " source ~/myconf/dotfiles/vim/rcmodules/lspsaga.vim  "Buggy
+        source ~/myconf/dotfiles/vim/rcmodules/nvim_lua.vim
     "{Git}
         source ~/myconf/dotfiles/vim/rcmodules/tig.vim
         " source ~/myconf/dotfiles/vim/rcmodules/fugitive.vim
@@ -121,22 +122,22 @@ silent! source ~/.vimrc-env.vim
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " LSPs:
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua']
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua']
-" Misc:
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+" Misc:
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua']
-
+" Load other lua configs defined elsewhere
 for path in g:lua_configs
-    echom 'Loading Lua config: ' . path |redraw  "Redraw prevent echo popup message
     execute 'luafile ' . path
+    echom 'Loaded Lua config: ' . path |redraw  "Redraw prevent echo popup message
 endfor
 
 
@@ -148,6 +149,9 @@ source ~/myconf/dotfiles/vim/vimrc-functions.vim
 source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
+
+" POC:
+luafile ~/myconf/dotfiles/vim/scripts/poc_marks.lua
 
 
 "Local overrides if there's any

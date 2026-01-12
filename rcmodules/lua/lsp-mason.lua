@@ -7,7 +7,7 @@ local my_lsp_servers = {
     'sqlls',
     'emmet_ls',  --HTML
     'clangd',
-    'lua_ls',
+    -- 'lua_ls',
 }
 
 require('mason').setup({
@@ -24,3 +24,5 @@ require('mason-lspconfig').setup({
 for _, lsp in ipairs(my_lsp_servers) do
     vim.lsp.config(lsp, {})  --New syntax after nvim v0.11
 end
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

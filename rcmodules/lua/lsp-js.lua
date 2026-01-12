@@ -16,3 +16,5 @@ vim.lsp.config('ts_ls', {
         }
     }
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

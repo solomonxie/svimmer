@@ -15,3 +15,5 @@ require('chatgpt').setup({
         n = 1,
     }
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

@@ -58,3 +58,5 @@ require('which-key').setup({
         v = { "j", "k" },
     },
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

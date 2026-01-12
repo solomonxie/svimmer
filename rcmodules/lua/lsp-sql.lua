@@ -17,3 +17,5 @@ vim.lsp.config('sqlls', {
     settings = {
     }
 })
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

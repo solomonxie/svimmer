@@ -32,3 +32,5 @@ hooks.register(
     hooks.type.WHITESPACE,
     hooks.builtin.hide_first_space_indent_level
 )
+
+print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
