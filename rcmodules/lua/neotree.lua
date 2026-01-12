@@ -85,5 +85,3 @@ if string.find(vim.o['runtimepath'], 'neo-tree') then
     })
     vim.cmd([[nnoremap \ :NeoTreeReveal<cr>]])
 end
-
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

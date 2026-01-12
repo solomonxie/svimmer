@@ -10,14 +10,8 @@
 --     return
 -- end
 
-local on_attach = function(_, bufnr)
-    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-end
-
 vim.lsp.enable('lua_ls')
 vim.lsp.config('lua_ls', {
-    on_attach=on_attach,
     settings = {
         Lua = {
             runtime = {
@@ -44,4 +38,4 @@ vim.lsp.config('lua_ls', {
     }
 })
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: lua_ls')

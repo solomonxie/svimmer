@@ -231,6 +231,20 @@ endif
 " nnoremap <leader>c5 :cc 5<CR>
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                              LSP Common Keys                               "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <Leader>d :lua vim.lsp.buf.definition()<CR>
+nnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
+vnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
+nnoremap <Leader>u :lua vim.lsp.buf.references()<CR>
+nnoremap <C-p> :lua vim.diagnostic.goto_prev()<CR>
+nnoremap <C-n> :lua vim.diagnostic.goto_next()<CR>
+nnoremap <Leader>a :lua vim.diagnostic.set_loclist()<CR>
+nnoremap <Leader>x :lua vim.lsp.buf.formatting()<CR>
+nnoremap K :lua vim.lsp.buf.hover()<CR>
+
+
 
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw

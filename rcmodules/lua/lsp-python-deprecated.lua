@@ -133,4 +133,4 @@ vim.lsp.config('diagnosticls', {
     }
 })
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: python')

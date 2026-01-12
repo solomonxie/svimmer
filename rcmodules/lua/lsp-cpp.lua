@@ -8,4 +8,4 @@ end
 vim.lsp.enable('clangd')
 vim.lsp.config('clangd', {})
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: C++')

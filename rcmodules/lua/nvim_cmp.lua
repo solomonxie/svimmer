@@ -106,5 +106,3 @@ cmp.setup.cmdline(':', {
 --     capacity = 5,
 --     debug = false,
 -- })
-
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

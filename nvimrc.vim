@@ -86,7 +86,6 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{NEOVIM + LANGUAGE SERVER + LUA}
         " LSP
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
         source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated

@@ -5,4 +5,4 @@ vim.lsp.config('cssls', {
   capabilities = capabilities,
 })
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: cssls')

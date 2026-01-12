@@ -30,4 +30,4 @@ vim.lsp.config('pylsp', {
     }
 })
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: python')

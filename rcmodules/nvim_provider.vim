@@ -21,5 +21,15 @@ let g:python3_host_prog = expand('~/virtualenv/venv/bin/python')
 " let g:python_host_prog = '~/virtualenv/venv2/bin/python'
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                           LSP CONFIG (IMPORTANT)                           "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Options: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+" HELP: DEBUG WITH :LspLog or :LspInfo
+" REF: https://github.com/neovim/nvim-lspconfig
+" Feature: a MUST-HAVE official plugin to configure any LSP
+Plug 'neovim/nvim-lspconfig', {'tag': 'v2.5.0'}
+
+
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw

@@ -41,5 +41,3 @@ require('gen').prompts['Demo_Prompt_Fix_Code'] = {
   replace = true,
   extract = "```$filetype\n(.-)```"
 }
-
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))

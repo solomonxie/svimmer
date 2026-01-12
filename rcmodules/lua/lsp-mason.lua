@@ -26,4 +26,4 @@ for _, lsp in ipairs(my_lsp_servers) do
     vim.lsp.config(lsp, {})  --New syntax after nvim v0.11
 end
 
-print('Loaded Lua config: ' .. vim.fn.expand('<sfile>:t'))
+print('Loaded Lua config: lua-mason.lua')
