@@ -7,7 +7,7 @@ local my_lsp_servers = {
     'sqlls',
     'emmet_ls',  --HTML
     'clangd',
-    -- 'lua_ls',
+    'lua_ls',
 }
 
 require('mason').setup({

@@ -71,7 +71,7 @@ call plug#begin('~/vim_plugged')
     "{Completion | Usages | Definitions}
         " source ~/myconf/dotfiles/vim/rcmodules/replace.vim
         source ~/myconf/dotfiles/vim/rcmodules/fzf.vim
-        source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Async linting
+        " source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Async linting
         " source ~/myconf/dotfiles/vim/rcmodules/deoplete.vim
         source ~/myconf/dotfiles/vim/rcmodules/ultisnips.vim
         source ~/myconf/dotfiles/vim/rcmodules/anyjump.vim
@@ -89,7 +89,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
         " source ~/myconf/dotfiles/vim/rcmodules/lspsaga.vim  "Buggy
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_lua.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/nvim_lua.vim
     "{Git}
         source ~/myconf/dotfiles/vim/rcmodules/tig.vim
         " source ~/myconf/dotfiles/vim/rcmodules/fugitive.vim

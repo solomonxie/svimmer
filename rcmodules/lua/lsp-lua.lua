@@ -5,10 +5,10 @@
 --   :MasonInstall lua_ls
 -- NOTE >>>>>> lua_ls IS SLOW, 20s+ TO LOAD, BE PATIENT...
 
--- if vim.fn.executable('lua-language-server') ~= 1 then
---     print('LSP server not installed, please do $ brew install lua-language-server')
---     return
--- end
+if vim.fn.executable('lua-language-server') ~= 1 then
+    print('LSP server not installed, please do $ brew install lua-language-server')
+    return
+end
 
 local on_attach = function(_, bufnr)
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
