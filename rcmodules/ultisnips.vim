@@ -9,7 +9,7 @@ let g:UltiSnipsUsePythonVersion=3
 
 " Trigger configuration.
 " Do not use <tab> if you use YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<Space>"
+let g:UltiSnipsExpandTrigger="<C-k>"  "Anything but <Tab>/<Enter>/<Space>, too many conflicts.
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 
