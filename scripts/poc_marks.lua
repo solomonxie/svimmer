@@ -40,73 +40,84 @@ local other_marks = {
 -- Step1: UI/UX
 
 function openMarks()
-    vim.cmd('botright 10 new') -- Create a new window, switch to new buf context
-    local marks_buf = vim.api.nvim_get_current_buf()
+    local buf = setupQuickWindow()
+    vim.cmd('setlocal modifiable noreadonly')
     local content_lines = {
         'Marks Menu:',
         '',
         '(a) Add Mark',
         '(d) Delete Mark',
         '(l) List Marks',
-        '(↵) Edit Annotation',
+        '(e) Edit Annotation',
         '',
         "Press 'q' to close this window."
     }
-    vim.api.nvim_buf_set_lines(marks_buf, 0, -1, false, content_lines)
-    vim.api.nvim_buf_call(marks_buf, function()
-        setupQuickWindow()
-        vim.cmd('nnoremap <buffer> <silent> <nowait> a :lua addMark()<CR>')
-        vim.cmd('nnoremap <buffer> <silent> <nowait> d :lua DelMark()<CR>')
-        vim.cmd('nnoremap <buffer> <silent> <nowait> l :lua listMarks()<CR>')
-        vim.cmd('nnoremap <buffer> <silent> <Enter> :lua editAnnotation()<CR>')
-    end)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
+    vim.cmd('nnoremap <buffer> <silent> <nowait> a :lua addMark()<CR>')
+    vim.cmd('nnoremap <buffer> <silent> <nowait> d :lua DelMark()<CR>')
+    vim.cmd('nnoremap <buffer> <silent> <nowait> l :lua listMarks()<CR>')
+    vim.cmd('nnoremap <buffer> <silent> <nowait> e :lua editAnnotation()<CR>')
 end
 local main_buf = vim.api.nvim_get_current_buf()
 vim.cmd('nnoremap <Leader>m :lua openMarks()<CR>')
 
 
 function addMark()
-    print('Add mark selected')
+    listMarks()
+    local char = vim.fn.getcharstr()  -- Listen for a keypress
+    print("Mark added: " .. char)
 end
 
 function DelMark()
-    print('Mark deleted')
+    listMarks()
+    local char = vim.fn.getcharstr()  -- Listen for a keypress
+    print("Mark deleted: " .. char)
 end
 
 function listMarks()
-    print('Listing marks!')
+    local buf = setupQuickWindow()
+    vim.cmd('setlocal modifiable noreadonly')
+    local content_lines = {
+        'Marks Viewer:',
+        '',
+        '(a) abc | poc_marks.lua:10',
+        '(b) def | poc_marks.lua:50',
+        '(D) xyz | nvim_cmp.lua:23',
+        '(X) haha | vim-profiler.py:100',
+        '',
+        "Press 'q' to close this window."
+    }
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
 end
 
 function editAnnotation()
-    print('Editing annotation!')
-    -- TODO: close current buffer and open a new buffer for annotation editing
-    vim.cmd('close')
-    vim.cmd('botright 10 new2')
-    local annot_buf = vim.api.nvim_get_current_buf()
-    vim.api.nvim_buf_set_lines(annot_buf, 0, -1, false, {'-- Enter your annotation here. <Ctrl-s> to save and exit --'})
-    vim.api.nvim_buf_call(annot_buf, function()
-        vim.cmd('nmap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
-        vim.cmd('imap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
-        vim.cmd('vmap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
-        -- vim.cmd('setlocal modifiable')
-        -- vim.cmd('startinsert')
-    end)
+    local buf = setupQuickWindow()
+    vim.cmd('setlocal modifiable noreadonly')
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, {'-- Enter your annotation here. <Ctrl-s> to save and exit --'})
+    vim.keymap.set({'n', 'i', 'v'}, '<C-s>', saveAnnotation, {
+        buffer = true,
+        silent = true,
+        nowait = true,
+        desc = "Save annotation"
+    })
 end
 
 function saveAnnotation()
     -- Already in the annotation buffer context
-    print('Annotation saved!')
-    vim.cmd('bwipeout!')
     local all_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-    local content = table.concat(all_lines, "\n")
+    local text = table.concat(all_lines, "\n")
+    print('Annotation saved: \n' .. text)
     listMarks()
 end
 
 function setupQuickWindow()
-    -- Already in the new buffer context
+    if vim.b.mark_quick_window == true then vim.cmd('bwipeout!') end  -- Close existing quick window
+    vim.cmd('botright 10 new')  -- Create new window and jump to the buffer context
+    vim.b.mark_quick_window = true
     vim.opt_local.buftype = 'nofile'
     vim.cmd('mapclear <buffer>')
     vim.cmd('autocmd BufLeave,BufWinLeave,BufHidden <buffer> ++once  :bd!')
     vim.cmd('nnoremap <buffer> <silent> <nowait> q :bwipeout!<CR>')
     vim.cmd('setlocal buftype=nofile bufhidden=wipe noswapfile nonumber norelativenumber nowrap nocursorline nomodifiable readonly')
+    return vim.api.nvim_get_current_buf()
 end
