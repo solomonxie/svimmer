@@ -114,7 +114,7 @@ set shada=
 "
 " Example: set viminfo='100,<50,@100,:100,/100,%,s10,h,f1
 "          (saves marks for 100 files, registers, history, buffer list, file marks)
-set viminfo='100,f1
+set viminfo=
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         ADVANCED BUILT-IN SETTINGS                         "
