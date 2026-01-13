@@ -151,6 +151,8 @@ source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
 
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-ui.lua
+
 " POC:
 luafile ~/myconf/dotfiles/vim/scripts/poc_marks.lua
 

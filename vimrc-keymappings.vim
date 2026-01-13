@@ -240,7 +240,8 @@ nnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
 nnoremap <Leader>u :lua vim.lsp.buf.references()<CR>
 nnoremap <C-p> :lua vim.diagnostic.goto_prev()<CR>
 nnoremap <C-n> :lua vim.diagnostic.goto_next()<CR>
-nnoremap K :lua vim.lsp.buf.hover()<CR>
+nnoremap K :lua vim.lsp.buf.hover({border = 'rounded'}) <CR>
+" nnoremap H :lua vim.lsp.buf.signature_help({border = 'rounded'}) <CR>
 
 
 

@@ -37,8 +37,9 @@ cmp.setup({
         ['<C-e>'] = cmp.mapping.abort(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
-        ['<Space>'] = cmp.mapping.confirm({ select = true }),
+        -- Disable <Enter> or <Space> for candidate selection, conflict with enter for newline
+        ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        ['<Space>'] = cmp.mapping.confirm({ select = false }),
     }),
 })
 -- Settings for <cmp-spell>
