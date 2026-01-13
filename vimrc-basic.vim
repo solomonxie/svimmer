@@ -71,8 +71,49 @@ set scrolloff=5  "Set 99 to make it center
 
 set isfname-==  "When using 'gf', ignore '=' as part of the file name
 
-"IMPORTANT: NeoVim's Shada (viminfo) shares all session marks/jumplist/buffers, which is super annoying
-set shada=""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"              Vim / NeoVim Persistent Layer (Shada & VimInfo)               "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Persistent mechanism will keep session/marks/jumplist/buffers...
+
+" SHADA: (Neovim) options - format: set shada=FLAGS
+"   'N - Required: Save marks for the last N files (0 = disable marks/jump locations)
+"   !  - Save/restore global variables that start with uppercase and contain lowercase (e.g., MyVar)
+"        Marks include: file marks ('a, 'b), jump locations (Ctrl-O/Ctrl-I), last position in files
+"   <N - Save up to N lines for each register (yank/delete history)
+"   @N - Save the last N registers (yank/delete history)
+"   :N - Save the last N command-line history entries
+"   /N - Save the last N search history entries
+"   %N - Save/restore buffer list (N = number of buffers, 0 = disable)
+"   sN - Only save items smaller than N KB (prevents saving large text blocks)
+"   c  - Save encoding of the file (when 'encoding' differs from 'utf-8')
+"   n  - Name of the shada file (default: ~/.local/share/nvim/shada/main.shada)
+"   r  - Removable media (comma-separated list of paths, e.g., r/tmp,r/media)
+"   h  - Disable search highlighting (hlsearch) when loading shada file
+"
+" Example: set shada=!,'0,<50,@100,:100,/100,%,s10,h
+"          (saves everything except marks/jump locations)
+set shada=
+"^  super annoying, hence disable it all.
+
+" VIMINFO: (Vim only, not used by Neovim) options - format: set viminfo=FLAGS
+"   'N - Required: Save marks for the last N files (0 = disable marks)
+"   !  - Save/restore global variables that start with uppercase and contain lowercase
+"   <N - Save up to N lines for each register
+"   @N - Save the last N registers
+"   :N - Save the last N command-line history entries
+"   /N - Save the last N search history entries
+"   %N - Save/restore buffer list (N = number of buffers, 0 = disable)
+"   sN - Only save items smaller than N KB
+"   c  - Save encoding of the file
+"   n  - Name of the viminfo file (default: ~/.viminfo)
+"   r  - Removable media (comma-separated list of paths)
+"   h  - Disable search highlighting when loading viminfo file
+"   f1 - Store file marks (marks set in files)
+"
+" Example: set viminfo='100,<50,@100,:100,/100,%,s10,h,f1
+"          (saves marks for 100 files, registers, history, buffer list, file marks)
 set viminfo='100,f1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
