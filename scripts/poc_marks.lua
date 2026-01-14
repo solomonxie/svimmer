@@ -4,32 +4,25 @@
 --               this is a trade-off of changing native behavior of `m{char}` to `ma{char}`, but I think it's more intuitive.
 -- (d) Delete mark: show a list of existing marks, allow user to type a char to delete
 -- (Enter) Add annotation: pop window is changed to an empty mutable buffer allow user to add annotation
-
-
 -- Step2: Implement marks listing logic
--- When user hit (l) List marks: pop a bottom split window shows all marks in
-
-
+--     When user hit (l) List marks: pop a bottom split window shows all marks in
 -- Step3: Implement jump logic
--- User can navigate to a mark by selecting it in the list (press Enter), or typing
-
-
+--      User can navigate to a mark by selecting it in the list (press Enter), or typing
 -- Step4: Implement persistent marks Saving logic
--- When user add/edit annotation, save the annotation to a file (default to `~/.config/nvim/marks_annotations.json`, but is configuerable)
-
-
+--     When user add/edit annotation, save the annotation to a file (default to `~/.config/nvim/marks_annotations.json`, but is configuerable)
 -- Step5: Implement persistent marks Matching logic
--- When user open a file, load the marks annotations from the file, and use matchinmg algorithm to set the marks
+--     When user open a file, load the marks annotations from the file, and use matchinmg algorithm to set the marks
 
 
 
--- Step1: UI/UX
+local ns_id = vim.api.nvim_create_namespace('poc_marks')
 
-local source_buf = nil
-vim.cmd('nnoremap <Leader>m :lua openMarks()<CR>')
+vim.cmd('nnoremap <silent> <nowait> <leader>m :lua openMarks()<CR>')
+-- vim.cmd('nnoremap <silent> <nowait> m :lua openMarks()<CR>')
 
 function openMarks()
     source_buf = vim.api.nvim_get_current_buf()
+    source_cursor = vim.api.nvim_win_get_cursor(0)
     local buf = setupQuickWindow()
     local content_lines = {
         'Marks Menu:',
@@ -43,34 +36,44 @@ function openMarks()
     }
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
     vim.cmd('setlocal readonly nomodifiable')
-    vim.cmd('nnoremap <buffer> <silent> <nowait> a :lua addMark()<CR>')
-    vim.cmd('nnoremap <buffer> <silent> <nowait> d :lua DelMark()<CR>')
-    vim.cmd('nnoremap <buffer> <silent> <nowait> l :lua listMarks()<CR>')
-    vim.cmd('nnoremap <buffer> <silent> <nowait> e :lua editAnnotation()<CR>')
+    vim.keymap.set('n', 'a', function() addMark(source_buf, source_cursor) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'l', function() listMarks(source_buf, source_cursor) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'e', function() editAnnotation(source_buf, source_cursor) end, {buffer = true, silent = true, nowait = true })
 end
 
 
-function addMark()
-    listMarks()
-    local char = vim.fn.getcharstr()  -- Listen for a keypress
-    print("Mark added: " .. char)
+function addMark(source_buf, source_cursor)
+    listMarks(source_buf, source_cursor)
+    local char = vim.fn.getcharstr()
+    local row, col = unpack(source_cursor)
+    local mark_id = string.byte(char)
+    vim.api.nvim_buf_set_extmark(source_buf, ns_id, row - 1, col, {
+        id = mark_id,  -- id = byte value of char (avoids duplicates for same char)
+        sign_text = char:sub(1,2), -- simple visual
+        sign_hl_group = 'Todo'
+    })
+    print("ExtMark added: " .. char)
     vim.cmd('bwipeout!')
 end
 
-function DelMark()
-    listMarks()
-    local char = vim.fn.getcharstr()  -- Listen for a keypress
-    print("Mark deleted: " .. char)
+function DelMark(source_buf, source_cursor)
+    listMarks(source_buf, source_cursor)
+    local char = vim.fn.getcharstr()
+    local mark_id = string.byte(char)
+    if source_buf and vim.api.nvim_buf_is_valid(source_buf) then
+        vim.api.nvim_buf_del_extmark(source_buf, ns_id, mark_id)
+        print("ExtMark deleted: " .. char)
+    end
     vim.cmd('bwipeout!')
 end
 
-function listMarks()
+function listMarks(source_buf, source_cursor)
     local buf = setupQuickWindow()
     local content_lines = {'Marks Viewer:', ''}
-    local marks = getAllMarks()
-    print('Total marks found: ', #marks)
+    local marks = getExtmarks(source_buf)
+    -- print('Total marks found: ', #marks)
     for _, meta in ipairs(marks) do
-        print('Mark display: ', meta.display)
+        -- print('Mark display: ', meta.display)
         table.insert(content_lines, meta.display)
     end
     table.insert(content_lines, '')
@@ -80,9 +83,22 @@ function listMarks()
     vim.cmd('redraw')
 end
 
+function getExtmarks(source_buf)
+    local marks = {}
+    local filename = vim.api.nvim_buf_get_name(source_buf)
+    filename = vim.fn.fnamemodify(filename, ":.")
+    local extmarks = vim.api.nvim_buf_get_extmarks(source_buf, ns_id, 0, -1, {details = true})
+    for _, ext in ipairs(extmarks) do
+        local id, row, col = ext[1], ext[2], ext[3]
+        local char = string.char(id)
+        local lnum = row + 1
+        local display_line = string.format("(%s) %s:%d:%d (ext)", char, filename, lnum, col)
+        table.insert(marks, {char = char, lnum = lnum, col = col, filename = filename, display = display_line})
+    end
+    return marks
+end
 
-function getAllMarks()
-    if not source_buf then return {} end
+function getVimMarks(source_buf)
     local filename = vim.api.nvim_buf_get_name(source_buf)
     print('Source buffer filename: ', filename)
     local marks = {}
@@ -115,24 +131,21 @@ function getAllMarks()
     return marks
 end
 
-function editAnnotation()
+function editAnnotation(source_buf, source_cursor)
     local buf = setupQuickWindow()
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
         '-- Enter your annotation here.',
         'Press `<Ctrl-s>` to save and exit --',
     })
     vim.cmd('startinsert')
-    vim.cmd('nmap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
-    vim.cmd('imap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
-    vim.cmd('vmap <buffer> <silent> <nowait> <c-s> :lua saveAnnotation()<CR>')
+    vim.keymap.set({'n', 'i', 'v'}, 'e', function() saveAnnotation(source_buf) end, {buffer = true, silent = true, nowait = true })
 end
 
-function saveAnnotation()
-    -- Already in the annotation buffer context
-    local all_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+function saveAnnotation(source_buf)
+    local all_lines = vim.api.nvim_buf_get_lines(source_buf, 0, -1, false)
     local text = table.concat(all_lines, "\n")
     print('Annotation saved: \n' .. text)
-    listMarks()
+    listMarks(source_buf)
 end
 
 function setupQuickWindow()
@@ -151,7 +164,6 @@ end
 -- local function perform_jump(item)
 --     -- Close the marks window
 --     vim.cmd('close')
-    
 --     -- Jump
 --     if item.filename and item.filename ~= "" then
 --         vim.cmd('edit ' .. vim.fn.fnameescape(item.filename))
@@ -161,7 +173,6 @@ end
 --             vim.cmd('buffer ' .. item.bufnr)
 --         end
 --     end
-    
 --     vim.api.nvim_win_set_cursor(0, {item.lnum, item.col})
 --     vim.cmd('normal! zz')
 -- end
