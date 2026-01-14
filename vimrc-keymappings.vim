@@ -111,8 +111,6 @@ vnoremap <Leader>y "+y
 nnoremap <Leader>p "+p
 vnoremap <Leader>p "+p
 
-nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
-
 nnoremap <Leader>L :source ~/myconf/dotfiles/vim/nvimrc.vim<CR>
 
 nnoremap <leader>R :call LoadSession()<CR><ESC>
@@ -242,6 +240,7 @@ nnoremap <C-p> :lua vim.diagnostic.goto_prev()<CR>
 nnoremap <C-n> :lua vim.diagnostic.goto_next()<CR>
 nnoremap K :lua vim.lsp.buf.hover({border = 'rounded'}) <CR>
 " nnoremap H :lua vim.lsp.buf.signature_help({border = 'rounded'}) <CR>
+nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 
 
 

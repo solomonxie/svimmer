@@ -13,6 +13,27 @@ require('nvim-treesitter.configs').setup({
                 ["ic"] = "@class.inner",
             },
         },
+        move = {
+            enable = true,
+            lookahead = true, -- Automatically jump forward to textobj
+            set_jumps = true, -- add jumps to the jumplist (CTRL-O/I)
+            goto_next_start = {
+                ["]]"] = "@function.outer",
+                ["]c"] = "@class.outer",
+            },
+            goto_next_end = {
+                ["]["] = "@function.outer",
+                ["]C"] = "@class.outer",
+            },
+            goto_previous_start = {
+                ["[["] = "@function.outer",
+                ["[c"] = "@class.outer",
+            },
+            goto_previous_end = {
+                ["[]"] = "@function.outer",
+                ["[C"] = "@class.outer",
+            },
+        }
     },
 
 
