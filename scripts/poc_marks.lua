@@ -85,10 +85,10 @@ function listMarks(main_bufid)
     vim.cmd('redraw')
 end
 
+-- Collect both Vim marks & Nvim extmarks
 -- @param bufid number
--- @return string
+-- @return hash_table{} # {char=hash_table}
 function collectMarks(bufid)
-    -- Collect both Vim marks & Nvim extmarks
     local marks = {} -- @type hash_table{}
     local filename = vim.api.nvim_buf_get_name(bufid)
     filename = vim.fn.fnamemodify(filename, ":.")
@@ -154,23 +154,25 @@ end
 -- end
 
 function editAnnotation(main_bufid)
-    local buf = setupQuickWindow()
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    local bufid = setupQuickWindow()
+    vim.api.nvim_buf_set_lines(bufid, 0, -1, false, {
         '-- Enter your annotation here.',
         'Press `<Ctrl-s>` to save and exit --',
     })
     vim.cmd('startinsert')
-    vim.keymap.set({'n', 'i', 'v'}, 'e', function() saveAnnotation(main_bufid) end, {buffer=true, silent=true, nowait=true })
+    vim.keymap.set({'n', 'i', 'v'}, '<C-s>', function() saveAnnotation(main_bufid, bufid) end, {buffer=true, silent=true, nowait=true })
 end
 
-function saveAnnotation(main_bufid)
-    local all_lines = vim.api.nvim_buf_get_lines(main_bufid, 0, -1, false)
+function saveAnnotation(main_bufid, bufid)
+    local all_lines = vim.api.nvim_buf_get_lines(bufid, 0, -1, false)
     local text = table.concat(all_lines, "\n")
     print('Annotation saved: \n' .. text)
+    vim.cmd('stopinsert')
+    vim.cmd('bwipeout!')
     listMarks(main_bufid)
 end
 
---- @return integer # Buffer id
+-- @return integer # Buffer id
 function setupQuickWindow()
     if vim.b.is_marks_window == true then vim.cmd('bwipeout!') end  -- Close existing quick window
     vim.cmd('botright 10 new')  -- Create new window and jump to the buffer context
