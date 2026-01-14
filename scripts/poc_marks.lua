@@ -15,14 +15,14 @@
 
 
 
-local ns_id = vim.api.nvim_create_namespace('poc_marks')
+local namespace_id = vim.api.nvim_create_namespace('poc_marks')
 
 vim.cmd('nnoremap <silent> <nowait> <leader>m :lua openMarks()<CR>')
 -- vim.cmd('nnoremap <silent> <nowait> m :lua openMarks()<CR>')
 
 function openMarks()
-    main_bufid = vim.api.nvim_get_current_buf()  --@type number
-    main_cursor = vim.api.nvim_win_get_cursor(0)  --@type {number, number}
+    local main_bufid = vim.api.nvim_get_current_buf()  --@type number
+    local line_number, col_number = unpack(vim.api.nvim_win_get_cursor(0))
     local buf = setupQuickWindow()
     local content_lines = {
         'Marks Menu:',
@@ -36,20 +36,18 @@ function openMarks()
     }
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
     vim.cmd('setlocal readonly nomodifiable')
-    vim.keymap.set('n', 'a', function() addMark(main_bufid, main_cursor) end, {buffer = true, silent = true, nowait = true })
-    vim.keymap.set('n', 'l', function() listMarks(main_bufid, main_cursor) end, {buffer = true, silent = true, nowait = true })
-    vim.keymap.set('n', 'e', function() editAnnotation(main_bufid, main_cursor) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'a', function() addMark(main_bufid, line_number) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'l', function() listMarks(main_bufid) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'e', function() editAnnotation(main_bufid) end, {buffer = true, silent = true, nowait = true })
 end
 
 
-function addMark(main_bufid, main_cursor)
-    listMarks(main_bufid, main_cursor)
+function addMark(main_bufid, line_number)
+    listMarks(main_bufid)
     local char = vim.fn.getcharstr()
-    local row, col = unpack(main_cursor)
     local mark_id = string.byte(char)
-    -- Add mark for both Vim/Neovim
-    vim.api.nvim_buf_set_mark(0, "a", line, col, {})
-    vim.api.nvim_buf_set_extmark(main_bufid, ns_id, row - 1, col, {
+    -- vim.api.nvim_buf_set_mark(0, char, line, col, {})  -- Vim native mark
+    vim.api.nvim_buf_set_extmark(main_bufid, namespace_id, line_number - 1, 0, {
         id = mark_id,  -- id = byte value of char (avoids duplicates for same char)
         sign_text = char:sub(1,2), -- simple visual
         sign_hl_group = 'Todo'
@@ -58,18 +56,17 @@ function addMark(main_bufid, main_cursor)
     vim.cmd('bwipeout!')
 end
 
-function DelMark(main_bufid, main_cursor)
-    listMarks(main_bufid, main_cursor)
+function DelMark(main_bufid)
+    listMarks(main_bufid)
     local char = vim.fn.getcharstr()
-    local mark_id = string.byte(char)
     if main_bufid and vim.api.nvim_buf_is_valid(main_bufid) then
-        vim.api.nvim_buf_del_extmark(main_bufid, ns_id, mark_id)
+        vim.api.nvim_buf_del_extmark(main_bufid, namespace_id, string.byte(char))
         print("ExtMark deleted: " .. char)
     end
     vim.cmd('bwipeout!')
 end
 
-function listMarks(main_bufid, main_cursor)
+function listMarks(main_bufid)
     local buf = setupQuickWindow()
     local content_lines = {'Marks Viewer:', ''}
     local marks = getExtmarks(main_bufid)
@@ -89,7 +86,7 @@ function getExtmarks(main_bufid)
     local marks = {}
     local filename = vim.api.nvim_buf_get_name(main_bufid)
     filename = vim.fn.fnamemodify(filename, ":.")
-    local extmarks = vim.api.nvim_buf_get_extmarks(main_bufid, ns_id, 0, -1, {details = true})
+    local extmarks = vim.api.nvim_buf_get_extmarks(main_bufid, namespace_id, 0, -1, {details = true})
     for _, ext in ipairs(extmarks) do
         local id, row, col = ext[1], ext[2], ext[3]
         local char = string.char(id)
@@ -133,7 +130,7 @@ function getVimMarks(main_bufid)
     return marks
 end
 
-function editAnnotation(main_bufid, main_cursor)
+function editAnnotation(main_bufid)
     local buf = setupQuickWindow()
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
         '-- Enter your annotation here.',
