@@ -22,12 +22,13 @@ let g:copilot_no_tab_map = 1  "Disable default tab mapping
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                           CopilotChat.nvim                                 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"REF: https://github.com/CopilotC-Nvim/CopilotChat.nvim
-" Plug 'CopilotC-Nvim/CopilotChat.nvim', {'commit': '21bdecb'}  "Require nvim>0.10
-" Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
+" Feature: This is an independent plugin to `copilot.vim`
+" REF: https://github.com/CopilotC-Nvim/CopilotChat.nvim
+Plug 'CopilotC-Nvim/CopilotChat.nvim', {'tag': 'v4.7.4'}  "Require nvim>0.10
+Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
 
 " Post-Vimplug setup
-" let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-copilot.lua']
+let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-copilot.lua']
 
 
 " ============= End of File ==================
