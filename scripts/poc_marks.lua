@@ -15,42 +15,47 @@
 
 
 
-local namespace_id = vim.api.nvim_create_namespace('poc_marks')
-
 vim.cmd('nnoremap <silent> <nowait> <leader>m :lua openMarks()<CR>')
 -- vim.cmd('nnoremap <silent> <nowait> m :lua openMarks()<CR>')
+local namespace_id = vim.api.nvim_create_namespace('poc_marks')
 
 function openMarks()
     local main_bufid = vim.api.nvim_get_current_buf()  --@type number
-    local line_number, col_number = unpack(vim.api.nvim_win_get_cursor(0))
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local buf = setupQuickWindow()
     local content_lines = {
         'Marks Menu:',
         '',
         '(a) Add Mark',
         '(d) Delete Mark',
-        '(l) List Marks',
         '(e) Edit Annotation',
+        '(l) List Marks',
+        '(L) List All Marks',
         '',
         "Press 'q' to close this window."
     }
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
     vim.cmd('setlocal readonly nomodifiable')
-    vim.keymap.set('n', 'a', function() addMark(main_bufid, line_number) end, {buffer = true, silent = true, nowait = true })
-    vim.keymap.set('n', 'l', function() listMarks(main_bufid) end, {buffer = true, silent = true, nowait = true })
-    vim.keymap.set('n', 'e', function() editAnnotation(main_bufid) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set('n', 'a', function() addMark(main_bufid, row) end, {buffer=true, silent=true, nowait=true })
+    vim.keymap.set('n', 'e', function() editAnnotation(main_bufid) end, {buffer=true, silent=true, nowait=true })
+    vim.keymap.set('n', 'l', function() listMarks(main_bufid) end, {buffer=true, silent=true, nowait=true })
+    vim.keymap.set('n', 'L', function() listGlobalMarks() end, {buffer=true, silent=true, nowait=true })
 end
 
 
-function addMark(main_bufid, line_number)
+function addMark(main_bufid, row)
     listMarks(main_bufid)
-    local char = vim.fn.getcharstr()
-    local mark_id = string.byte(char)
-    -- vim.api.nvim_buf_set_mark(0, char, line, col, {})  -- Vim native mark
-    vim.api.nvim_buf_set_extmark(main_bufid, namespace_id, line_number - 1, 0, {
-        id = mark_id,  -- id = byte value of char (avoids duplicates for same char)
-        sign_text = char:sub(1,2), -- simple visual
-        sign_hl_group = 'Todo'
+    local char = vim.fn.getcharstr()  -- Wait for a key press
+    local mark_id = math.random(10000, 99999)  -- ID is scoped under whole project
+    -- Must auto-align Vim marks & Nvim Extmarks to have wider supports (shortcuts, plugins...)
+    print('Adding mark: ', mark_id, ' at line ', row, ' in buffer ', main_bufid)
+    vim.api.nvim_buf_set_mark(main_bufid, char, row, 0, {})  -- Vim native mark
+    vim.api.nvim_buf_set_extmark(main_bufid, namespace_id, row - 1, 0, {
+        id=mark_id,  -- id=byte value of char (avoids duplicates for same char)
+        end_row=row - 1,  -- TODO: allow multi-line mark/annotation
+        end_col=0,
+        sign_text=char,
+        sign_hl_group='Todo'
     })
     print("ExtMark added: " .. char)
     vim.cmd('bwipeout!')
@@ -67,68 +72,86 @@ function DelMark(main_bufid)
 end
 
 function listMarks(main_bufid)
-    local buf = setupQuickWindow()
     local content_lines = {'Marks Viewer:', ''}
-    local marks = getExtmarks(main_bufid)
-    -- print('Total marks found: ', #marks)
-    for _, meta in ipairs(marks) do
-        -- print('Mark display: ', meta.display)
+    local marks = collectMarks(main_bufid)
+    -- print('Collected marks: ', vim.inspect(marks))
+    for _, meta in pairs(marks) do
         table.insert(content_lines, meta.display)
     end
-    table.insert(content_lines, '')
-    table.insert(content_lines, 'Press `q` to close this window.')
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, content_lines)
+    local bufid = setupQuickWindow()
+    vim.api.nvim_buf_set_lines(bufid, 0, -1, false, content_lines)
+    vim.api.nvim_buf_set_lines(bufid, -1, -1, false, {'', 'Press `q` to close this window.'})
     vim.cmd('setlocal readonly nomodifiable')
     vim.cmd('redraw')
 end
 
-function getExtmarks(main_bufid)
-    local marks = {}
-    local filename = vim.api.nvim_buf_get_name(main_bufid)
+-- @param bufid number
+-- @return string
+function collectMarks(bufid)
+    -- Collect both Vim marks & Nvim extmarks
+    local marks = {} -- @type hash_table{}
+    local filename = vim.api.nvim_buf_get_name(bufid)
     filename = vim.fn.fnamemodify(filename, ":.")
-    local extmarks = vim.api.nvim_buf_get_extmarks(main_bufid, namespace_id, 0, -1, {details = true})
+    -- Neovim Extmarks
+    local extmarks = vim.api.nvim_buf_get_extmarks(bufid, namespace_id, 0, -1, {details=true})
     for _, ext in ipairs(extmarks) do
-        local id, row, col = ext[1], ext[2], ext[3]
-        local char = string.char(id)
-        local lnum = row + 1
-        local display_line = string.format("(%s) %s:%d:%d (ext)", char, filename, lnum, col)
-        table.insert(marks, {char = char, lnum = lnum, col = col, filename = filename, display = display_line})
+        local _, row, col, details = unpack(ext)
+        local char = details.sign_text:gsub('%s+', '') or '?'
+        print('ExtMark found: ', char, row+1, col+1, filename)
+        local display = string.format("(%s) %s:%d", char, filename, row+1, col+1)
+        marks[char] = {char=char, row=row+1, filename=filename, display=display}
+    end
+    -- Vim Marks
+    local vim_chars = 'abcdefghijklmnopqrstuvwxyz'
+    for i=1, #vim_chars do
+        local char = vim_chars:sub(i,i)
+        row, col = unpack(vim.api.nvim_buf_get_mark(bufid, char))
+        if row > 0 and marks[char] == nil then
+            print('Vim Mark found: ', char, row, filename)
+            local display = string.format("(%s) %s:%d", char, filename, row)
+            marks[char] = {marks, {char=char, row=row, filename=filename, display=display}}
+        end
     end
     return marks
 end
 
-function getVimMarks(main_bufid)
-    local filename = vim.api.nvim_buf_get_name(main_bufid)
-    print('Source buffer filename: ', filename)
-    local marks = {}
-    local local_marks = 'abcdefghijklmnopqrstuvwxyz'
-    local global_marks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    local mark_chars = local_marks..global_marks
-    for i=1, #mark_chars do
-        local c = mark_chars:sub(i,i)
-        local linenum, column, scope
-        if string.find(local_marks, c) ~= nil then
-            scope = 'local'
-            local mark = vim.api.nvim_buf_get_mark(main_bufid, c)
-            lnum, col = mark[1], mark[2] + 1 -- Convert col to 1-indexed
-            -- print('Local: ', lnum, col, filename)
-        elseif string.find(global_marks, c) ~= nil then
-            scope = 'global'
-            local mark = vim.fn.getpos("'" .. c)
-            bufnum, lnum, col = mark[1], mark[2], mark[3]
-            filename = vim.api.nvim_buf_get_name(bufnum) or '<BUFFER>'
-            -- print('Global: ', bufnum, lnum, col, filename)
-        end
-        filename = vim.fn.fnamemodify(filename, ":.")
-        if lnum ~= 0 and col ~= 0 then
-            display_line = string.format("(%s) %s:%d:%d (%s)", c, filename, lnum, col, scope)
-            print('Display Line: ', display_line)
-            meta = {char=c, lnum=lnum, col=col, filename=filename, scope=scope, display=display_line}
-            table.insert(marks, meta)
-        end
-    end
-    return marks
+function listGlobalMarks()
+    print('Listing global marks: TBD')
+    -- Source 1: all marks in the `persistent_marks.json`
+    -- Source 2: all Vim global marks with registry `A-Z`
 end
+
+-- function getVimMarks(main_bufid)
+--     local filename = vim.api.nvim_buf_get_name(main_bufid)
+--     print('Source buffer filename: ', filename)
+--     local marks = {}
+--     local local_marks = 'abcdefghijklmnopqrstuvwxyz'
+--     local global_marks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+--     local mark_chars = local_marks..global_marks
+--     for i=1, #mark_chars do
+--         local c = mark_chars:sub(i,i)
+--         if string.find(local_marks, c) ~= nil then
+--             scope = 'local'
+--             local mark = vim.api.nvim_buf_get_mark(main_bufid, c)
+--             lnum, col = mark[1], mark[2] + 1 -- Convert col to 1-indexed
+--             -- print('Local: ', lnum, col, filename)
+--         elseif string.find(global_marks, c) ~= nil then
+--             scope = 'global'
+--             local mark = vim.fn.getpos("'" .. c)
+--             bufnum, lnum, col = mark[1], mark[2], mark[3]
+--             filename = vim.api.nvim_buf_get_name(bufnum) or '<BUFFER>'
+--             -- print('Global: ', bufnum, lnum, col, filename)
+--         end
+--         filename = vim.fn.fnamemodify(filename, ":.")
+--         if lnum ~= 0 and col ~= 0 then
+--             display_line = string.format("(%s) %s:%d:%d (%s)", c, filename, lnum, col, scope)
+--             print('Display Line: ', display_line)
+--             meta = {char=c, lnum=lnum, col=col, filename=filename, scope=scope, display=display_line}
+--             table.insert(marks, meta)
+--         end
+--     end
+--     return marks
+-- end
 
 function editAnnotation(main_bufid)
     local buf = setupQuickWindow()
@@ -137,7 +160,7 @@ function editAnnotation(main_bufid)
         'Press `<Ctrl-s>` to save and exit --',
     })
     vim.cmd('startinsert')
-    vim.keymap.set({'n', 'i', 'v'}, 'e', function() saveAnnotation(main_bufid) end, {buffer = true, silent = true, nowait = true })
+    vim.keymap.set({'n', 'i', 'v'}, 'e', function() saveAnnotation(main_bufid) end, {buffer=true, silent=true, nowait=true })
 end
 
 function saveAnnotation(main_bufid)
@@ -147,14 +170,17 @@ function saveAnnotation(main_bufid)
     listMarks(main_bufid)
 end
 
+--- @return integer # Buffer id
 function setupQuickWindow()
-    if vim.b.mark_quick_window == true then vim.cmd('bwipeout!') end  -- Close existing quick window
+    if vim.b.is_marks_window == true then vim.cmd('bwipeout!') end  -- Close existing quick window
     vim.cmd('botright 10 new')  -- Create new window and jump to the buffer context
-    vim.b.mark_quick_window = true
+    vim.b.is_marks_window = true
     vim.opt_local.buftype = 'nofile'
     vim.cmd('mapclear <buffer>')
     vim.cmd('autocmd BufLeave,BufWinLeave,BufHidden <buffer> ++once  :bd!')
     vim.cmd('nnoremap <buffer> <silent> <nowait> q :bwipeout!<CR>')
+    vim.cmd('nnoremap <buffer> <silent> <nowait> <ESC> :bwipeout!<CR>')
+    vim.cmd('nnoremap <buffer> <silent> <nowait> <C-c> :bwipeout!<CR>')
     vim.cmd('setlocal buftype=nofile bufhidden=wipe noswapfile nonumber norelativenumber nowrap nocursorline')
     return vim.api.nvim_get_current_buf()
 end
