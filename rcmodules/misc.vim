@@ -112,6 +112,8 @@ Plug 'kshenoy/vim-signature', {'commit': '6bc3dd1'}
 " Plug 'tpope/vim-obsession'  "Messing up the buffer behaviors
 
 
+"REF: https://github.com/solomonxie/nvim-marks
+Plug 'solomonxie/nvim-marks', {'branch': 'master'}
 
 
 " ============= End of File ==================

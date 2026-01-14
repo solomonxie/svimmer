@@ -70,7 +70,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/markbar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/syntastic.vim
         " source ~/myconf/dotfiles/vim/rcmodules/telescope.vim  "SLOW
-        " source ~/myconf/dotfiles/vim/rcmodules/which_key.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/whichkey.vim
     "{Completion | Usages | Definitions}
         " source ~/myconf/dotfiles/vim/rcmodules/replace.vim
         source ~/myconf/dotfiles/vim/rcmodules/fzf.vim
@@ -110,9 +110,10 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
         " source ~/myconf/dotfiles/vim/rcmodules/llm-gp.vim  "Ugly design, not easy to use
         " source ~/myconf/dotfiles/vim/rcmodules/llm-codecompanion.vim  "Not yet knowing how to autocomplete
-    "{Misc}
+    "{Others}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
 call plug#end()
+echom 'All plugins loaded.' |redraw
 
 
 " Some plugins require env variables (vim/neovim does not take env from shell)
@@ -122,6 +123,12 @@ silent! source ~/.vimrc-env.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Load lua configs defined elsewhere
+for path in g:lua_configs
+    execute 'luafile ' . path
+    echom 'Loaded Lua config: ' . path |redraw  "Redraw prevent echo popup message
+endfor
+
 " LSPs:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
@@ -132,14 +139,9 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
-" Misc:
+" Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-
-" Load other lua configs defined elsewhere
-for path in g:lua_configs
-    execute 'luafile ' . path
-    echom 'Loaded Lua config: ' . path |redraw  "Redraw prevent echo popup message
-endfor
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -152,9 +154,6 @@ source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
 source ~/myconf/dotfiles/vim/vimrc-ui.vim
 
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-ui.lua
-
-" POC:
-luafile ~/myconf/dotfiles/vim/scripts/poc_marks.lua
 
 
 "Local overrides if there's any
