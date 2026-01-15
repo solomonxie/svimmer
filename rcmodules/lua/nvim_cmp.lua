@@ -5,6 +5,7 @@
 local cmp = require('cmp')
 
 -- Setup nvim-cmp.
+vim.opt.completeopt = 'menu,menuone,noinsert,noselect'  -- Important! It's annoying to "pre-select" for you
 cmp.setup({
     snippet = {
         -- REQUIRED - you must specify a snippet engine
@@ -31,17 +32,20 @@ cmp.setup({
         }
     ),
     mapping = cmp.mapping.preset.insert({
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
+        ['<Tab>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = false}),
+        ['<C-l>'] = cmp.mapping.complete(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
-        -- Disable <Enter> or <Space> for candidate selection, conflict with enter for newline
-        ['<CR>'] = cmp.mapping.confirm({ select = false }),
-        ['<Space>'] = cmp.mapping.confirm({ select = false }),
+        -- Less used:
+        -- ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        -- ['<C-e>'] = cmp.mapping.abort(),
+        -- Disable: <Enter> or <Space> for candidate selection, conflict with enter for newline
+        -- ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        -- ['<Space>'] = cmp.mapping.confirm({ select = false }),
     }),
 })
+
 -- Settings for <cmp-spell>
 vim.opt.spell = true
 vim.opt.spelllang = { 'en_us' }
