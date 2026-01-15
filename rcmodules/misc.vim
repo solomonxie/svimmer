@@ -106,7 +106,7 @@ Plug 'kizza/actionmenu.nvim', {'commit': 'e8d547b'}  "Popup Context Menu
 "Plug 'mg979/vim-visual-multi'
 
 "REF: https://github.com/kshenoy/vim-signature
-Plug 'kshenoy/vim-signature', {'commit': '6bc3dd1'}
+" Plug 'kshenoy/vim-signature', {'commit': '6bc3dd1'}
 " nnoremap fm :SignatureListBufferMarks<CR>
 
 " Plug 'tpope/vim-obsession'  "Messing up the buffer behaviors
