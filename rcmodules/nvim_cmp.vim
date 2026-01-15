@@ -14,6 +14,7 @@ Plug 'hrsh7th/cmp-omni'
 " Plug 'dmitmel/cmp-cmdline-history'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 " Plug 'uga-rosa/cmp-dictionary'
+Plug 'ray-x/cmp-treesitter'
 
 let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua']
 

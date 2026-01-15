@@ -5,8 +5,9 @@
 local cmp = require('cmp')
 
 -- Setup nvim-cmp.
-vim.opt.completeopt = 'menu,menuone,noinsert,noselect'  -- Important! It's annoying to "pre-select" for you
+-- vim.opt.completeopt = 'menu,menuone,noinsert,noselect'
 cmp.setup({
+    completeopt = 'menu,menuone,noinsert,noselect',  -- Important! It's annoying to "pre-select" for you
     snippet = {
         -- REQUIRED - you must specify a snippet engine
         expand = function(args)
@@ -16,19 +17,32 @@ cmp.setup({
             vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
         end,
     },
+    -- Order matters: decides suggestion order
+    -- Grouping matters: will only show 2nd group if 1st group has no result at all
     sources = cmp.config.sources(
         {
-            { name = 'nvim_lsp' },  -- Any LSP installed by Mason will be used
-            { name = 'ultisnips' },
-            { name = 'buffer' },
-            { name = 'path', keyword_length = 2 },
+            { name = 'nvim_lsp', priority = 1000 },  -- Any LSP installed by Mason will be used
+            { name = 'ultisnips', priority = 900 },
+            { name = 'buffer', priority = 500 },
+            { name = 'cmdline', priority = 500 },
+            -- { name = 'omni', priority = 500 },  -- Vim native Omnifunc, slow
+            -- { name = 'treesitter', priority = 600, keyword_length = 3 },  -- Buggy
+            {
+                -- `cmp-path` source is picky about path patterns, starts with `./` to trigger
+                name = 'path', priority = 700, keyword_length = 2,
+                option = {
+                    trailing_slash = true,
+                    label_trailing_slash = true,
+                    get_cwd = function()
+                        return vim.fn.getcwd()
+                    end,
+                }
+            },
         },
         {
-            -- { name = 'treesitter' },  -- Buggy
             -- { name = 'vsnip' }, -- For vsnip users.
             -- { name = 'luasnip' }, -- For luasnip users.
             -- { name = 'snippy' }, -- For snippy users.
-            -- { name = 'dictionary', keyword_length=2, },
         }
     ),
     mapping = cmp.mapping.preset.insert({
