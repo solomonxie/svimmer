@@ -15,4 +15,10 @@ Plug 'nvim-treesitter/playground'
 
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
+" NOTE: also check settings in `./vim/nvimrc.vim` to avoid conflicts
+set foldmethod=expr
+set foldexpr=v:lua.vim.treesitter.foldexpr()  "Do this if installed treesitter
+
+
+" Post-Vimplug setup
 let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua']

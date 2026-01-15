@@ -19,8 +19,9 @@ vim.lsp.config('lua_ls', {
                 -- path = runtime_path,
             },
             diagnostics = {
-                globals = {'vim'},
-                disable = { 'lowercase-global', 'unused-local', 'undefined-global' }
+                globals = {'vim'},  -- Global variables registry, otherwise it'll show "no module vim is imported"
+                disable = { 'lowercase-global', 'unused-local', 'undefined-global', 'unused-local', 'unused-function' }
+                -- ^ Treesitter will make entire code as grey as if they're comments if it's shown as "unused", even `local funciton xxx end function`
             },
             workspace = {
                 library = {

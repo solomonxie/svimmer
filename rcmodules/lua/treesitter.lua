@@ -1,6 +1,5 @@
 --REF: https://github.com/nvim-treesitter/nvim-treesitter
 require('nvim-treesitter.configs').setup({
-
     -- Plug 'nvim-treesitter/nvim-treesitter-textobjects'
     textobjects = {
         select = {
