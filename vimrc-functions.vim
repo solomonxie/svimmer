@@ -101,8 +101,9 @@ function! SaveSessionSimple()
     call add(steps, 'let s:wipebuf = bufnr("%")')  "Mark initial/empty buffer
     " Record buffers
     for bufnr in buffer_list
-        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# ''
-            call add(steps, '$argadd ' . expand('#' . bufnr . ':b'))
+        let l:bufname = expand('#' .. bufnr .. ':p')
+        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !isdirectory(l:bufname)
+            call add(steps, '$argadd ' . expand('#' . bufnr . ':p'))
         endif
     endfor
     " Record others

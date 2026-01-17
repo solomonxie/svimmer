@@ -24,7 +24,7 @@ cmp.setup({
             { name = 'nvim_lsp', priority = 1000 },  -- Any LSP installed by Mason will be used
             { name = 'ultisnips', priority = 900 },
             { name = 'buffer', priority = 500 },
-            { name = 'cmdline', priority = 500 },
+            -- { name = 'cmdline', priority = 500 },  -- Buggy
             -- { name = 'omni', priority = 500 },  -- Vim native Omnifunc, slow
             -- { name = 'treesitter', priority = 600, keyword_length = 3 },  -- Buggy
             {

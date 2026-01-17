@@ -20,9 +20,14 @@ let g:netrw_list_hide = '.*\.swp$,.DS_Store,*/tmp/*,*.so,*.swp,*.zip,*.git,^\.\.
 " let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 
-"Enable to close netrw buffer
+"Enable to close netrw buffer (otherwise once open, even :bd! cannot close it)
 autocmd FileType netrw setl bufhidden=wipe
+autocmd FileType netrw nnoremap <buffer> q :bw<CR>
+let g:netrw_fastbrowse = 0
 
+let g:netrw_chgwin = 2   " Open files in the previous window, not the explorer window
+let g:netrw_liststyle = 3 " Tree view
+let g:netrw_winsize = 25  " Window size 25%
 
 function! CloseNetrw() abort
     for bufn in range(1, bufnr('$'))
