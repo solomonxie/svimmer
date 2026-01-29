@@ -15,6 +15,7 @@
     command! CDToCurrentDir :cd %:p:h
     command! R :source ~/.vimrc
     command! BufferCount :call HowManyBuffers()
+    command! Build call BuildCurrentFile()
 "}
 
 

@@ -308,17 +308,27 @@ endfunction
 
 
 function! BuildCurrentFile ()
-    " autocmd BufReadPre *.py noremap <buffer> <leader>B :w<CR>:!python "%:p" <CR>
-    " autocmd BufReadPre *.c noremap <buffer> <leader>B :w<CR>:!gcc % -o /tmp/a.out && /tmp/a.out <CR>
-    " autocmd BufReadPre *.cpp,*.cc noremap <buffer> <leader>B :w<CR>:!g++ % -o /tmp/a.out && /tmp/a.out <CR>
-    " autocmd BufReadPre *.js noremap <buffer> <leader>B :w<CR>:call DebugCurrentFile()<CR>
-    " " autocmd BufReadPre *.js nnoremap <buffer> [[ []
-    " " autocmd BufReadPre *.js nnoremap <buffer> ]] ][
-    " autocmd BufReadPre *.sh noremap <buffer> <leader>B :w<CR>:!bash % <CR>
-    " autocmd BufReadPre Makefile noremap <buffer> <leader>B :w<CR>:!make <CR>
-    " autocmd BufReadPre .vim,.vimrc,vimrc* noremap <buffer> <leader>B :w<CR>:source ~/.vim/init.vim <CR>
-    " autocmd BufReadPre .zshrc,zshrc* noremap <buffer> <leader>B :w<CR>:!source % <CR>
-    let s:ft = &filetype
+    write
+    if &filetype ==# 'python'
+        execute '!python3 ' . shellescape(expand('%:p'))
+    elseif &filetype ==# 'c'
+        execute '!gcc ' . shellescape(expand('%')) . ' -o /tmp/a.out && /tmp/a.out'
+    elseif &filetype ==# 'cpp' || &filetype ==# 'c++' || &filetype ==# 'cc'
+        execute '!clang++ ' . shellescape(expand('%')) . ' -Wall -Wextra -std=c++17 -o /tmp/a.out && /tmp/a.out'
+    elseif &filetype ==# 'javascript'
+        " Call your custom JS debug function
+        call DebugCurrentFile()
+    elseif &filetype ==# 'sh'
+        execute '!bash ' . shellescape(expand('%'))
+    elseif expand('%') =~# 'Makefile'
+        execute '!make'
+    elseif expand('%:t') =~# '\v(\.vim|\.vimrc|vimrc.*)'
+        execute 'source ~/.vim/init.vim'
+    elseif expand('%:t') =~# '\v(\.zshrc|zshrc.*)'
+        execute '!source ' . shellescape(expand('%:p'))
+    else
+        echo "No build command defined for this filetype."
+    endif
 endfunction
 
 

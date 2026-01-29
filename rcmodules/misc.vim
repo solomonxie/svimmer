@@ -114,6 +114,7 @@ Plug 'kizza/actionmenu.nvim', {'commit': 'e8d547b'}  "Popup Context Menu
 
 "REF: https://github.com/solomonxie/nvim-marks
 Plug 'solomonxie/nvim-marks', {'branch': 'master'}
+let g:nvim_marks_persistent_dir = expand('~/Documents/gdrive/nvim-marks')
 
 
 " ============= End of File ==================
