@@ -26,3 +26,8 @@
 
 (import_from_statement
   name: (dotted_name (identifier) @module.imported))
+;; Module/Class usage in expressions (heuristic)
+((attribute
+  object: (identifier) @module)
+  (#not-match? @module "^(self|cls)$"))
+
