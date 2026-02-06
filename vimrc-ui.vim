@@ -265,7 +265,7 @@ hi semshiBuiltin         ctermfg=207 guifg=#ff5fff " Magenta
 hi semshiAttribute       ctermfg=44  guifg=#00d7d7 " Turquoise
 hi semshiSelf            ctermfg=249 guifg=#b2b2b2 " Grey
 hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline " Yellow (Underline)
-hi semshiSelected        ctermfg=231 guifg=#ffffff ctermbg=161 guibg=#d7005f " White on Red
+hi semshiSelected        ctermfg=16  guifg=#000000 ctermbg=221 guibg=#fade3e cterm=bold gui=bold " Black on Gold (Search style)
 function! s:ApplyPythonSemshiHighlights()
     " Map Tree-sitter captures to Semshi groups
     hi! link @variable          semshiLocal
