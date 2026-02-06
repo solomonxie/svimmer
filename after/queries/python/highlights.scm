@@ -1,5 +1,5 @@
 ;; Allow overrides:
-extends
+; extends
 
 ;; Function definitions
 (function_definition

@@ -233,6 +233,7 @@ EOF
 "                             PYTHON HIGHLIGHTS                              "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Semshi-style syntax highlighting for Python using Tree-sitter and LSP
+" TODO: mark color name as comment for each hl groop
 hi semshiLocal           ctermfg=209 guifg=#ff875f
 hi semshiGlobal          ctermfg=214 guifg=#ffaf00
 hi semshiImported        ctermfg=214 guifg=#ffaf00 cterm=bold gui=bold
@@ -240,12 +241,13 @@ hi semshiParameter       ctermfg=75  guifg=#5fafff
 hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
 hi semshiFree            ctermfg=218 guifg=#ffafd7
 hi semshiBuiltin         ctermfg=207 guifg=#ff5fff
-hi semshiAttribute       ctermfg=49  guifg=#00ffaf
+hi semshiAttribute       ctermfg=49  guifg=#00ffaf  "TODO: change from green to others
 hi semshiSelf            ctermfg=249 guifg=#b2b2b2
 hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline
+hi semshiSelected        ctermfg=231 guifg=#ffffff ctermbg=161 guibg=#d7005f
 function! s:ApplyPythonSemshiHighlights()
     " Map Tree-sitter captures to Semshi groups
-    hi! link @variable          Normal
+    hi! link @variable          semshiLocal
     hi! link @variable.python   Normal
     hi! link @variable.global   semshiGlobal
     hi! link @variable.builtin.python  semshiSelf
@@ -259,23 +261,32 @@ function! s:ApplyPythonSemshiHighlights()
     hi! link @method.call       semshiAttribute
     hi! link @property          semshiAttribute
     hi! link @attribute         semshiAttribute
+    hi! link @variable.member   semshiAttribute
+    hi! link @variable.field    semshiAttribute
     hi! link @module            semshiImported
     hi! link @module.python     semshiImported
     hi! link @constant          semshiGlobal
     hi! link @constant.builtin  semshiBuiltin
     hi! link @constant.python    semshiGlobal
     hi! link @constructor.python semshiGlobal
+    hi! link @type.python semshiGlobal
+    hi! link @function.method.call.python Normal
+    hi! link @variable.member.python Normal
     " Map LSP semantic tokens
     hi! link @lsp.type.variable.python    Normal
     hi! link @lsp.type.parameter.python   semshiParameter
     hi! link @lsp.type.function.python    semshiGlobal
     hi! link @lsp.type.method.python      semshiAttribute
     hi! link @lsp.type.property.python    semshiAttribute
+    " Special/Advanced Mappings
+    hi! link DiagnosticUnused             semshiParameterUnused
+    hi! link @lsp.mod.readonly.python     semshiGlobal
 endfunction
 augroup PythonSemshi
     autocmd!
     autocmd ColorScheme,FileType python call s:ApplyPythonSemshiHighlights()
 augroup END
+
 
 
 
