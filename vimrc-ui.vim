@@ -226,25 +226,46 @@ local diagnostic_config = {
     severity_sort = true,
 }
 vim.diagnostic.config(diagnostic_config)
+
+-- Document Highlight (Semshi-style occurrence highlighting)
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client and client.server_capabilities.documentHighlightProvider then
+            local group = vim.api.nvim_create_augroup('LspDocumentHighlight', { clear = false })
+            vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                group = group,
+                buffer = ev.buf,
+                callback = vim.lsp.buf.document_highlight,
+            })
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                group = group,
+                buffer = ev.buf,
+                callback = vim.lsp.buf.clear_references,
+            })
+        end
+    end,
+})
 EOF
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             PYTHON HIGHLIGHTS                              "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Semshi-style syntax highlighting for Python using Tree-sitter and LSP
-" TODO: mark color name as comment for each hl groop
-hi semshiLocal           ctermfg=209 guifg=#ff875f
-hi semshiGlobal          ctermfg=214 guifg=#ffaf00
-hi semshiImported        ctermfg=214 guifg=#ffaf00 cterm=bold gui=bold
-hi semshiParameter       ctermfg=75  guifg=#5fafff
-hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
-hi semshiFree            ctermfg=218 guifg=#ffafd7
-hi semshiBuiltin         ctermfg=207 guifg=#ff5fff
-hi semshiAttribute       ctermfg=49  guifg=#00ffaf  "TODO: change from green to others
-hi semshiSelf            ctermfg=249 guifg=#b2b2b2
-hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline
-hi semshiSelected        ctermfg=231 guifg=#ffffff ctermbg=161 guibg=#d7005f
+hi semshiLocal           ctermfg=209 guifg=#ff875f " Salmon
+hi semshiGlobal          ctermfg=214 guifg=#ffaf00 " Orange
+hi semshiImported        ctermfg=214 guifg=#ffaf00 cterm=bold gui=bold " Orange (Bold)
+hi semshiParameter       ctermfg=75  guifg=#5fafff " Blue
+hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline " Light Blue (Underline)
+hi semshiFree            ctermfg=218 guifg=#ffafd7 " Pink
+hi semshiBuiltin         ctermfg=207 guifg=#ff5fff " Magenta
+hi semshiAttribute       ctermfg=44  guifg=#00d7d7 " Turquoise
+hi semshiSelf            ctermfg=249 guifg=#b2b2b2 " Grey
+hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline " Yellow (Underline)
+hi semshiSelected        ctermfg=231 guifg=#ffffff ctermbg=161 guibg=#d7005f " White on Red
 function! s:ApplyPythonSemshiHighlights()
     " Map Tree-sitter captures to Semshi groups
     hi! link @variable          semshiLocal
@@ -261,7 +282,7 @@ function! s:ApplyPythonSemshiHighlights()
     hi! link @method.call       semshiAttribute
     hi! link @property          semshiAttribute
     hi! link @attribute         semshiAttribute
-    hi! link @variable.member   semshiAttribute
+    hi! link @variable.member   Normal
     hi! link @variable.field    semshiAttribute
     hi! link @module            semshiImported
     hi! link @module.python     semshiImported
@@ -273,6 +294,8 @@ function! s:ApplyPythonSemshiHighlights()
     hi! link @function.method.call.python Normal
     hi! link @variable.member.python Normal
     " Map LSP semantic tokens
+    hi! link @lsp.type.namespace.python   semshiImported
+    hi! link @lsp.type.namespace          semshiImported
     hi! link @lsp.type.variable.python    Normal
     hi! link @lsp.type.parameter.python   semshiParameter
     hi! link @lsp.type.function.python    semshiGlobal
@@ -281,13 +304,17 @@ function! s:ApplyPythonSemshiHighlights()
     " Special/Advanced Mappings
     hi! link DiagnosticUnused             semshiParameterUnused
     hi! link @lsp.mod.readonly.python     semshiGlobal
+
+    " Document Highlighting (Occurrences)
+    hi! link LspReferenceText            semshiSelected
+    hi! link LspReferenceRead            semshiSelected
+    hi! link LspReferenceWrite           semshiSelected
 endfunction
+
 augroup PythonSemshi
     autocmd!
     autocmd ColorScheme,FileType python call s:ApplyPythonSemshiHighlights()
 augroup END
-
-
 
 
 
