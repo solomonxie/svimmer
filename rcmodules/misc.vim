@@ -17,7 +17,8 @@ Plug 'bronson/vim-visual-star-search', {'commit': '7c32edb'}
 Plug 'tpope/vim-commentary', {'commit': '64a654e'}  "Blazing fast!!
 autocmd FileType sql setlocal commentstring=--\ %s
 
-" Plug 'bronson/vim-trailing-whitespace'
+"REF: https://github.com/bronson/vim-trailing-whitespace
+Plug 'bronson/vim-trailing-whitespace'
 
 "REF: https://github.com/wsdjeg/vim-fetch
 " Plug 'wsdjeg/vim-fetch'  "Open/Edit file from reference: /path/to/file:190:3

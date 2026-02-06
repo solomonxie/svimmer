@@ -305,8 +305,10 @@ autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
 
 "IMPORTANT: FOR OPENNING LARGE FILE
 let g:large_file_size = 10000000  "10MB
+
+" If the file is too large, for performance, need to disable highlighting
 autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file_size | set noswapfile | syntax clear | endif
-autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) <= g:large_file_size | syntax clear | endif
+" autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) <= g:large_file_size | syntax clear | endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                          PERSISTENT FILE SETTINGS                          "

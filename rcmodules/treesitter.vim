@@ -11,7 +11,7 @@
 " 3. :TSInstall python javascript bash json
 
 Plug 'nvim-treesitter/nvim-treesitter', {'tag': 'v0.10.0'}
-Plug 'nvim-treesitter/playground'
+" Plug 'nvim-treesitter/playground'
 
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 

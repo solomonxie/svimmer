@@ -229,6 +229,58 @@ vim.diagnostic.config(diagnostic_config)
 EOF
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                             PYTHON HIGHLIGHTS                              "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Semshi-style syntax highlighting for Python using Tree-sitter and LSP
+hi semshiLocal           ctermfg=209 guifg=#ff875f
+hi semshiGlobal          ctermfg=214 guifg=#ffaf00
+hi semshiImported        ctermfg=214 guifg=#ffaf00 cterm=bold gui=bold
+hi semshiParameter       ctermfg=75  guifg=#5fafff
+hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
+hi semshiFree            ctermfg=218 guifg=#ffafd7
+hi semshiBuiltin         ctermfg=207 guifg=#ff5fff
+hi semshiAttribute       ctermfg=49  guifg=#00ffaf
+hi semshiSelf            ctermfg=249 guifg=#b2b2b2
+hi semshiUnresolved      ctermfg=226 guifg=#ffff00 cterm=underline gui=underline
+function! s:ApplyPythonSemshiHighlights()
+    " Map Tree-sitter captures to Semshi groups
+    hi! link @variable          Normal
+    hi! link @variable.python   Normal
+    hi! link @variable.global   semshiGlobal
+    hi! link @variable.builtin.python  semshiSelf
+    hi! link @variable.parameter semshiParameter
+    hi! link @variable.parameter.python semshiParameter
+    hi! link @function          semshiGlobal
+    hi! link @function.builtin  semshiBuiltin
+    hi! link @function.call     semshiGlobal
+    hi! link @function.python   semshiGlobal
+    hi! link @method            semshiAttribute
+    hi! link @method.call       semshiAttribute
+    hi! link @property          semshiAttribute
+    hi! link @attribute         semshiAttribute
+    hi! link @module            semshiImported
+    hi! link @module.python     semshiImported
+    hi! link @constant          semshiGlobal
+    hi! link @constant.builtin  semshiBuiltin
+    hi! link @constant.python    semshiGlobal
+    hi! link @constructor.python semshiGlobal
+    " Map LSP semantic tokens
+    hi! link @lsp.type.variable.python    Normal
+    hi! link @lsp.type.parameter.python   semshiParameter
+    hi! link @lsp.type.function.python    semshiGlobal
+    hi! link @lsp.type.method.python      semshiAttribute
+    hi! link @lsp.type.property.python    semshiAttribute
+endfunction
+augroup PythonSemshi
+    autocmd!
+    autocmd ColorScheme,FileType python call s:ApplyPythonSemshiHighlights()
+augroup END
+
+
+
+
+
 
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw
