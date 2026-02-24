@@ -226,27 +226,6 @@ local diagnostic_config = {
     severity_sort = true,
 }
 vim.diagnostic.config(diagnostic_config)
-
--- Document Highlight (Semshi-style occurrence highlighting)
-vim.api.nvim_create_autocmd('LspAttach', {
-    callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client and client.server_capabilities.documentHighlightProvider then
-            local group = vim.api.nvim_create_augroup('LspDocumentHighlight', { clear = false })
-            vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-                group = group,
-                buffer = ev.buf,
-                callback = vim.lsp.buf.document_highlight,
-            })
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-                group = group,
-                buffer = ev.buf,
-                callback = vim.lsp.buf.clear_references,
-            })
-        end
-    end,
-})
 EOF
 
 
@@ -316,7 +295,28 @@ augroup PythonSemshi
     autocmd ColorScheme,FileType python call s:ApplyPythonSemshiHighlights()
 augroup END
 
-
+lua <<EOF
+-- Document Highlight (Semshi-style occurrence highlighting)
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--     callback = function(ev)
+--         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--         if client and client.server_capabilities.documentHighlightProvider then
+--             local group = vim.api.nvim_create_augroup('LspDocumentHighlight', { clear = false })
+--             vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
+--             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+--                 group = group,
+--                 buffer = ev.buf,
+--                 callback = vim.lsp.buf.document_highlight,
+--             })
+--             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+--                 group = group,
+--                 buffer = ev.buf,
+--                 callback = vim.lsp.buf.clear_references,
+--             })
+--         end
+--     end,
+-- })
+EOF
 
 
 
