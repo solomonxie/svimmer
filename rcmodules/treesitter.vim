@@ -16,8 +16,18 @@ Plug 'nvim-treesitter/nvim-treesitter', {'tag': 'v0.10.0'}
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " NOTE: also check settings in `./vim/nvimrc.vim` to avoid conflicts
-set foldmethod=expr
-set foldexpr=v:lua.vim.treesitter.foldexpr()  "Do this if installed treesitter
+" Treesitter folding is powerful but can be very slow on large files.
+" We only enable it for files smaller than 100KB.
+augroup TreesitterFolding
+    autocmd!
+    autocmd BufReadPost,BufNewFile *
+        \ if getfsize(expand("<afile>")) < 100000 && getfsize(expand("<afile>")) != -2 |
+        \   setlocal foldmethod=expr |
+        \   setlocal foldexpr=v:lua.vim.treesitter.foldexpr() |
+        \ else |
+        \   setlocal foldmethod=indent |
+        \ endif
+augroup END
 
 
 " Post-Vimplug setup

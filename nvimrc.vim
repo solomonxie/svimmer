@@ -12,6 +12,11 @@
 let mapleader = ","
 " let maplocalleader = ""
 
+" Enable Byte-compilation for Lua modules (Neovim 0.9.1+)
+if has('nvim-0.9.1')
+    lua vim.loader.enable()
+endif
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                            INSTALL DEPENDENCIES                            "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

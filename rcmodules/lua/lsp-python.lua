@@ -13,7 +13,7 @@ vim.lsp.config('pylsp', {
             filetypes = {"python"},
             debounce = 100,
             single_file_support = true,
-            skip_token_initialization=true,
+            -- skip_token_initialization=true,
             -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             init_options = { lint = false },
             plugins = {
