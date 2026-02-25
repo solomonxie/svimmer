@@ -17,12 +17,13 @@ vim.lsp.config('pylsp', {
             -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             -- init_options = { lint = false },
             plugins = {
-                pylint =  { enabled = true, args = { "--rcfile", vim.fn.expand("~/myconf/dotfiles/etc/pylintrc") } },
-                flake8 = { enabled = true, config = vim.fn.expand("~/myconf/dotfiles/etc/flake8")  },
+                pylint =  { enabled = false, args = { "--rcfile", vim.fn.expand("~/myconf/dotfiles/etc/pylintrc") } },
+                flake8 = { enabled = false },
+                pylsp_flake8 = { enabled = false },
                 pylsp_mypy =  { enabled = false },
                 mypy =  { enabled = false },
-                pycodestyle =  { enabled = false },
-                pyflakes =  { enabled = false },
+                pycodestyle =  { enabled = true },
+                pyflakes =  { enabled = true },
                 jedi_completion = { enabled = true, include_params = true },  -- Important for completion
             },
             -- ^ Have to specifically everything "enabled=false" otherwise enabled by default
