@@ -15,10 +15,10 @@ vim.lsp.config('pylsp', {
             single_file_support = true,
             -- skip_token_initialization=true,
             -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
-            init_options = { lint = false },
+            -- init_options = { lint = false },
             plugins = {
-                pylint =  { enabled = false, args = { "--rcfile", vim.fn.expand("~/.config/pylintrc") } },
-                flake8 = { enabled = false, config = vim.fn.expand("~/.config/flake8")  },
+                pylint =  { enabled = true, args = { "--rcfile", vim.fn.expand("~/myconf/dotfiles/etc/pylintrc") } },
+                flake8 = { enabled = true, config = vim.fn.expand("~/myconf/dotfiles/etc/flake8")  },
                 pylsp_mypy =  { enabled = false },
                 mypy =  { enabled = false },
                 pycodestyle =  { enabled = false },
