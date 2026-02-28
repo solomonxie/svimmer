@@ -124,7 +124,7 @@ endfunction
     " autocmd ColorScheme * highlight NonText ctermbg=None
 
 " <Spell Check>
-    autocmd BufRead,BufNewFile *.txt,*.md setlocal spell spelllang=en,en_us,cjk
+    " autocmd BufRead,BufNewFile *.txt,*.md setlocal spell spelllang=en,en_us,cjk
     autocmd FileType gitcommit setlocal spell spelllang=en,en_us,cjk
 
 " <Length Marker>
@@ -220,7 +220,7 @@ local diagnostic_config = {
         source = "always",
         prefix = '●', -- Could be '■', '▎', 'x'
     },
-    signs = true,
+    signs = false,
     update_in_insert = false,
     underline = true,
     severity_sort = true,

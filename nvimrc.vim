@@ -146,6 +146,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
 " Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua

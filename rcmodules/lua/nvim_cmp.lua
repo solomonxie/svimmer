@@ -61,7 +61,7 @@ cmp.setup({
 })
 
 -- Settings for <cmp-spell>
-vim.opt.spell = true
+vim.opt.spell = false
 vim.opt.spelllang = { 'en_us' }
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
