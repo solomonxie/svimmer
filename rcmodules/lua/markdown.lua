@@ -2,7 +2,7 @@
 -- This configures Neovim to show a more "preview-like" version of Markdown files.
 
 -- Enable concealment to hide **bold**, _italic_, and `code` markers.
-vim.opt.conceallevel = 2
+vim.opt.conceallevel = 0
 
 -- Don't conceal in the current line while editing
 vim.opt.concealcursor = 'nc'
@@ -13,7 +13,9 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         -- Disable spell check for markdown
         vim.opt_local.spell = false
-
+        -- Enable concealment for this buffer
+        vim.opt_local.conceallevel = 0
+        
         -- BOLD: Bright Yellow/Gold to be unmistakable
         vim.cmd([[hi! markdownBold gui=bold cterm=bold guifg=#f9e2af ctermfg=222]])
         
