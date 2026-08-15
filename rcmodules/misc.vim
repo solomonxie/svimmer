@@ -117,6 +117,10 @@ Plug 'kizza/actionmenu.nvim', {'commit': 'e8d547b'}  "Popup Context Menu
 Plug 'solomonxie/nvim-marks', {'branch': 'master'}
 let g:nvim_marks_persistent_dir = expand('~/Documents/gdrive/nvim-marks')
 
+"REF: https://github.com/hashivim/vim-terraform
+" Syntax highlighting for Terraform
+Plug 'hashivim/vim-terraform'
+
 
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw
