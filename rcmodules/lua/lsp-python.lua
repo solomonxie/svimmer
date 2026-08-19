@@ -22,7 +22,7 @@ vim.lsp.config('pylsp', {
                 pylsp_flake8 = { enabled = false },
                 pylsp_mypy =  { enabled = false },
                 mypy =  { enabled = false },
-                pycodestyle =  { enabled = true },
+                pycodestyle =  { enabled = true, maxLineLength = 120 },
                 pyflakes =  { enabled = true },
                 jedi_completion = { enabled = true, include_params = true },  -- Important for completion
             },
