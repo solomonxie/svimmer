@@ -255,6 +255,9 @@ nnoremap K :lua vim.lsp.buf.hover({border = 'rounded'}) <CR>
 " nnoremap H :lua vim.lsp.buf.signature_help({border = 'rounded'}) <CR>
 nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 
+" :LspInfo is aliased to :checkhealth vim.lsp on nvim 0.11+; make sure `q` closes it
+autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<CR>
+
 
 
 " ============= End of File ==================
