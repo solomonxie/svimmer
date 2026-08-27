@@ -219,7 +219,7 @@ filetype plugin indent on
 set timeout
 set ttimeout
 set timeoutlen=1000
-set ttimeoutlen=0
+set ttimeoutlen=30
 "Word recognizing
 "set iskeyword-=_
 "[Auto reload current file]
