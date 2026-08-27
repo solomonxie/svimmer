@@ -283,11 +283,6 @@ function! s:ApplyPythonSemshiHighlights()
     " Special/Advanced Mappings
     hi! link DiagnosticUnused             semshiParameterUnused
     hi! link @lsp.mod.readonly.python     semshiGlobal
-
-    " Document Highlighting (Occurrences)
-    hi! link LspReferenceText            semshiSelected
-    hi! link LspReferenceRead            semshiSelected
-    hi! link LspReferenceWrite           semshiSelected
 endfunction
 
 augroup PythonSemshi
@@ -295,27 +290,67 @@ augroup PythonSemshi
     autocmd ColorScheme,FileType python call s:ApplyPythonSemshiHighlights()
 augroup END
 
+function! s:ApplyDocumentHighlightColors()
+    hi! link LspReferenceText  semshiSelected
+    hi! link LspReferenceRead  semshiSelected
+    hi! link LspReferenceWrite semshiSelected
+endfunction
+
+augroup DocumentHighlightColors
+    autocmd!
+    autocmd ColorScheme * call s:ApplyDocumentHighlightColors()
+augroup END
+call s:ApplyDocumentHighlightColors()
+
 lua <<EOF
--- Document Highlight (Semshi-style occurrence highlighting)
--- vim.api.nvim_create_autocmd('LspAttach', {
---     callback = function(ev)
---         local client = vim.lsp.get_client_by_id(ev.data.client_id)
---         if client and client.server_capabilities.documentHighlightProvider then
---             local group = vim.api.nvim_create_augroup('LspDocumentHighlight', { clear = false })
---             vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
---             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
---                 group = group,
---                 buffer = ev.buf,
---                 callback = vim.lsp.buf.document_highlight,
---             })
---             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
---                 group = group,
---                 buffer = ev.buf,
---                 callback = vim.lsp.buf.clear_references,
---             })
---         end
---     end,
--- })
+-- Document highlight (occurrences of word under cursor), debounced on
+-- CursorMoved instead of CursorHold so it's not tied to 'updatetime'.
+local HIGHLIGHT_DEBOUNCE_MS = 120
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if not (client and client.server_capabilities.documentHighlightProvider) then
+            return
+        end
+
+        local group = vim.api.nvim_create_augroup('LspDocumentHighlight', { clear = false })
+        vim.api.nvim_clear_autocmds({ group = group, buffer = ev.buf })
+
+        local timer = nil
+        local function schedule_highlight()
+            if timer then
+                timer:stop()
+                timer:close()
+            end
+            timer = vim.uv.new_timer()
+            timer:start(HIGHLIGHT_DEBOUNCE_MS, 0, vim.schedule_wrap(function()
+                timer = nil
+                vim.lsp.buf.document_highlight()
+            end))
+        end
+
+        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+            group = group,
+            buffer = ev.buf,
+            callback = function()
+                vim.lsp.buf.clear_references()
+                schedule_highlight()
+            end,
+        })
+        vim.api.nvim_create_autocmd('BufLeave', {
+            group = group,
+            buffer = ev.buf,
+            callback = function()
+                if timer then
+                    timer:stop()
+                    timer:close()
+                    timer = nil
+                end
+            end,
+        })
+    end,
+})
 EOF
 
 
