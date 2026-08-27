@@ -189,9 +189,6 @@ set sessionoptions-=folds      " do not store folds
 " set sessionoptions-=buffers      " do not store closed buffers with :bd
 " set sessionoptions=blank,buffers,curdir,tabpages,winsize,terminal
 
-"Avoid annoying continuation of comment (:help fo-table)
-autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
-
 " Avoid prompt to hit enter for every echo when it's not enough to show full msg
 set shortmess+=T
 set cmdheight=1
@@ -294,8 +291,8 @@ set hlsearch " Enable Highlighting all matches
 "Disable runtime matchit.vim (SLOW)
 let g:loaded_matchit = 1
 
-"Disable new line with comment
-autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
+"Disable new line with comment (FileType, so it wins over ftplugin's `fo+=cro`)
+autocmd FileType * setlocal formatoptions-=cro
 
 "<Buffer>
     "Change pwd/current-dir
