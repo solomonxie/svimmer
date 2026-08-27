@@ -7,9 +7,9 @@
 
 "Feature: Shwo diff inline
 "REF: https://github.com/airblade/vim-gitgutter
-Plug 'airblade/vim-gitgutter', {'commit': '0acb772'}
+Plug 'airblade/vim-gitgutter', {'commit': '90b7520'}
 
-set updatetime=100
+set updatetime=1000
 let g:gitgutter_enabled = 1
 let g:gitgutter_diff_base = 'HEAD'
 let g:gitgutter_max_signs = 500
