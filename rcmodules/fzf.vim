@@ -165,7 +165,7 @@ let g:fzf_action = {
 "     \   {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 " [Ag] disable matching file path
-" command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 
 " MUST BE PLACED AFTER SETTINGS
