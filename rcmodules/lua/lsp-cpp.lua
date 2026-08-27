@@ -6,6 +6,8 @@ if vim.fn.executable('clangd') ~= 1 then
 end
 
 vim.lsp.enable('clangd')
-vim.lsp.config('clangd', {})
+vim.lsp.config('clangd', {
+    init_options = { fallbackFlags = { '-std=c++20' } },
+})
 
 print('Loaded Lua config: C++')
