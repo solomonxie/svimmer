@@ -117,6 +117,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
         " source ~/myconf/dotfiles/vim/rcmodules/llm-gp.vim  "Ugly design, not easy to use
         " source ~/myconf/dotfiles/vim/rcmodules/llm-codecompanion.vim  "Not yet knowing how to autocomplete
+        " source ~/myconf/dotfiles/vim/rcmodules/llm-yetanotherpilot.vim
     "{Others}
         " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
 call plug#end()
