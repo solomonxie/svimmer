@@ -6,7 +6,8 @@
 let g:fzf_preview_window = ['right:40%', 'ctrl-/']  " up|down|left|right
 
 let $FZF_DEFAULT_OPTS='--layout=reverse --info=inline'
-" let $FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard || fd --type f --type l --hidden --follow"
+" .git/ and venv/ stay excluded via ~/.config/fd/ignore (etc/fd/ignore), even with --hidden
+let $FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard || fd --type f --type l --hidden --follow"
 " command! -bang -nargs=? -complete=dir Files
 "         \ call fzf#vim#files(<q-args>, { 'options': "--prompt '>' $FZF_DEFAULT_OPTS"}, <bang>0)
 
