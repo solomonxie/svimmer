@@ -90,7 +90,6 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/autopairs.vim  "Brakets/Quotes
         source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
     "{Language Servers - LSP}
-        source ~/myconf/dotfiles/vim/rcmodules/filetypes.vim  "Extensions nvim doesn't know by default
         " LSP
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
         source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
