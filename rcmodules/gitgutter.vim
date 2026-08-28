@@ -49,6 +49,10 @@ command! ChangeGitDiffBase let g:gitgutter_diff_base = 'master'
 " Aoivd hanging when loading big files
 autocmd BufEnter * call Disable_plugins()
 
+" Stop running at background, often cause error when lost focus
+autocmd FocusLost * GitGutterDisable
+autocmd FocusGained * GitGutterEnable
+
 function! Disable_plugins()
     if line('$') > 2000
         execute "GitGutterDisable"
