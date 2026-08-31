@@ -56,7 +56,7 @@ function! LoadVimrc()
 endfunction
 
 
-function! GetGitRemoteCodeReferenceLink()
+function! GetGithubLink(with_line)
     "Expected URL
         "https://github.com/user/repo/blob/master/path/to/script.py#L13"
     "Formatted string
@@ -64,10 +64,24 @@ function! GetGitRemoteCodeReferenceLink()
     let repo = trim(system("git remote get-url origin | sed \"s/^git@//; s/\.git$//\""))
     let branch = trim(system("git rev-parse --abbrev-ref HEAD"))
     let cwd = expand("%")
-    let lineno = line(".")
-    let url = "https://".repo."/blob/".branch."/".cwd."#L".lineno
+    let url = "https://".repo."/blob/".branch."/".cwd
+    if a:with_line
+        let url = url . "#L" . line(".")
+    endif
     let @+ = url
     echo "Copied: " url
+endfunction
+
+function! GetGitRemoteCodeReferenceLink()
+    call GetGithubLink(1)
+endfunction
+
+function! CopyGithubLink()
+    call GetGithubLink(0)
+endfunction
+
+function! GithubLinkCurrentLine()
+    call GetGithubLink(1)
 endfunction
 
 

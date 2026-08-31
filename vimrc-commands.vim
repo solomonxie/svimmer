@@ -43,6 +43,8 @@
 
 "<Git>------------------------------------------------------------------{
     command! RemoteGitFileReference call GetGitRemoteCodeReferenceLink()
+    command! CopyGithubLink call CopyGithubLink()
+    command! GithubLinkCurrentLine call GithubLinkCurrentLine()
     command! OpenChangedFiles :call EditChangedFiles()<CR>
 "}
 
