@@ -63,8 +63,8 @@ function! GetGithubLink(with_line)
         "https://${REPO}/blob/${BRANCH}/${FILEPATH}#{LINE-NUMBER}"
     let repo_url = trim(system("git remote get-url origin | sed -E 's#^git@([^:]+):#https://\\1/#; s#\\.git$##'"))
     let branch = trim(system("git rev-parse --abbrev-ref HEAD"))
-    let cwd = expand("%")
-    let url = repo_url."/blob/".branch."/".cwd
+    let relpath = trim(system("git ls-files --full-name " . shellescape(expand("%:p"))))
+    let url = repo_url."/blob/".branch."/".relpath
     if a:with_line
         let url = url . "#L" . line(".")
     endif
