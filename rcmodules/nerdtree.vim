@@ -15,7 +15,15 @@ Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'
 nnoremap <Leader>f :NERDTree<CR>
 " nnoremap <Leader>F :NERDTreeFind<CR>zz
 " nnoremap FF :NERDTree<CR>
-nnoremap ff :<C-U>NERDTreeFind<CR>zz
+nnoremap ff :<C-U>call NerdTreeFindOrRoot()<CR>zz
+
+function! NerdTreeFindOrRoot()
+    if empty(expand('%'))
+        NERDTree
+    else
+        NERDTreeFind
+    endif
+endfunction
 " nnoremap <Leader>F :NERDTree %:p:h<CR>
 " Add '%' for changing root accordingly
 "nnoremap <Leader>f :NERDTree %:p:h<CR>
