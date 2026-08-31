@@ -61,15 +61,15 @@ function! GetGithubLink(with_line)
         "https://github.com/user/repo/blob/master/path/to/script.py#L13"
     "Formatted string
         "https://${REPO}/blob/${BRANCH}/${FILEPATH}#{LINE-NUMBER}"
-    let repo = trim(system("git remote get-url origin | sed \"s/^git@//; s/\.git$//\""))
+    let repo_url = trim(system("git remote get-url origin | sed -E 's#^git@([^:]+):#https://\\1/#; s#\\.git$##'"))
     let branch = trim(system("git rev-parse --abbrev-ref HEAD"))
     let cwd = expand("%")
-    let url = "https://".repo."/blob/".branch."/".cwd
+    let url = repo_url."/blob/".branch."/".cwd
     if a:with_line
         let url = url . "#L" . line(".")
     endif
     let @+ = url
-    echo "Copied: " url
+    echo "Copied Github Link"
 endfunction
 
 function! GetGitRemoteCodeReferenceLink()
