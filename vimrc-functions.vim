@@ -76,7 +76,7 @@ function! GetGitRemoteCodeReferenceLink()
     call GetGithubLink(1)
 endfunction
 
-function! CopyGithubLink()
+function! GithubLink()
     call GetGithubLink(0)
 endfunction
 
