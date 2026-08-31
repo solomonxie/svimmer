@@ -372,16 +372,27 @@ function! ToggleVerbose()
 endfunction
 
 
-function! SendContextToAI() range
-    " Send current file path + line (or visual line range) to the tmux pane
-    " on the right, so Claude Code has context and you can type a question after it.
+function! SendContextToAI(...) range
+    " Send current file path + line (or visual line range), plus an optional
+    " trailing message, to the tmux pane on the right.
     if a:firstline == a:lastline
         let l:loc = expand('%') . ':L' . a:firstline
     else
         let l:loc = expand('%') . ':L' . a:firstline . '-' . a:lastline
     endif
-    let l:msg = 'Context: ' . l:loc . "\n"
+    let l:msg = 'Context: ' . l:loc
+    let l:has_question = a:0 > 0 && a:1 !=# ''
+    if l:has_question
+        let l:msg .= "\n" . a:1
+    else
+        let l:msg .= "\n"
+    endif
     call system('tmux send-keys -t "{right-of}" -l ' . shellescape(l:msg))
+    if l:has_question
+        " A pasted "\n" just inserts a line break in the prompt box, it
+        " doesn't submit — send a real Enter keystroke to ask right away.
+        call system('tmux send-keys -t "{right-of}" Enter')
+    endif
     call system('tmux select-pane -t "{right-of}"')
 endfunction
 

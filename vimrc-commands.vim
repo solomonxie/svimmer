@@ -50,7 +50,7 @@
 
 
 "<Claude>-----------------------------------------------------------------{
-    command! -range AskAI <line1>,<line2>call SendContextToAI()
+    command! -range -nargs=* AskAI <line1>,<line2>call SendContextToAI(<q-args>)
 "}
 
 
