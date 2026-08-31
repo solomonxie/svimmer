@@ -45,7 +45,7 @@
     command! RemoteGitFileReference call GetGitRemoteCodeReferenceLink()
     command! GithubLink call GithubLink()
     command! GithubLinkCurrentLine call GithubLinkCurrentLine()
-    command! OpenChangedFiles :call EditChangedFiles()<CR>
+    command! OpenChangedFiles call EditChangedFiles()
 "}
 
 
