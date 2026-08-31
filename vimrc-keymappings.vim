@@ -168,6 +168,11 @@ nnoremap <Leader>tq :windo bdelete<CR>
 
 noremap <A-c> <C-w>c
 
+" Send current line (normal) or selection (visual) as context to AI pane,
+" no trailing message so it doesn't auto-submit.
+nnoremap <Leader>i :call SendContextToAI()<CR>
+vnoremap <Leader>i :call SendContextToAI()<CR>
+
 nnoremap \\ :echo expand('%')<CR>
 " nnoremap tf :Cwd<CR>
 " nnoremap tc :CwdCopy<CR>
