@@ -50,7 +50,7 @@
 
 
 "<Claude>-----------------------------------------------------------------{
-    command! -range ClaudeAsk <line1>,<line2>call SendContextToClaude()
+    command! -range AskAI <line1>,<line2>call SendContextToAI()
 "}
 
 
