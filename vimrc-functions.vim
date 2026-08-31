@@ -372,10 +372,15 @@ function! ToggleVerbose()
 endfunction
 
 
-function! SendContextToClaude()
-    " Send current file path + line number to the tmux pane on the right,
-    " so Claude Code has context and you can type a question after it.
-    let l:msg = 'Context: ' . expand('%') . ':' . line('.') . "\n"
+function! SendContextToClaude() range
+    " Send current file path + line (or visual line range) to the tmux pane
+    " on the right, so Claude Code has context and you can type a question after it.
+    if a:firstline == a:lastline
+        let l:loc = expand('%') . ':L' . a:firstline
+    else
+        let l:loc = expand('%') . ':L' . a:firstline . '-' . a:lastline
+    endif
+    let l:msg = 'Context: ' . l:loc . "\n"
     call system('tmux send-keys -t "{right-of}" -l ' . shellescape(l:msg))
 endfunction
 
