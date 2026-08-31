@@ -47,6 +47,11 @@
 "}
 
 
+"<Claude>-----------------------------------------------------------------{
+    command! ClaudeAsk call SendContextToClaude()
+"}
+
+
 "<Spelling>---------------------------------------------------------{
     command! SpellCheck01On  setlocal spell spelllang=en,en_us,cjk
     command! SpellCheck02Off setlocal nospell

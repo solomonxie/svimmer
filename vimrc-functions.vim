@@ -358,5 +358,12 @@ function! ToggleVerbose()
 endfunction
 
 
+function! SendContextToClaude()
+    " Send current file path + line number to the tmux pane on the right,
+    " so Claude Code has context and you can type a question after it.
+    let l:msg = 'Context: ' . expand('%') . ':' . line('.') . "\n"
+    call system('tmux send-keys -t "{right-of}" -l ' . shellescape(l:msg))
+endfunction
+
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw
