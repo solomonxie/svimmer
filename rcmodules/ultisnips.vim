@@ -1,3 +1,8 @@
+" DISABLED for now: not sourced from nvimrc.vim anymore, replaced by the
+" custom engine in snippets.vim + lua/snippets.lua. Kept here for reference /
+" in case it's worth reviving (e.g. for its `!p` Python interpolation, which
+" the replacement doesn't support).
+
 " REF: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
 Plug 'SirVer/ultisnips', {'commit': 'b22a86f', 'on': []}  " Track the engine. Lazy-loaded on InsertEnter (saves ~54ms off startup).
 

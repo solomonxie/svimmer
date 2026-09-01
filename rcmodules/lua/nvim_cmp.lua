@@ -11,10 +11,7 @@ cmp.setup({
     snippet = {
         -- REQUIRED - you must specify a snippet engine
         expand = function(args)
-            -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-            -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-            vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+            vim.snippet.expand(args.body) -- Neovim's built-in engine, see rcmodules/lua/snippets.lua
         end,
     },
     -- Order matters: decides suggestion order
@@ -22,7 +19,7 @@ cmp.setup({
     sources = cmp.config.sources(
         {
             { name = 'nvim_lsp', priority = 1000 },  -- Any LSP installed by Mason will be used
-            { name = 'ultisnips', priority = 900 },
+            { name = 'my_snippets', priority = 900 },  -- rcmodules/lua/snippets.lua, over mysnippets/
             { name = 'buffer', priority = 500 },
             -- { name = 'cmdline', priority = 500 },  -- Buggy
             -- { name = 'omni', priority = 500 },  -- Vim native Omnifunc, slow
