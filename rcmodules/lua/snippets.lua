@@ -3,7 +3,10 @@
 -- Expands via Neovim's built-in vim.snippet (LSP snippet syntax): supports
 -- $1 / ${1:default} tabstops and this engine's own ${VISUAL:default}.
 
-local snippets_dir = vim.fn.expand('~/myconf/dotfiles/vim/mysnippets')
+-- mysnippets/ sits next to rcmodules/, derive its path from this file's own
+-- location instead of hardcoding the dotfiles repo path.
+local this_file = debug.getinfo(1, 'S').source:sub(2)
+local snippets_dir = vim.fn.fnamemodify(this_file, ':h:h:h') .. '/mysnippets'
 local cache = {}
 local last_visual = nil
 
