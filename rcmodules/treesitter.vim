@@ -13,7 +13,7 @@
 Plug 'nvim-treesitter/nvim-treesitter', {'tag': 'v0.10.0'}
 " Plug 'nvim-treesitter/playground'
 
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'commit': '5ca4aaa6efdcc59be46b95a3e876300cfead05ef'}
 
 " NOTE: also check settings in `./vim/nvimrc.vim` to avoid conflicts
 " Treesitter folding is powerful but can be very slow on large files.

@@ -18,7 +18,7 @@ Plug 'tpope/vim-commentary', {'commit': '64a654e'}  "Blazing fast!!
 autocmd FileType sql setlocal commentstring=--\ %s
 
 "REF: https://github.com/bronson/vim-trailing-whitespace
-Plug 'bronson/vim-trailing-whitespace'
+Plug 'bronson/vim-trailing-whitespace', {'commit': '5540b3f'}
 
 "REF: https://github.com/wsdjeg/vim-fetch
 " Plug 'wsdjeg/vim-fetch'  "Open/Edit file from reference: /path/to/file:190:3
@@ -119,7 +119,7 @@ let g:nvim_marks_persistent_dir = expand('~/Documents/gdrive/nvim-marks')
 
 "REF: https://github.com/hashivim/vim-terraform
 " Syntax highlighting for Terraform
-Plug 'hashivim/vim-terraform'
+Plug 'hashivim/vim-terraform', {'commit': '520498f'}
 
 
 " ============= End of File ==================
