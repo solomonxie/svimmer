@@ -1,5 +1,5 @@
 " REF: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
-Plug 'SirVer/ultisnips', {'commit': 'b22a86f'}  " Track the engine.
+Plug 'SirVer/ultisnips', {'commit': 'b22a86f', 'on': []}  " Track the engine. Lazy-loaded on InsertEnter (saves ~54ms off startup).
 
 " REF: https://github.com/honza/vim-snippets
 Plug 'honza/vim-snippets', {'commit': 'ededcf7'}  " Snippets are separated from the engine.
@@ -21,10 +21,10 @@ let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=[expand('~/vim_plugged/vim-snippets/UltiSnips/'), expand('~/myconf/dotfiles/vim/mysnippets')]
 
 " [  Lazy Load Plugins  ]-----------{
-    " augroup load_ultisnips
-    "     autocmd!
-    "     autocmd InsertEnter * call plug#load('ultisnips') | autocmd! load_ultisnips
-    " augroup END
+    augroup load_ultisnips
+        autocmd!
+        autocmd InsertEnter * ++once call plug#load('ultisnips', 'cmp-nvim-ultisnips')
+    augroup END
 " }
 
 

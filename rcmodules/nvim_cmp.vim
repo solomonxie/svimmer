@@ -12,7 +12,7 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-omni'
 " Plug 'f3fora/cmp-spell'
 " Plug 'dmitmel/cmp-cmdline-history'
-Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips', {'on': []}  " Lazy-loaded on InsertEnter, see ultisnips.vim (saves ~54ms off startup)
 " Plug 'uga-rosa/cmp-dictionary'
 Plug 'ray-x/cmp-treesitter'
 
