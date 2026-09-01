@@ -85,6 +85,7 @@ endfunction
     " autocmd FileType vista call SetSyntax()
     autocmd BufRead *.json.gz set filetype=json
     autocmd BufRead *.sh,envfile*,.bashrc*,.zshrc* set filetype=bash
+    autocmd BufRead,BufNewFile *.snippets set filetype=snippets
     autocmd BufRead *.ini,*rc,*.service,*.conf,*.config,*.cfg set syntax=config  "or syntax=config
     autocmd BufRead requirements*.txt set syntax=requirements
 
