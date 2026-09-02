@@ -100,6 +100,10 @@ onoremap <Del> <ESC>
 cnoremap <Del> <ESC>
 tnoremap <Del> <ESC>
 
+" Ctrl-z in Terminal-mode goes to the embedded job (e.g. tig suspends itself)
+" instead of nvim; exit terminal-mode and suspend nvim like Normal-mode does
+tnoremap <C-z> <C-\><C-n>:suspend<CR>
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                            LEADER KEY MAPPINGS                             "
@@ -263,6 +267,58 @@ nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 " :LspInfo is aliased to :checkhealth vim.lsp on nvim 0.11+; make sure `q` closes it
 autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<CR>
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                Plugin Keys                                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"vim/rcmodules/misc.vim
+" map <LocalLeader>d
+" plugin defaults, not set by me: m=nvim-marks (overrides built-in set-mark), ds/cs/cS/ys/yS/yss/ySs/ySS=vim-surround, S/gS(visual)/<C-s>(insert)=vim-surround, gc/gcc/gcu=vim-commentary, */#(visual)=vim-visual-star-search, <Leader>bd=bclose.vim
+
+"vim/rcmodules/hop.vim
+" map fw
+
+"vim/rcmodules/nerdtree.vim
+" map <Leader>f, map ff
+" plugin defaults, not set by me (buffer-local inside NERDTree window): o/t/T/i/s/x/X/m/r/R/D/C/u/?/q ... see :help NERDTreeMappings
+
+"vim/after/ftplugin/netrw.vim
+" map o, map p, map q, map qq (buffer-local, netrw filetype)
+
+"vim/rcmodules/netrw.vim
+" map q (buffer-local, close netrw)
+" plugin defaults, not set by me (buffer-local inside netrw window): -/%/d/D/R/mf/mt/mc ... see :help netrw-quickmap
+
+"vim/rcmodules/tagbar.vim
+" map ft, map g], map g[
+" plugin defaults, not set by me (buffer-local inside Tagbar window): see :help tagbar-keys
+
+"vim/rcmodules/fzf.vim
+" map fd, map fa, map fb, map fc, map fm, map FD, map FA
+" plugin defaults, not set by me (inside fzf popup): Ctrl-t/Ctrl-x/Ctrl-v=tab/split/vsplit, Ctrl-/=toggle preview ... see :help fzf-vim-mappings
+
+"vim/rcmodules/anyjump.vim
+" map fu
+" (plugin's own default keybindings explicitly disabled via g:any_jump_disable_default_keybindings)
+
+"vim/rcmodules/autopairs.vim
+" no maps set directly here (options only)
+" plugin defaults, not set by me (insert mode): <M-p>=toggle, <M-e>=fast-wrap, <M-n>=jump, <M-b>=back-insert
+
+"vim/rcmodules/tig.vim
+" map gt
+" plugin defaults, not set by me (buffer-local inside Tig window): e/<C-o>/<C-t>/<C-s>/<C-v>=open entry, <ESC>o/t/s/v=open commit ... see g:tig_explorer_keymap_*
+
+"vim/rcmodules/gitgutter.vim
+" map gz, map gp, map gn, map gP
+" plugin defaults, not set by me (buffer-local): [c/]c=prev/next hunk, <Leader>hs=stage hunk, <Leader>hu=undo hunk, <Leader>hp=preview hunk, ic/ac=hunk text-object
+
+"vim/rcmodules/lua/snippets.lua
+" map <C-k> (insert/select/visual, expand or wrap), <C-j> (insert/select, jump back)
+
+"vim/rcmodules/lua/nvim_cmp.lua
+" map <Tab>, <C-l>, <C-p>, <C-n> (insert mode, completion menu)
+" plugin defaults, not set by me (cmp.mapping.preset.insert, insert mode): <C-y>=confirm, <C-e>=abort (commented out in my override table, but preset default still applies)
 
 
 " ============= End of File ==================
