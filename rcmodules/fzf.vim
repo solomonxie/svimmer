@@ -79,9 +79,9 @@ endfunction
 nnoremap fd :Files<CR>
 nnoremap fa :Ag<CR>
 nnoremap fb :Buffers<CR>
-nnoremap fl :BLines<CR>
-nnoremap ft :BTags<CR>
-nnoremap fh :History:<CR>
+" nnoremap fl :BLines<CR>
+" nnoremap ft :BTags<CR>
+" nnoremap fh :History:<CR>
 nnoremap fc :History:<CR>
 nnoremap fm :Marks<CR>
 " nnoremap tc :History:<CR>

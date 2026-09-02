@@ -32,7 +32,7 @@ inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vnoremap br "1y:bufdo %s/<C-r>1/<C-r>1/ge \| update
 " nnoremap fw /<C-r>+<CR>
-nnoremap fw :call SearchInFile('<C-r>+')<CR>
+" nnoremap fw :call SearchInFile('<C-r>+')<CR>
 
 " Centralize
 " nnoremap n nzzzv
@@ -51,7 +51,7 @@ nnoremap g* #<C-O>:%s///gn<CR>
 
 vnoremap r "1y:%s#<C-r>1#<C-r>1#gc<Left><Left><Left>*<BS>
 vnoremap R :call ReplaceSelection()<CR>
-vnoremap f "1y :Rg <C-r>1<CR>
+" vnoremap f "1y :Rg <C-r>1<CR>
 
 nnoremap Y y$
 
