@@ -227,7 +227,8 @@ set autoread
 au FocusGained,BufEnter * :checktime
 
 " Fix ":" auto-filling a huge range like .,.+2143 -> E16 on :q/:wq after refocus
-au FocusGained * call feedkeys("\<C-\>\<C-n>", 'n')
+" Skip terminal buffers (tig/fzf/lazygit etc) so refocus doesn't kick them out of Terminal-mode
+au FocusGained * if &buftype !=# 'terminal' | call feedkeys("\<C-\>\<C-n>", 'n') | endif
 
 " Automatically set view in the center when jump to the matches
 " https://vim.fandom.com/wiki/Make_search_results_appear_in_the_middle_of_the_screen
