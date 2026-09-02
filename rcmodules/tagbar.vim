@@ -5,7 +5,7 @@
 Plug 'majutsushi/tagbar', {'on': ['TagbarToggle', 'TagbarJumpNext', 'TagbarJumpPrev'], 'commit': '7bfffca'}
 
 " >> KEY MAPPINGS
-noremap gt :TagbarToggle<CR>
+noremap ft :TagbarToggle<CR>
 noremap g] :TagbarJumpNext<CR>
 noremap g[ :TagbarJumpPrev<CR>
 
