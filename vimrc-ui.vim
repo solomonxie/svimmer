@@ -283,7 +283,9 @@ function! s:ApplyPythonSemshiHighlights()
     hi! link @lsp.type.property.python    semshiAttribute
     " Special/Advanced Mappings
     hi! link DiagnosticUnused             semshiParameterUnused
-    hi! link @lsp.mod.readonly.python     semshiGlobal
+    " Not linked: @lsp.mod.readonly.python would overlay on top of the type
+    " highlight (e.g. params/locals never reassigned), clobbering param blue
+    " with global orange/yellow for every non-reassigned name.
 endfunction
 
 augroup PythonSemshi
@@ -357,4 +359,4 @@ EOF
 
 
 " ============= End of File ==================
-echom 'Loaded ' . expand('<sfile>:t') |redraw
+" echom 'Loaded ' . expand('<sfile>:t') |redraw

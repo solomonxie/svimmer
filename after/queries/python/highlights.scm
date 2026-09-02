@@ -26,10 +26,6 @@
 
 (import_from_statement
   name: (dotted_name (identifier) @module.imported))
-;; Module/Class usage in expressions (heuristic)
-((attribute
-  object: (identifier) @module)
-  (#not-match? @module "^(self|cls)$"))
 
 ;; Bare string statements """...""" used as comments (not docstrings, not assigned)
 (expression_statement (string) @comment)
