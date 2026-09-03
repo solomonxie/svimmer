@@ -122,6 +122,8 @@ function! SaveSessionSimple()
     endfor
     " Record others
     call add(steps, 'edit ' . expand('#'. bufnr('%') .':b'))  "Set focused file
+    call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
+    call add(steps, 'normal! zz')  "Center view on restored cursor line
     call add(steps, 'silent exe "bwipe " . s:wipebuf')  "Remove initial/empty buffer
     " echom 'Steps: ' . string(steps)
     if len(steps) > 0
