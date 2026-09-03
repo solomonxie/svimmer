@@ -5,9 +5,11 @@
 (function_definition
   name: (identifier) @function)
 
-;; Function calls
+;; Function calls (lower priority than base query's builtin-function list,
+;; so e.g. __import__()/open() keep @function.builtin's color instead of this)
 (call
-  function: (identifier) @function.call)
+  function: (identifier) @function.call
+  (#set! "priority" 95))
 
 ;; Function parameters
 (parameters
