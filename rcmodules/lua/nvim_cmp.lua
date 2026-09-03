@@ -4,6 +4,22 @@
 
 local cmp = require('cmp')
 
+-- Confirm the entry, then re-trigger completion if it inserted a path ending
+-- in `/` (selecting a folder) — otherwise you'd have to delete and retype
+-- the `/` to see that folder's contents.
+local function confirm_and_reopen_dir(opts)
+    return function()
+        cmp.confirm(vim.tbl_extend('force', { behavior = cmp.ConfirmBehavior.Replace }, opts))
+        vim.schedule(function()
+            local col = vim.api.nvim_win_get_cursor(0)[2]
+            local line = vim.api.nvim_get_current_line()
+            if line:sub(col, col) == '/' then
+                cmp.complete()
+            end
+        end)
+    end
+end
+
 -- Setup nvim-cmp.
 -- vim.opt.completeopt = 'menu,menuone,noinsert,noselect'
 cmp.setup({
@@ -43,16 +59,24 @@ cmp.setup({
         }
     ),
     mapping = cmp.mapping.preset.insert({
-        ['<Tab>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = false}),
-        ['<C-l>'] = cmp.mapping.complete(),
+        -- <Tab> intentionally left unmapped, avoid conflict with other autocompletion (e.g. Copilot)
+        ['<C-l>'] = cmp.mapping(confirm_and_reopen_dir({ select = true }), { 'i', 's' }),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         -- Less used:
         -- ['<C-b>'] = cmp.mapping.scroll_docs(-4),
         -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
         -- ['<C-e>'] = cmp.mapping.abort(),
-        -- Disable: <Enter> or <Space> for candidate selection, conflict with enter for newline
-        -- ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        -- Only confirms when an entry is actually highlighted (via <C-n>/<C-p>),
+        -- so plain <CR> still inserts a newline the rest of the time.
+        ['<CR>'] = cmp.mapping(function(fallback)
+            if cmp.visible() and cmp.get_selected_entry() then
+                confirm_and_reopen_dir({ select = false })()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        -- Disable: <Space> for candidate selection, conflict with space for actual space char
         -- ['<Space>'] = cmp.mapping.confirm({ select = false }),
     }),
 })

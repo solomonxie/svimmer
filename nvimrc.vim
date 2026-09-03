@@ -198,7 +198,7 @@ set cmdheight=1
 
 filetype plugin on
 set omnifunc=syntaxcomplete#Complete
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone,noinsert,noselect
 " Bugfix for insert mode in SQL file:
 " SQLComplete, The dbext plugin must be loaded for dynamic SQL completion -->
 let g:omni_sql_default_compl_type = 'syntax'
