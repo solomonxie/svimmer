@@ -4,12 +4,7 @@
 
 local cmp = require('cmp')
 
--- After confirming a completion that inserted a path ending in `/`
--- (selecting a folder), re-trigger completion so its contents show up right
--- away — otherwise you'd have to delete and retype the `/` to see them.
--- Hooked on CompleteDone (fires for any confirm: <C-l>, <CR>, mouse click)
--- rather than wrapping each mapping, and deferred a tick so cmp's own
--- text-edit/cursor-move from the confirm has fully settled first.
+-- Selecting a folder (ends in `/`) re-triggers completion to show its contents.
 vim.api.nvim_create_autocmd('CompleteDone', {
     callback = function()
         local word = (vim.v.completed_item or {}).word
