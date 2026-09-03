@@ -4,21 +4,22 @@
 
 local cmp = require('cmp')
 
--- Confirm the entry, then re-trigger completion if it inserted a path ending
--- in `/` (selecting a folder) — otherwise you'd have to delete and retype
--- the `/` to see that folder's contents.
-local function confirm_and_reopen_dir(opts)
-    return function()
-        cmp.confirm(vim.tbl_extend('force', { behavior = cmp.ConfirmBehavior.Replace }, opts))
-        vim.schedule(function()
-            local col = vim.api.nvim_win_get_cursor(0)[2]
-            local line = vim.api.nvim_get_current_line()
-            if line:sub(col, col) == '/' then
+-- After confirming a completion that inserted a path ending in `/`
+-- (selecting a folder), re-trigger completion so its contents show up right
+-- away — otherwise you'd have to delete and retype the `/` to see them.
+-- Hooked on CompleteDone (fires for any confirm: <C-l>, <CR>, mouse click)
+-- rather than wrapping each mapping, and deferred a tick so cmp's own
+-- text-edit/cursor-move from the confirm has fully settled first.
+vim.api.nvim_create_autocmd('CompleteDone', {
+    callback = function()
+        local word = (vim.v.completed_item or {}).word
+        if word and word:sub(-1) == '/' then
+            vim.defer_fn(function()
                 cmp.complete()
-            end
-        end)
-    end
-end
+            end, 20)
+        end
+    end,
+})
 
 -- Setup nvim-cmp.
 -- vim.opt.completeopt = 'menu,menuone,noinsert,noselect'
@@ -60,7 +61,7 @@ cmp.setup({
     ),
     mapping = cmp.mapping.preset.insert({
         -- <Tab> intentionally left unmapped, avoid conflict with other autocompletion (e.g. Copilot)
-        ['<C-l>'] = cmp.mapping(confirm_and_reopen_dir({ select = true }), { 'i', 's' }),
+        ['<C-l>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         -- Less used:
@@ -71,7 +72,7 @@ cmp.setup({
         -- so plain <CR> still inserts a newline the rest of the time.
         ['<CR>'] = cmp.mapping(function(fallback)
             if cmp.visible() and cmp.get_selected_entry() then
-                confirm_and_reopen_dir({ select = false })()
+                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
             else
                 fallback()
             end
