@@ -70,8 +70,8 @@ inoremap ? ?<C-g>u
 " inoremap <Space> <Space><C-g>u
 
 " Buffer Movement
-nnoremap - :bprev<CR>:echo expand('%')<CR>
-nnoremap = :bnext<CR>:echo expand('%')<CR>
+nnoremap - :bprev<CR>:echo pathshorten(expand('%'))<CR>
+nnoremap = :bnext<CR>:echo pathshorten(expand('%'))<CR>
 
 " ESC replacement
 inoremap ,. <Esc>:nohl<CR><ESC>
