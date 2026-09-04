@@ -18,6 +18,11 @@ require('mason').setup({
 
 require('mason-lspconfig').setup({
   ensure_installed = my_lsp_servers,
+  -- v2 defaults this to true, auto-enabling *any* Mason-installed server
+  -- (not just ones above) -- e.g. it silently resurrected a leftover
+  -- lua-language-server install. The loop below already does enabling
+  -- explicitly for the servers we actually want.
+  automatic_enable = false,
 })
 -- ^ IF GOT ERROR, run :MasonInstall <LSP_NAME> or :Mason
 -- then manually select lsp serers

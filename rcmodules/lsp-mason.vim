@@ -10,7 +10,7 @@ Plug 'mason-org/mason.nvim', {'tag': 'v2.2.1'}
 
 " DEPs:
 " REF: https://github.com/mason-org/mason-lspconfig.nvim
-Plug 'mason-org/mason-lspconfig.nvim', {'tag': 'v1.32.0'}  "Auto install/enable/configure multiple LSPs
+Plug 'mason-org/mason-lspconfig.nvim', {'tag': 'v2.3.0'}  "Auto install/enable/configure multiple LSPs
 Plug 'neovim/nvim-lspconfig', {'tag': 'v2.5.0'}
 
 " All pre-enabled LSPs are defined here:
