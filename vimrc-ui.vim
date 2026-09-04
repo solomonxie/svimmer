@@ -256,7 +256,7 @@ function! s:ApplyPythonSemshiHighlights()
     hi! link @variable.parameter.python semshiParameter
     hi! link @function          semshiGlobal
     hi! link @function.builtin  semshiBuiltin
-    hi! link @function.call     semshiGlobal
+    hi! link @function.call     Normal
     hi! link @function.python   semshiGlobal
     hi! link @method            semshiAttribute
     hi! link @method.call       semshiAttribute
