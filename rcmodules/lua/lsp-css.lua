@@ -4,5 +4,3 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 vim.lsp.config('cssls', {
   capabilities = capabilities,
 })
-
-print('Loaded Lua config: cssls')

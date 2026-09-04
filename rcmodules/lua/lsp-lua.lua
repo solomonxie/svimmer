@@ -38,5 +38,3 @@ vim.lsp.config('lua_ls', {
         },
     }
 })
-
-print('Loaded Lua config: lua_ls')

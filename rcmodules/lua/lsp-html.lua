@@ -14,5 +14,3 @@ vim.lsp.config('emmet_ls', {
       },
     }
 })
-
-print('Loaded Lua config: html')

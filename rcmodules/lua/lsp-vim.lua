@@ -29,5 +29,3 @@ vim.lsp.config('vimls', {
         }
     }
 })
-
-print('Loaded Lua config: vim')

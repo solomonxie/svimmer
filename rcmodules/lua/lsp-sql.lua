@@ -11,5 +11,3 @@ vim.lsp.config('sqlls', {
     settings = {
     }
 })
-
-print('Loaded Lua config: sql')

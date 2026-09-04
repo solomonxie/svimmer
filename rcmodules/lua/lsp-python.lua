@@ -30,5 +30,3 @@ vim.lsp.config('pylsp', {
         }
     }
 })
-
-print('Loaded Lua config: python')

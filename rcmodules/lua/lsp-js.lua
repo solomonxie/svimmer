@@ -11,5 +11,3 @@ vim.lsp.config('ts_ls', {
         }
     }
 })
-
-print('Loaded Lua config: js')

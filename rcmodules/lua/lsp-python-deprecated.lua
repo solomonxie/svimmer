@@ -132,5 +132,3 @@ vim.lsp.config('diagnosticls', {
         },
     }
 })
-
-print('Loaded Lua config: python')

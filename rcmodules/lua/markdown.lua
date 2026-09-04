@@ -49,5 +49,3 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.cmd([[hi! markdownUrl gui=italic cterm=italic guifg=#6c7086 ctermfg=243]])
     end
 })
-
-print('Loaded Lua config: markdown.lua')

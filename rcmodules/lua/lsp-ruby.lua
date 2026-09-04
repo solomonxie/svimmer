@@ -84,5 +84,3 @@ vim.lsp.config('solargraph', {
 -- end
 
 -- lspconfig.ruby_lsp.setup({ on_attach = on_attach, capabilities = capabilities })
-
-print('Loaded Lua config: ruby')

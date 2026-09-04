@@ -9,5 +9,3 @@ vim.lsp.enable('clangd')
 vim.lsp.config('clangd', {
     init_options = { fallbackFlags = { '-std=c++20' } },
 })
-
-print('Loaded Lua config: C++')

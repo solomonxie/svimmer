@@ -156,5 +156,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.keymap.set('n', 'ft', M.toggle, { silent = true })
-
-print('Loaded Lua config: nvim-lsp-tagbar.lua')
