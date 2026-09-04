@@ -6,8 +6,9 @@ local my_lsp_servers = {
     'cssls',
     'sqlls',
     'emmet_ls',  --HTML
-    'clangd',
+    'clangd',  -- C, C++
     'lua_ls',
+    'gopls',  -- Go
 }
 
 require('mason').setup({
@@ -25,5 +26,3 @@ for _, lsp in ipairs(my_lsp_servers) do
     vim.lsp.enable(lsp)  --New syntax after nvim v0.11
     vim.lsp.config(lsp, {})  --New syntax after nvim v0.11
 end
-
-print('Loaded Lua config: lua-mason.lua')

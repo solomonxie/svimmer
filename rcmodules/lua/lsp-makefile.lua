@@ -9,5 +9,3 @@ vim.lsp.config('autotools_ls', {
   root_markers = { 'Makefile', 'configure.ac', '.git' },
 })
 vim.lsp.enable('autotools_ls')
-
-print('Loaded Lua config: lsp-makefile.lua')
