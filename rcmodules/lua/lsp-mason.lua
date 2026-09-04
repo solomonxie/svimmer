@@ -7,8 +7,9 @@ local my_lsp_servers = {
     'sqlls',
     'emmet_ls',  --HTML
     'clangd',  -- C, C++
-    'lua_ls',
     'gopls',  -- Go
+    -- 'lua_ls',  -- super slow, 18s+ to load (it analyzes whole repo on first load)
+    'emmylua_ls',  -- Lua, Rust-based replacement for lua_ls; see vim/.emmyrc.json
 }
 
 require('mason').setup({

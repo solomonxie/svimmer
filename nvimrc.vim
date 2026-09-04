@@ -143,7 +143,6 @@ endfor
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-lua.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
