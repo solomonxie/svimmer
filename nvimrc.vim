@@ -150,7 +150,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
-" Own minimal LSP symbol bar, replaces outline.vim/tagbar.vim/vista.vim
+" Own minimal LSP symbol bar, replaces outline/tagbar/vista
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim-lsp-tagbar.lua
 " Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
