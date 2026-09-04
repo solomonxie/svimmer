@@ -4,7 +4,8 @@
 
 local cmp = require('cmp')
 
--- Selecting a folder (ends in `/`) re-triggers completion to show its contents.
+-- Path completion fix:
+-- Selecting a folder (ends in `/`) --> ctrl-n to select, then <Enter> to show further content
 vim.api.nvim_create_autocmd('CompleteDone', {
     callback = function()
         local word = (vim.v.completed_item or {}).word
