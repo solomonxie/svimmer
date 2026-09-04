@@ -70,8 +70,8 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
         " source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
         " source ~/myconf/dotfiles/vim/rcmodules/ctags.vim  "300ms+, 99% CPU
-        source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+
-        " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR
+        " source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+, ctag based, heavy -- replaced by lua/nvim-lsp-tagbar.lua
+        " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR, ctag based -- replaced by lua/nvim-lsp-tagbar.lua
         " source ~/myconf/dotfiles/vim/rcmodules/markbar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/syntastic.vim
         " source ~/myconf/dotfiles/vim/rcmodules/telescope.vim  "SLOW
@@ -94,6 +94,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
         source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
         source ~/myconf/dotfiles/vim/rcmodules/lsp-makefile.vim  "autotools-language-server, not in Mason
+        " source ~/myconf/dotfiles/vim/rcmodules/outline.vim  "Buggy split_command (leaves stray "vs" buffer), flat display for flat-SymbolInformation servers like pylsp -- replaced by lua/nvim-lsp-tagbar.lua
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -149,6 +150,8 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
+" Own minimal LSP symbol bar, replaces outline.vim/tagbar.vim/vista.vim
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim-lsp-tagbar.lua
 " Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua

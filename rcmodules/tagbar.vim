@@ -1,6 +1,8 @@
 "Setup:
 "  $ brew install ctags
 
+" Simple enough and elegant, but purely relying on Ctags, pretty heavy and outdated
+
 "REF: https://github.com/majutsushi/tagbar
 Plug 'majutsushi/tagbar', {'on': ['TagbarToggle', 'TagbarJumpNext', 'TagbarJumpPrev'], 'commit': '7bfffca'}
 

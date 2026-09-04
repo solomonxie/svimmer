@@ -289,9 +289,16 @@ autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<
 " map q (buffer-local, close netrw)
 " plugin defaults, not set by me (buffer-local inside netrw window): -/%/d/D/R/mf/mt/mc ... see :help netrw-quickmap
 
-"vim/rcmodules/tagbar.vim
+"vim/rcmodules/tagbar.vim (disabled, ctags-based, replaced by lua/nvim-lsp-tagbar.lua)
 " map ft, map g], map g[
 " plugin defaults, not set by me (buffer-local inside Tagbar window): see :help tagbar-keys
+
+"vim/rcmodules/outline.vim (disabled: buggy split_command, flat display for pylsp -- replaced by lua/nvim-lsp-tagbar.lua)
+" map ft (toggle symbol outline)
+
+"vim/rcmodules/lua/nvim-lsp-tagbar.lua
+" map ft (toggle bottom symbol bar)
+" buffer-local inside the bar: <CR> jump to symbol + close, q/<Esc> close
 
 "vim/rcmodules/fzf.vim
 " map fd, map fa, map fb, map fc, map fm, map FD, map FA
