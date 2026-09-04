@@ -86,7 +86,7 @@ endfunction
 
 
 function! GetSessionPath()
-    let g:gitroot = get(g:, 'gitroot', trim(system("git rev-parse --show-toplevel")))
+    let g:gitroot = trim(system("git rev-parse --show-toplevel"))
     if isdirectory(g:gitroot)
         let session_path = g:gitroot . "/.git/workspace.vim"
     else
@@ -110,18 +110,18 @@ function! SaveSessionSimple()
     " echom 'Buffers: ' . string(buffer_list)
     let session_path = GetSessionPath()
     let steps = []
-    call add(steps, 'cd '. expand(getcwd()))
+    call add(steps, 'cd '. fnameescape(getcwd()))
     call add(steps, 'let g:gitroot = "'. g:gitroot . '"')
     call add(steps, 'let s:wipebuf = bufnr("%")')  "Mark initial/empty buffer
     " Record buffers
     for bufnr in buffer_list
         let l:bufname = expand('#' .. bufnr .. ':p')
         if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !isdirectory(l:bufname)
-            call add(steps, '$argadd ' . expand('#' . bufnr . ':p'))
+            call add(steps, '$argadd ' . fnameescape(expand('#' . bufnr . ':p')))
         endif
     endfor
     " Record others
-    call add(steps, 'edit ' . expand('#'. bufnr('%') .':b'))  "Set focused file
+    call add(steps, 'edit ' . fnameescape(expand('#'. bufnr('%') .':p')))  "Set focused file
     call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
     call add(steps, 'normal! zz')  "Center view on restored cursor line
     call add(steps, 'silent exe "bwipe " . s:wipebuf')  "Remove initial/empty buffer
