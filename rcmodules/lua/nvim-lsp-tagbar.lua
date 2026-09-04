@@ -9,6 +9,8 @@ local KIND_LABEL = {
     [6] = 'METHOD',
     [9] = 'METHOD',  -- Constructor
     [12] = 'FUNC',
+    [14] = 'CONST',
+    [23] = 'STRUCT',
 }
 
 M.win, M.buf, M.src_win, M.src_buf = nil, nil, nil, nil
@@ -42,10 +44,45 @@ local function jump_pos(s)
     return s.location.range.start
 end
 
+-- A real definition's `range` spans its whole signature/body; a mere
+-- reference (e.g. an import) has no body, so `range` collapses to just
+-- the name, same as `selectionRange`.
+local function is_bare_reference(s)
+    local r, sel = s.range, s.selectionRange
+    if not (r and sel) then
+        return false
+    end
+    return r.start.line == sel.start.line and r.start.character == sel.start.character
+        and r['end'].line == sel['end'].line and r['end'].character == sel['end'].character
+end
+
+-- Flat SymbolInformation servers (e.g. pylsp) have no range/selectionRange
+-- gap to check, so ask treesitter whether the position sits inside an
+-- import-like node instead.
+local function is_import_node(pos)
+    if not (M.src_buf and vim.api.nvim_buf_is_valid(M.src_buf)) then
+        return false
+    end
+    local ok, parser = pcall(vim.treesitter.get_parser, M.src_buf, vim.bo[M.src_buf].filetype)
+    if not ok or not parser then
+        return false
+    end
+    local root = parser:parse()[1]:root()
+    local node = root:named_descendant_for_range(pos.line, pos.character, pos.line, pos.character)
+    while node do
+        if node:type():find('import', 1, true) then
+            return true
+        end
+        node = node:parent()
+    end
+    return false
+end
+
 local function build_lines(list, depth, lines, jumps)
     for _, s in ipairs(list) do
         local label = KIND_LABEL[s.kind]
-        if label then
+        local kept = label and not is_bare_reference(s) and not is_import_node(jump_pos(s))
+        if kept then
             table.insert(lines, string.rep('  ', depth) .. label .. ' ' .. s.name)
             table.insert(jumps, jump_pos(s))
         end
@@ -54,7 +91,7 @@ local function build_lines(list, depth, lines, jumps)
             -- shown; filtered-out containers still walk their children at
             -- the same depth so a stray Function under an unlisted kind
             -- (e.g. Namespace) isn't lost.
-            build_lines(s.children, label and (depth + 1) or depth, lines, jumps)
+            build_lines(s.children, kept and (depth + 1) or depth, lines, jumps)
         end
     end
 end
@@ -81,13 +118,13 @@ local function goto_jump()
     vim.cmd('normal! zz')
 end
 
-local function render(result)
+local function render(result, empty_msg)
     if not (M.buf and vim.api.nvim_buf_is_valid(M.buf)) then
         return
     end
     local lines, jumps = {}, {}
     if not result or vim.tbl_isempty(result) then
-        lines = { 'No symbols' }
+        lines = { empty_msg or 'No symbols' }
     else
         local tree = is_document_symbol(result) and result or nest_by_container_name(result)
         build_lines(tree, 0, lines, jumps)
@@ -105,13 +142,14 @@ function M.refresh()
     if not (M.buf and M.src_buf and vim.api.nvim_buf_is_valid(M.src_buf)) then
         return
     end
+    if not next(vim.lsp.get_clients({ bufnr = M.src_buf, method = 'textDocument/documentSymbol' })) then
+        render(nil, 'No LSP attached yet')
+        return
+    end
+    render(nil, 'Loading symbols...')
     local params = { textDocument = vim.lsp.util.make_text_document_params(M.src_buf) }
     vim.lsp.buf_request(M.src_buf, 'textDocument/documentSymbol', params, function(err, result)
-        if err then
-            render(nil)
-        else
-            render(result)
-        end
+        render(err and nil or result)
     end)
 end
 
@@ -119,7 +157,7 @@ function M.open()
     M.src_win = vim.api.nvim_get_current_win()
     M.src_buf = vim.api.nvim_get_current_buf()
 
-    vim.cmd('botright 10split')
+    vim.cmd('botright 20 split')
     M.win = vim.api.nvim_get_current_win()
     M.buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(M.win, M.buf)
