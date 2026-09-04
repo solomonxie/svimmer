@@ -82,7 +82,6 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Async linting
         " source ~/myconf/dotfiles/vim/rcmodules/deoplete.vim
         " source ~/myconf/dotfiles/vim/rcmodules/ultisnips.vim  "DISABLED for now, see snippets.vim
-        source ~/myconf/dotfiles/vim/rcmodules/snippets.vim  "Custom engine over mysnippets/, uses native vim.snippet
         source ~/myconf/dotfiles/vim/rcmodules/anyjump.vim
         " source ~/myconf/dotfiles/vim/rcmodules/YCM.vim
         " source ~/myconf/dotfiles/vim/rcmodules/coc.vim
@@ -153,6 +152,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
 " Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/snippets.lua
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
