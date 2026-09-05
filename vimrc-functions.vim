@@ -159,16 +159,6 @@ function! LoadSession()
 endfunction
 
 
-function! OpenFileInPrevWindow()
-    "Refer: https://unix.stackexchange.com/questions/74571
-    let cfile = expand(expand("<cfile>"))
-    if filereadable(cfile)
-        wincmd p
-        execute "edit " . cfile
-    endif
-endfunction
-
-
 "Search/grep pattern and open files
 function! GrepOpen(...)
     let keywords = a:1
@@ -363,9 +353,10 @@ function! PreviewMarkdown()
     " Render current markdown buffer to HTML (dark theme, mermaid diagrams, KaTeX math)
     " via pandoc and open it in the browser.
     if &filetype !=# 'markdown'
-        echo "Not a markdown file."
+        echo 'Not a markdown file.'
         return
     endif
+    echo 'Generating preview page for ' . expand('%:t') . '...'
     let l:css = expand('<script>:p:h') . '/scripts/markdown-preview-dark.css'
     let l:mermaid = expand('<script>:p:h') . '/scripts/markdown-preview-mermaid.html'
     let l:slug = substitute(expand('%:p:r'), '[/.]', '-', 'g')
