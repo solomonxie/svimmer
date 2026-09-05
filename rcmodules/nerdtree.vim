@@ -1,4 +1,4 @@
-" NERDTREE - FILE BROWSER {{{1
+" --- NERDTREE - FILE BROWSER ---
 
 "LOAD SIGNIFICANTLY FASTER
 "REF: https://github.com/preservim/nerdtree/issues/276
@@ -96,7 +96,7 @@ let g:NERDTreeIndicatorMapCustom = {
 \ }
 
 
-" Customized Abilities on Nerdtree {{{1
+" --- Customized Abilities on Nerdtree ---
 " call NERDTreeAddKeyMap({
 "         \ 'key': 'E',
 "         \ 'callback': 'MyNerdtreeFunc',
@@ -111,7 +111,7 @@ let g:NERDTreeIndicatorMapCustom = {
 
 
 
-" Vim-Devicons - Icons for Nerdtree {{{1
+" --- Vim-Devicons - Icons for Nerdtree ---
 "https://github.com/ryanoasis/vim-devicons/wiki/Extra-Configuration
 if &runtimepath =~ 'vim-devicons'
     let g:webdevicons_enable = 1  "Enable plugin
@@ -122,7 +122,7 @@ if &runtimepath =~ 'vim-devicons'
 endif
 
 
-" Nerdtree Syntax Highlight {{{1
+" --- Nerdtree Syntax Highlight ---
 "https://github.com/tiagofumo/vim-nerdtree-syntax-highlight
 if &runtimepath =~ 'nerdtree-syntax-highlight'
     let g:NERDTreeFileExtensionHighlightFullName = 1

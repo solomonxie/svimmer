@@ -393,14 +393,6 @@ set foldlevelstart=99  "Don't fold anything at start
 set foldcolumn=0      " 0|1 for a thin indicator at left bar
 set foldtext=         " Neovim: setting this to empty keeps syntax highlighting on the fold line
 
-" Vim/vimscript files use {{{ }}} banners as section markers instead of
-" treesitter folding. Set after treesitter.vim's BufReadPost autocmd so it
-" wins the override for filetype=vim.
-augroup VimFoldMarker
-    autocmd!
-    autocmd BufReadPost * if &filetype ==# 'vim' | setlocal foldmethod=marker | endif
-augroup END
-
 " [Persistent Folding]
 " augroup AutoSaveFolds
 "   autocmd!
