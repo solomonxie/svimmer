@@ -357,14 +357,18 @@ function! PreviewMarkdown()
         return
     endif
     echo 'Generating preview page for ' . expand('%:t') . '...'
-    let l:css = expand('<script>:p:h') . '/scripts/markdown-preview-dark.css'
+    let l:css_dark = expand('<script>:p:h') . '/scripts/markdown-preview-dark.css'
+    let l:css_light = expand('<script>:p:h') . '/scripts/markdown-preview-light.css'
     let l:mermaid = expand('<script>:p:h') . '/scripts/markdown-preview-mermaid.html'
+    let l:toggle = expand('<script>:p:h') . '/scripts/markdown-preview-theme-toggle.html'
     let l:slug = substitute(expand('%:p:r'), '[/.]', '-', 'g')
     let l:out = '/tmp/' . l:slug . '.html'
     let l:cmd = 'pandoc ' . shellescape(expand('%:p'))
         \ . ' -s --katex --embed-resources'
-        \ . ' --css=' . shellescape(l:css)
+        \ . ' --css=' . shellescape(l:css_dark)
+        \ . ' --css=' . shellescape(l:css_light)
         \ . ' --include-after-body=' . shellescape(l:mermaid)
+        \ . ' --include-after-body=' . shellescape(l:toggle)
         \ . ' -o ' . shellescape(l:out) . ' && open ' . shellescape(l:out)
     if exists('*jobstart')
         call jobstart(l:cmd)
