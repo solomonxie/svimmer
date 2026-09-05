@@ -16,7 +16,6 @@
     command! R :source ~/.vimrc
     command! BufferCount :call HowManyBuffers()
     command! Build call BuildCurrentFile()
-    command! PreviewMarkdown call PreviewMarkdown()
 "}
 
 

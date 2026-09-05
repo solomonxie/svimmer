@@ -249,6 +249,11 @@ nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 " :LspInfo is aliased to :checkhealth vim.lsp on nvim 0.11+; make sure `q` closes it
 autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<CR>
 
+" Render to HTML and open in the browser: buffer-local so it only exists in markdown
+" (gp/gP are already taken by gitgutter's plugin defaults, see rcmodules/gitgutter.vim notes)
+autocmd FileType markdown command! -buffer MarkdownPreview call PreviewMarkdown()
+autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<CR>
+
 
 " --- Plugin Keys ---
 "vim/rcmodules/misc.vim
