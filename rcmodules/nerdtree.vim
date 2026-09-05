@@ -62,6 +62,21 @@ endfunction
 
 autocmd FileType nerdtree call NerdTreeCustom()
 
+" NERDTree caches its "previous buffer" number at open time and jumps back to
+" it on quit. Netrw's own buffer wiping (bufhidden=wipe, CloseNetrw) can free
+" that number out from under it, throwing E86. Guard with bufexists() first.
+function! SafeNERDTreeQuit() abort
+    if exists('b:NERDTree') && b:NERDTree.isWinTree()
+                \ && b:NERDTree.previousBuf() !=# -1 && bufexists(b:NERDTree.previousBuf())
+        exec 'buffer ' . b:NERDTree.previousBuf()
+    elseif winnr('$') > 1
+        call g:NERDTree.Close()
+    else
+        call nerdtree#echo('Cannot close last window')
+    endif
+endfunction
+autocmd FileType nerdtree nnoremap <buffer> q :call SafeNERDTreeQuit()<CR>
+
 
 " Customize icons on Nerdtree
 let g:NERDTreeDirArrowExpandable = '▸'
