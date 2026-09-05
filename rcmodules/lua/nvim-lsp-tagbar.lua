@@ -15,6 +15,8 @@ local KIND_LABEL = {
 
 M.win, M.buf, M.src_win, M.src_buf = nil, nil, nil, nil
 
+local CURSOR_NS = vim.api.nvim_create_namespace('lsptagbar_cursor')
+
 local function is_document_symbol(list)
     return list[1] and list[1].selectionRange ~= nil
 end
@@ -84,7 +86,7 @@ local function build_lines(list, depth, lines, jumps)
         local kept = label and not is_bare_reference(s) and not is_import_node(jump_pos(s))
         if kept then
             table.insert(lines, string.rep('  ', depth) .. label .. ' ' .. s.name)
-            table.insert(jumps, jump_pos(s))
+            table.insert(jumps, { pos = jump_pos(s), range = s.range or s.location.range })
         end
         if s.children and #s.children > 0 then
             -- kept nodes recurse one deeper only if this node itself was
@@ -105,8 +107,8 @@ end
 
 local function goto_jump()
     local jumps = vim.b[M.buf].jumps
-    local pos = jumps[vim.api.nvim_win_get_cursor(0)[1]]
-    if not pos then
+    local entry = jumps[vim.api.nvim_win_get_cursor(0)[1]]
+    if not entry then
         return
     end
     local src_win = M.src_win
@@ -114,8 +116,41 @@ local function goto_jump()
     if src_win and vim.api.nvim_win_is_valid(src_win) then
         vim.api.nvim_set_current_win(src_win)
     end
-    vim.api.nvim_win_set_cursor(0, { pos.line + 1, pos.character })
+    vim.api.nvim_win_set_cursor(0, { entry.pos.line + 1, entry.pos.character })
     vim.cmd('normal! zz')
+end
+
+-- Deepest symbol whose range contains lnum0 (0-indexed): children are
+-- listed right after their parent and their ranges nest inside it, so the
+-- last containing match found by a plain left-to-right scan is the most
+-- specific one.
+local function line_for_cursor(jumps, lnum0)
+    local best
+    for i, entry in ipairs(jumps) do
+        local r = entry.range
+        if r and lnum0 >= r.start.line and lnum0 <= r['end'].line then
+            best = i
+        end
+    end
+    return best
+end
+
+function M.sync_cursor()
+    if not (M.win and vim.api.nvim_win_is_valid(M.win) and M.buf and vim.api.nvim_buf_is_valid(M.buf)
+            and M.src_buf and vim.api.nvim_get_current_buf() == M.src_buf) then
+        return
+    end
+    local jumps = vim.b[M.buf].jumps
+    if not jumps or vim.tbl_isempty(jumps) then
+        return
+    end
+    local idx = line_for_cursor(jumps, vim.api.nvim_win_get_cursor(0)[1] - 1)
+    if not idx then
+        return
+    end
+    vim.api.nvim_buf_clear_namespace(M.buf, CURSOR_NS, 0, -1)
+    vim.api.nvim_buf_add_highlight(M.buf, CURSOR_NS, 'CursorLine', idx - 1, 0, -1)
+    vim.api.nvim_win_set_cursor(M.win, { idx, 0 })
 end
 
 local function render(result, empty_msg)
@@ -150,6 +185,7 @@ function M.refresh()
     local params = { textDocument = vim.lsp.util.make_text_document_params(M.src_buf) }
     vim.lsp.buf_request(M.src_buf, 'textDocument/documentSymbol', params, function(err, result)
         render(err and nil or result)
+        M.sync_cursor()
     end)
 end
 
@@ -192,5 +228,25 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end
     end,
 })
+
+-- No per-buffer filter: sync_cursor() itself checks the moved-in buffer is
+-- M.src_buf and bails out cheaply (no LSP call) otherwise.
+vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+    callback = M.sync_cursor,
+})
+
+-- Temporary: run :LspTagbarDebug with the bar open, cursor inside a
+-- function, to see which assumption (win/buf validity, src_buf match,
+-- jumps populated, range present) is failing.
+vim.api.nvim_create_user_command('LspTagbarDebug', function()
+    print('win valid:', M.win and vim.api.nvim_win_is_valid(M.win))
+    print('buf valid:', M.buf and vim.api.nvim_buf_is_valid(M.buf))
+    print('src_buf:', M.src_buf, 'current buf:', vim.api.nvim_get_current_buf())
+    local jumps = M.buf and vim.b[M.buf] and vim.b[M.buf].jumps
+    print('jumps count:', jumps and #jumps or 'nil')
+    if jumps and jumps[1] then
+        print('first entry:', vim.inspect(jumps[1]))
+    end
+end, {})
 
 vim.keymap.set('n', 'ft', M.toggle, { silent = true })
