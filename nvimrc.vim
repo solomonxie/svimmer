@@ -228,10 +228,11 @@ set ttimeoutlen=30
 "[Auto reload current file]
 set autoread
 au FocusGained,BufEnter * :checktime
-" FocusGained/BufEnter only fire on window-switch or refocus -- if you stay
-" parked on the same buffer while another program edits the file, neither
-" fires. CursorHold covers that: checks after 'updatetime' ms of inactivity.
-au CursorHold,CursorHoldI * :checktime
+" Poll on a real timer, not CursorHold -- CursorHold needs a keystroke to
+" re-arm, so it can't catch a change while you're fully idle.
+if !exists('g:autoread_timer')
+    let g:autoread_timer = timer_start(2000, {-> execute('silent! checktime')}, {'repeat': -1})
+endif
 
 " Fix ":" auto-filling a huge range like .,.+2143 -> E16 on :q/:wq after refocus
 " Skip terminal buffers (tig/fzf/lazygit etc) so refocus doesn't kick them out of Terminal-mode
