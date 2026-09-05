@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          NERDTREE - FILE BROWSER                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NERDTREE - FILE BROWSER {{{1
 
 "LOAD SIGNIFICANTLY FASTER
 "REF: https://github.com/preservim/nerdtree/issues/276
@@ -98,9 +96,7 @@ let g:NERDTreeIndicatorMapCustom = {
 \ }
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                      Customized Abilities on Nerdtree                      "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Customized Abilities on Nerdtree {{{1
 " call NERDTreeAddKeyMap({
 "         \ 'key': 'E',
 "         \ 'callback': 'MyNerdtreeFunc',
@@ -115,9 +111,7 @@ let g:NERDTreeIndicatorMapCustom = {
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        Vim-Devicons - ICONS FOR NERDTREE                   "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-Devicons - Icons for Nerdtree {{{1
 "https://github.com/ryanoasis/vim-devicons/wiki/Extra-Configuration
 if &runtimepath =~ 'vim-devicons'
     let g:webdevicons_enable = 1  "Enable plugin
@@ -128,9 +122,7 @@ if &runtimepath =~ 'vim-devicons'
 endif
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                         Nerdtree Syntax Highlight                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Nerdtree Syntax Highlight {{{1
 "https://github.com/tiagofumo/vim-nerdtree-syntax-highlight
 if &runtimepath =~ 'nerdtree-syntax-highlight'
     let g:NERDTreeFileExtensionHighlightFullName = 1
