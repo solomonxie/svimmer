@@ -359,6 +359,30 @@ function! BuildCurrentFile ()
 endfunction
 
 
+function! PreviewMarkdown()
+    " Render current markdown buffer to HTML (dark theme, mermaid diagrams, KaTeX math)
+    " via pandoc and open it in the browser.
+    if &filetype !=# 'markdown'
+        echo "Not a markdown file."
+        return
+    endif
+    let l:css = expand('<script>:p:h') . '/scripts/markdown-preview-dark.css'
+    let l:mermaid = expand('<script>:p:h') . '/scripts/markdown-preview-mermaid.html'
+    let l:slug = substitute(expand('%:p:r'), '[/.]', '-', 'g')
+    let l:out = '/tmp/' . l:slug . '.html'
+    let l:cmd = 'pandoc ' . shellescape(expand('%:p'))
+        \ . ' -s --katex --embed-resources'
+        \ . ' --css=' . shellescape(l:css)
+        \ . ' --include-after-body=' . shellescape(l:mermaid)
+        \ . ' -o ' . shellescape(l:out) . ' && open ' . shellescape(l:out)
+    if exists('*jobstart')
+        call jobstart(l:cmd)
+    else
+        call system(l:cmd)
+    endif
+endfunction
+
+
 function! SearchInFile(pattern)
     " Good for searching text with special characters
     let oldpat=@/

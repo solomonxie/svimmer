@@ -1,0 +1,11 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // pandoc wraps fenced code in <code>, but mermaid only parses raw text
+    // in <pre class="mermaid">, choking on the nested tag if left in place.
+    document.querySelectorAll('pre.mermaid').forEach(function (pre) {
+        pre.textContent = pre.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+});
+</script>
