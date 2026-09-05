@@ -159,6 +159,7 @@ nnoremap [B :call searchpair('{','','}','b')<cr>
 
 nnoremap \ `
 " nnoremap <leader>l :call ToggleRelativeNumber()<CR>
+nnoremap <silent> <leader>l :call FlashRelativeNumber()<CR>
 
 " vnoremap <Leader>f "1y:call GrepOpen("<C-r>1")<CR>
 nnoremap <Leader>aa :ggVG<CR>

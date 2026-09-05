@@ -49,6 +49,24 @@ function! ToggleRelativeNumber()
     endif
 endfunction
 
+"{Flash Relative Line Number -- show just long enough to type a {count}j/k
+" jump, then auto-hide on the first cursor move so it doesn't stay on}
+function! FlashRelativeNumber() abort
+    if &relativenumber
+        return  " already on (e.g. via the permanent toggle) -- leave it alone
+    endif
+    set relativenumber
+    augroup FlashRelativeNumberOff
+        autocmd!
+        autocmd CursorMoved <buffer> call s:UnflashRelativeNumber()
+    augroup END
+endfunction
+
+function! s:UnflashRelativeNumber() abort
+    set norelativenumber
+    autocmd! FlashRelativeNumberOff
+endfunction
+
 
 function! LoadVimrc()
     :tabnew
