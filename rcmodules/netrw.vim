@@ -12,31 +12,28 @@
 
 let g:netrw_banner=1
 let g:netrw_hide=1
-let g:netrw_browse_split=4  "How files are opened"
-let g:netrw_liststyle=3  "Directory view in netrw"
+let g:netrw_browse_split=0  " 0 = open files in netrw's own window (single-window `:e folder/` use)
+let g:netrw_liststyle=0  " flat listing -- tree (3) uses a shadow "NetrwTreeListing" buffer that lingers
 let g:netrw_altv = 2
 let g:netrw_winsize=30
 let g:netrw_list_hide = '.*\.swp$,.DS_Store,*/tmp/*,*.so,*.swp,*.zip,*.git,^\.\.\=/\=$'
 " let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 
-"Enable to close netrw buffer (otherwise once open, even :bd! cannot close it)
-autocmd FileType netrw setl bufhidden=wipe
-autocmd FileType netrw nnoremap <buffer> q :bw<CR>
 let g:netrw_fastbrowse = 0
 
-let g:netrw_chgwin = 2   " Open files in the previous window, not the explorer window
-let g:netrw_liststyle = 3 " Tree view
 let g:netrw_winsize = 25  " Window size 25%
 
 function! CloseNetrw() abort
+    " Sweep every netrw buffer (by filetype, name, or b:netrw_curdir) -- netrw
+    " juggles multiple buffers per listing, and wiping only the current one
+    " leaves the directory-named buffer behind to reseed a fresh display.
     for bufn in range(1, bufnr('$'))
-        if bufexists(bufn) && getbufvar(bufn, '&filetype') ==# 'netrw'
-            silent! execute 'bwipeout ' . bufn
-            if getline(2) =~# '^" Netrw '
-                silent! bwipeout
-            endif
-            return
+        if !bufexists(bufn) | continue | endif
+        if getbufvar(bufn, '&filetype') ==# 'netrw'
+                    \ || bufname(bufn) =~# 'NetrwTreeListing'
+                    \ || !empty(getbufvar(bufn, 'netrw_curdir'))
+            silent! execute 'bwipeout! ' . bufn
         endif
     endfor
 endfunction
@@ -46,12 +43,19 @@ augroup closeOnOpen
     autocmd BufWinEnter * if getbufvar(winbufnr(winnr()), "&filetype") != "netrw"|call CloseNetrw()|endif
 aug END
 
+" All netrw buffer-local mappings/settings, kept in one place
+augroup netrwLocal
+    autocmd!
+    autocmd FileType netrw setl bufhidden=wipe
+    autocmd FileType netrw nmap <buffer> o <CR>
+    autocmd FileType netrw nmap <buffer> p -
+    " <nowait>: netrw's own qb/qf/qF/qL mappings make bare "q" an ambiguous
+    " prefix otherwise (this also makes those four unreachable -- q always wins)
+    autocmd FileType netrw nnoremap <buffer> <nowait> q :call CloseNetrw()<CR>
+augroup END
+
 " nnoremap ff :silent execute "let @/=expand('%:t')<Bar>silent execute 'Lexplore' expand('%:h')<Bar>normal n"<CR>
 " nnoremap <Leader>f :Lexplore .<CR>
-
-
-" ===> More mappings inside netrw ->
-" vim/after/ftplugin/netrw.vim
 
 
 " ============= End of File ==================
