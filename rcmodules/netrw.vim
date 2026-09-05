@@ -52,6 +52,7 @@ augroup netrwLocal
     " <nowait>: netrw's own qb/qf/qF/qL mappings make bare "q" an ambiguous
     " prefix otherwise (this also makes those four unreachable -- q always wins)
     autocmd FileType netrw nnoremap <buffer> <nowait> q :call CloseNetrw()<CR>
+    autocmd FileType netrw if exists('b:netrw_bannercnt') | execute b:netrw_bannercnt | endif
 augroup END
 
 " nnoremap ff :silent execute "let @/=expand('%:t')<Bar>silent execute 'Lexplore' expand('%:h')<Bar>normal n"<CR>
