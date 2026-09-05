@@ -329,7 +329,32 @@ vim.api.nvim_create_autocmd('LspAttach', {
             timer = vim.uv.new_timer()
             timer:start(HIGHLIGHT_DEBOUNCE_MS, 0, vim.schedule_wrap(function()
                 timer = nil
-                vim.lsp.buf.document_highlight()
+                -- vim.lsp.buf.document_highlight() renders whatever the server
+                -- returns verbatim. gopls's own documentHighlight sometimes
+                -- includes more than literal occurrences of the word under the
+                -- cursor (e.g. return statements when on "func", or other
+                -- same-purpose functions) -- filter to exact-text matches only.
+                local bufnr = ev.buf
+                local word = vim.fn.expand('<cword>')
+                local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+                vim.lsp.buf_request(bufnr, 'textDocument/documentHighlight', params, function(err, result, ctx)
+                    if err or not result then
+                        return
+                    end
+                    local hl_client = vim.lsp.get_client_by_id(ctx.client_id)
+                    if not hl_client then
+                        return
+                    end
+                    local filtered = vim.tbl_filter(function(ref)
+                        local r = ref.range
+                        if r.start.line ~= r['end'].line then
+                            return false
+                        end
+                        local line = vim.api.nvim_buf_get_lines(bufnr, r.start.line, r.start.line + 1, false)[1] or ''
+                        return line:sub(r.start.character + 1, r['end'].character) == word
+                    end, result)
+                    vim.lsp.util.buf_highlight_references(bufnr, filtered, hl_client.offset_encoding)
+                end)
             end))
         end
 
