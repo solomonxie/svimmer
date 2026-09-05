@@ -55,7 +55,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
         source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "Important
         source ~/myconf/dotfiles/vim/rcmodules/misc.vim
-        source ~/myconf/dotfiles/vim/rcmodules/hop.vim
+        " source ~/myconf/dotfiles/vim/rcmodules/hop.vim  "Textobject hop
     "{UI}
         " source ~/myconf/dotfiles/vim/rcmodules/indent_line.vim  "BUGGY
         source ~/myconf/dotfiles/vim/rcmodules/blankline.vim  "INDENT-LINE
@@ -65,6 +65,7 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/statusline.vim
         source ~/myconf/dotfiles/vim/rcmodules/nerdtree.vim
         " source ~/myconf/dotfiles/vim/rcmodules/neotree.vim  "BUGGY!!! HEAVY
+        " source ~/myconf/dotfiles/vim/rcmodules/nvim-tree.vim  "fast, simple, but sometimes annoying
         source ~/myconf/dotfiles/vim/rcmodules/netrw.vim
         " source ~/myconf/dotfiles/vim/rcmodules/vinegar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
