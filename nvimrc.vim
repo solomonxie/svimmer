@@ -227,6 +227,10 @@ set ttimeoutlen=30
 "[Auto reload current file]
 set autoread
 au FocusGained,BufEnter * :checktime
+" FocusGained/BufEnter only fire on window-switch or refocus -- if you stay
+" parked on the same buffer while another program edits the file, neither
+" fires. CursorHold covers that: checks after 'updatetime' ms of inactivity.
+au CursorHold,CursorHoldI * :checktime
 
 " Fix ":" auto-filling a huge range like .,.+2143 -> E16 on :q/:wq after refocus
 " Skip terminal buffers (tig/fzf/lazygit etc) so refocus doesn't kick them out of Terminal-mode
