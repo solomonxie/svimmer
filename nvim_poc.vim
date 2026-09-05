@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        PROOF OF CONCEPTS (NEO VIM)                         "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- PROOF OF CONCEPTS (NEO VIM) ---
 colorscheme badwolf
 let mapleader = ","
 nnoremap - :bprev<CR>:echo expand('%')<CR>
@@ -25,9 +23,7 @@ call plug#end()
 set completeopt=menuone,noselect
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               NVIM-LSPCONFIG                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NVIM-LSPCONFIG ---
 lua << EOF
 local nvim_lsp = require('lspconfig')
 
@@ -78,9 +74,7 @@ end
 EOF
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                 NVIM-COMPE                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NVIM-COMPE ---
 let g:compe = {}
 let g:compe.enabled = v:true
 let g:compe.autocomplete = v:true

@@ -17,9 +17,7 @@ if has('nvim-0.9.1')
     lua vim.loader.enable()
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                            INSTALL DEPENDENCIES                            "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- INSTALL DEPENDENCIES ---
 " $ brew install ctags
 " $ brew install --HEAD universal-ctags/universal-ctags/universal-ctags
 " $ pip install pynvim neovim
@@ -37,9 +35,7 @@ endif
 " On MacOS, grand permission for entire Neovim program:
 " $ sudo xattr -r -d com.apple.quarantine ~/nvim-macos-0.11.4/
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        VIM-PLUG MANAGER FOR PLUGINS                        "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- VIM-PLUG MANAGER FOR PLUGINS ---
 " https://github.com/junegunn/vim-plug
 " if !filereadable(expand('~/.vim/autoload/plug.vim'))
 "     echo 'Downlading vim-plug manager...'
@@ -131,9 +127,7 @@ echom 'All plugins loaded.' |redraw
 silent! source ~/.vimrc-env.vim
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"              NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS)               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NVIM LUA CONFIGS (MUST BE LOADED AFTER PLUGINS) ---
 " Load lua configs defined elsewhere
 for path in g:lua_configs
     execute 'luafile ' . path
@@ -158,9 +152,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/snippets.lua
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               IMPORT MODULES                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- IMPORT MODULES ---
 source ~/myconf/dotfiles/vim/vimrc-functions.vim
 source ~/myconf/dotfiles/vim/vimrc-commands.vim
 source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
@@ -170,9 +162,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-ui.lua
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                         GENERAL BUILT-IN SETTINGS                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- GENERAL BUILT-IN SETTINGS ---
 set nocompatible
 set encoding=utf8
 "set spell spelllang=en,en_us,cjk  "Spell check [Ugly]
@@ -250,9 +240,7 @@ set scrolloff=5  "Set 99 to make it center
 set isfname-==  "When using 'gf', ignore '=' as part of the file name
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"              Vim / NeoVim Persistent Layer (Shada & VimInfo)               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Vim / NeoVim Persistent Layer (Shada & VimInfo) ---
 " Persistent mechanism will keep session/marks/jumplist/buffers...
 
 " SHADA: (Neovim) options - format: set shada=FLAGS
@@ -294,9 +282,7 @@ set shada=
 "          (saves marks for 100 files, registers, history, buffer list, file marks)
 set viminfo=
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                         ADVANCED BUILT-IN SETTINGS                         "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- ADVANCED BUILT-IN SETTINGS ---
 "set wildmenu
 "set wildmode=longest:full,full
 "Search Highlighting
@@ -328,9 +314,7 @@ let g:large_file_size = 10000000  "10MB
 autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file_size | set noswapfile | syntax clear | endif
 " autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) <= g:large_file_size | syntax clear | endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          PERSISTENT FILE SETTINGS                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- PERSISTENT FILE SETTINGS ---
 " [  Backup Files  ]--------{
     set nobackup
     " set backup
@@ -372,9 +356,7 @@ autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file_siz
 set history=1000
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                  Folding                                   "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Folding ---
 
 " <Avoid any folding>
 " set nofoldenable  "Cancel all folds when enter vim (faster)
@@ -401,9 +383,7 @@ set foldtext=         " Neovim: setting this to empty keeps syntax highlighting 
 " augroup END
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              OTHER SETTINGS                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- OTHER SETTINGS ---
 " [  Builtin Autocomplete (omnifunc) ] ----{
     "autocmd FileType python set omnifunc=python3complete#Complete
     "autocmd FileType python setl ofu=pythoncomplete#CompletePHP
@@ -416,7 +396,5 @@ set foldtext=         " Neovim: setting this to empty keeps syntax highlighting 
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              Local Overrides                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Local Overrides ---
 silent! source ~/.vimrc-local.vim

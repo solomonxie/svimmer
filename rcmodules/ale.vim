@@ -14,9 +14,7 @@ Plug 'dense-analysis/ale', {'commit': '8eb4803'}
 " nnoremap K :ALEHover<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                DEPENDENCIES                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- DEPENDENCIES ---
 " Python:
 " $ pip install python-language-server
 " Javascript:
@@ -46,9 +44,7 @@ let g:ale_keep_list_window_open = 0  "Auto-close quickfix when no error
 let g:ale_list_window_size = 5
 let g:ale_set_loclist = 0
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                            CUSTOMIZE HIGHLIGHTS                            "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- CUSTOMIZE HIGHLIGHTS ---
 "REF: https://jonasjacek.github.io/colors/
 hi! ALEVirtualTextError ctermfg=200
 hi! ALEVirtualTextWarning ctermfg=250
@@ -57,9 +53,7 @@ hi! ALEVirtualTextStyleError ctermfg=200
 hi! ALEVirtualTextInfo ctermfg=226
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                       LANGUAGE SERVER PROTOCOL (LSP)                       "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LANGUAGE SERVER PROTOCOL (LSP) ---
 
 " " ===Pylsp===
 " https://github.com/palantir/python-language-server/issues/190
@@ -72,10 +66,8 @@ hi! ALEVirtualTextInfo ctermfg=226
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                  LINTERS                                   "
+" --- LINTERS ---
 "               LSP will be specified in the "g:ale_linters" below           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Available Linters:
 " https://github.com/dense-analysis/ale/tree/master/ale_linters
 
@@ -160,9 +152,7 @@ let g:ale_python_pyright_config = {
 let g:ale_python_ruff_format_executable = '/Users/solomonxie/virtualenv/venv/bin/ruff'
 let g:ale_python_ruff_format_options = '--ignore F401'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                   FIXERS                                   "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- FIXERS ---
 let b:ale_fixers = {
 \   'python': ['autopep8'],
 \   'c++': ['clang', 'gcc'],
@@ -171,9 +161,7 @@ let b:ale_fixers = {
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                DEPENDENCIES                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- DEPENDENCIES ---
 function CheckHealthALE()
     if &filetype == 'python' && !executable('mypy')
         echo "MyPy not installed for ALE linters: $ python3 -m pip install -U mypy"

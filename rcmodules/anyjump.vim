@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                     Any Jump - Reference/Usage search                      "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Any Jump - Reference/Usage search ---
 "
 "IDE madness without overhead for 40+ languages
 "Vim plugin for jumping to defitinitions and references/usages through nice ui.

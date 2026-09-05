@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                           LSP CONFIG (IMPORTANT)                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LSP CONFIG (IMPORTANT) ---
 " Options: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 " HELP: DEBUG WITH :LspLog or :LspInfo
 " REF: https://github.com/neovim/nvim-lspconfig

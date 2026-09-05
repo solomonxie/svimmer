@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                    Semshi - Python Syntax Highlighting                     "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Semshi - Python Syntax Highlighting ---
 "The Best for python-syntax (pynvim required)
 
 " Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}

@@ -62,9 +62,7 @@ let g:LanguageClient_devel = 1 " Use rust debug build
 let g:LanguageClient_loggingLevel = 'DEBUG' " Use highest logging level
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                 JAVASCRIPT                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- JAVASCRIPT ---
 " {TernJS}
 " REF: https://ternjs.net/doc/manual.html#configuration
 " $ touch ~/.tern-config

@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              YCM - YOU COMPLETE ME                         "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- YCM - YOU COMPLETE ME ---
 " https://github.com/ycm-core/YouCompleteMe
 
 function! BuildYCM(info)

@@ -15,9 +15,7 @@
 let $HOME = expand('~')
 let $DOTFILES = expand('~') . '/myconf/dotfiles'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          GENERAL GLOBAL MAPPINGS                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- GENERAL GLOBAL MAPPINGS ---
 let mapleader = ","
 " let maplocalleader = "\\"
 
@@ -27,9 +25,7 @@ set shortmess+=c
 " When menu comes out, can use ctrl-n to select
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                  ALPHABET                                  "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- ALPHABET ---
 vnoremap br "1y:bufdo %s/<C-r>1/<C-r>1/ge \| update
 " nnoremap fw /<C-r>+<CR>
 " nnoremap fw :call SearchInFile('<C-r>+')<CR>
@@ -56,9 +52,7 @@ vnoremap R :call ReplaceSelection()<CR>
 nnoremap Y y$
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                             SPECIAL CHARACTERS                             "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- SPECIAL CHARACTERS ---
 " No Use of ";" in Normal mode
 " nnoremap ; :
 
@@ -105,9 +99,7 @@ tnoremap <Del> <ESC>
 tnoremap <C-z> <C-\><C-n>:suspend<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                            LEADER KEY MAPPINGS                             "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LEADER KEY MAPPINGS ---
 " vnoremap <leader>r "1y:1,10 s/<C-r>1/<C-r>1/gc<Left><Left><Left>*<BS>
 " vnoremap <leader>r :call ReplaceSelection()<CR>
 nnoremap <Leader>v v$h
@@ -126,17 +118,13 @@ nnoremap <leader>R :call LoadSession()<CR><ESC>
 " nnoremap gb :execute "!git blame -L " . line(".") . ",+1 % "<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          CTRL + ALPHABET MAPPINGS                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- CTRL + ALPHABET MAPPINGS ---
 inoremap <C-v> <C-r>0
 noremap  <C-c> <Esc>:nohl<CR><ESC>
 nnoremap <ESC> <Esc>:nohl<CR><ESC>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          ALT + ALPHABET MAPPINGS                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- ALT + ALPHABET MAPPINGS ---
 
 
 
@@ -212,9 +200,7 @@ if &diff
 endif
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               AUTO COMPLETE                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- AUTO COMPLETE ---
 " inoremap ( ()<left>
 " inoremap [ []<left>
 " inoremap { {}<left>
@@ -228,9 +214,7 @@ endif
 " inoremap <expr> " strpart(getline('.'), col('.')-1, 1) == "\"" ? "\<Right>" : "\"\"\<Left>"
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                  QUICKFIX                                  "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- QUICKFIX ---
 " nnoremap <leader>co :copen<CR>
 " nnoremap <leader>cc :cclose<CR>
 " nnoremap <leader>cn :cnext<CR>
@@ -242,9 +226,7 @@ endif
 " nnoremap <leader>c5 :cc 5<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                             Command-line Mode                              "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Command-line Mode ---
 cnoremap <C-A> <Home>
 cnoremap <C-F> <Right>
 cnoremap <C-B> <Left>
@@ -253,9 +235,7 @@ cnoremap <Esc>f <S-Right>
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              LSP Common Keys                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LSP Common Keys ---
 nnoremap <Leader>d :lua vim.lsp.buf.definition()<CR>
 nnoremap <Leader>D :lua vim.diagnostic.open_float()<CR>
 nnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
@@ -270,9 +250,7 @@ nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                Plugin Keys                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- Plugin Keys ---
 "vim/rcmodules/misc.vim
 " map <LocalLeader>d
 " plugin defaults, not set by me: m=nvim-marks (overrides built-in set-mark), ds/cs/cS/ys/yS/yss/ySs/ySS=vim-surround, S/gS(visual)/<C-s>(insert)=vim-surround, gc/gcc/gcu=vim-commentary, */#(visual)=vim-visual-star-search, <Leader>bd=bclose.vim

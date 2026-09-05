@@ -364,9 +364,7 @@ endif
 " }}}
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        THIRD PARTY PLUGIN SPECIFIC                         "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- THIRD PARTY PLUGIN SPECIFIC ---
 "{{CtrlP}}================>>>>>>>>>>>>>
 if g:enable_badwolf_ctrlp == 1 && g:enable_badwolf_plugin == 1
     " the message when no match is found
@@ -451,9 +449,7 @@ if g:enable_badwolf_show_marks == 1 && g:enable_badwolf_plugin == 1
 endif
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        FILETYPE / LANGUAGE SPECIFIC                        "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- FILETYPE / LANGUAGE SPECIFIC ---
 
 "{{Clojure}}================>>>>>>>>>>>>>
 if g:enable_badwolf_clojure == 1

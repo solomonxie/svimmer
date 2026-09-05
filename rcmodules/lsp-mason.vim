@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        MASON - MODERN LSP INSTALLER                        "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- MASON - MODERN LSP INSTALLER ---
 " Feature: Mason is alternative to `lspinstaller`, `npm`, `homebrew`...
 " NOTE: This plugin only manages installation (including virtual env of each package)
 " NOTE: but it does not care about configurations of each LLP

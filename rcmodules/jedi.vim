@@ -6,9 +6,7 @@ Plug 'davidhalter/jedi-vim'
 " nnoremap <Leader>d :call jedi#goto()<CR>
 " nnoremap <Leader>n :call jedi#usages()<CR>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                LAZY LOADING                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LAZY LOADING ---
 " Disable [completion] but keep other functionalities
 let g:jedi#completions_enabled = 0
 
@@ -21,9 +19,7 @@ let g:jedi#auto_vim_configuration = 0
 " Display function call signatures/parameters in insert mode in real-time
 let g:jedi#show_call_signatures = 2
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                KEY BINDINGS                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- KEY BINDINGS ---
 " nnoremap <Leader>d :call jedi#goto()<CR>
 "
 " let g:jedi#goto_command = "<leader>d"

@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                     TREE SITTER - FOR BUILDING PLUGINS                     "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- TREE SITTER - FOR BUILDING PLUGINS ---
 
 " REF: https://tree-sitter.github.io/tree-sitter/
 " REF: https://github.com/nvim-treesitter/nvim-treesitter

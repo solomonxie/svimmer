@@ -52,9 +52,7 @@ let g:vimspector_install_gadgets = ['vscode-node-debug2']
 " let g:test#custom_strategies = {'jest': function('JestStrategy')}
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               INSTALL STEPS                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- INSTALL STEPS ---
 " https://github.com/puremourning/vimspector/issues/88
 " If you are using plugin managers like vim-plug, add this line to your init.vim:
 " Plug 'puremourning/vimspector'
@@ -71,9 +69,7 @@ let g:vimspector_install_gadgets = ['vscode-node-debug2']
 " Now go to your project and create a file called .vimspector.json and put these lines into it:
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               NODE.JS CONFIG                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NODE.JS CONFIG ---
 " .vimspector.json
 " {
 "   "configurations": {
@@ -102,9 +98,7 @@ let g:vimspector_install_gadgets = ['vscode-node-debug2']
 " }
 "
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                 C++ CONFIG                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- C++ CONFIG ---
 " .vimspector.json
 " {
 "   "configurations": {

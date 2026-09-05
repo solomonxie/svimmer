@@ -16,9 +16,7 @@ Plug 'hrsh7th/nvim-compe'
 
 " set completeopt=menuone,noselect
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                 NVIM-COMPE                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NVIM-COMPE ---
 let g:compe = {}
 let g:compe.enabled = v:true
 let g:compe.autocomplete = v:true

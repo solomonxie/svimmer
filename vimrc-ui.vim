@@ -9,9 +9,7 @@
 
 "REF: http://bytefluent.com/devify/
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                           COLORS SCHEME / THEMES                           "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- COLORS SCHEME / THEMES ---
 
 "==========> GRUVBOX ============>>>>
 " colorscheme gruvbox ">> grubox is slow for old machine
@@ -58,9 +56,7 @@ colorscheme badwolf  "16ms after my fork
     "autocmd FileType vim,tmux,sh,txt,dockerfile colorscheme badwolf
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                         GENERAL UI / COLOR SCHEME                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- GENERAL UI / COLOR SCHEME ---
 function SetSyntax()
     let b:max_line = 5000
     if line('$') <= b:max_line "&& &syntax != 'manual'
@@ -146,9 +142,7 @@ endfunction
 
     set jumpoptions-=clean  "After nvim 0.10.+, Ctrl-O can't jump back (buffer removed from jumplist) (REF: issues/28968)
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                HIGHLIGHTING                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- HIGHLIGHTING ---
 " >>
     set showmatch
     set matchtime=3
@@ -190,18 +184,14 @@ endfunction
 highlight TrailingWhitespace ctermbg=red guibg=red
 autocmd BufRead,BufNewFile * match TrailingWhitespace /\s\+$/
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               PLUGIN RELATED                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- PLUGIN RELATED ---
 " THIS IS REQUIRED BY PLUGIN TO LOAD AFTER SETTING COLORSCHEME
 
 highlight HighlightedyankRegion cterm=reverse gui=reverse
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              NEOVIM UI                                     "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- NEOVIM UI ---
 " Change Linter result colors
 highlight DiagnosticsError ctermfg=4 guifg=Red
 highlight DiagnosticsWarning ctermfg=4 guifg=Orange
@@ -231,9 +221,7 @@ EOF
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                             PYTHON HIGHLIGHTS                              "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- PYTHON HIGHLIGHTS ---
 " Semshi-style syntax highlighting for Python using Tree-sitter and LSP
 hi semshiLocal           ctermfg=209 guifg=#ff875f " Salmon
 hi semshiGlobal          ctermfg=214 guifg=#ffaf00 " Orange

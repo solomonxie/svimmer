@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                    DEOPLETE - AUTOCOMPLETION (PYTHON3)                     "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- DEOPLETE - AUTOCOMPLETION (PYTHON3) ---
 " https://github.com/Shougo/deoplete.nvim
 " https://github.com/Shougo/deoplete.nvim/wiki/Completion-Sources
 
@@ -78,9 +76,7 @@ let g:deoplete#sources#ternjs#filetypes = [
 \ ]
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                 JAVASCRIPT                                 "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- JAVASCRIPT ---
 " {TernJS}
 " HAVE TO CREATE `~/.tern-config` or `.tern-project` in project root to MAKE IT WORK on NodeJS
 " {

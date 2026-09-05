@@ -1,6 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                             LINTER: Syntastic                              "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --- LINTER: Syntastic ---
 " https://github.com/vim-syntastic/syntastic
 "Static Code Check
 Plug 'vim-syntastic/syntastic'
