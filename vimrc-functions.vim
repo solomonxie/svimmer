@@ -95,6 +95,73 @@ function! GithubLinkCurrentLine()
     call GetGithubLink(1)
 endfunction
 
+function! GitOpen() abort
+    let l:file = expand('%:p')
+    if empty(l:file) || &buftype !=# ''
+        echoerr 'Current buffer is not a file'
+        return
+    endif
+
+    let l:file_dir = expand('%:p:h')
+    let l:root = trim(system('git -C ' . shellescape(l:file_dir) . ' rev-parse --show-toplevel'))
+    if v:shell_error || empty(l:root)
+        echoerr 'Current file is not in a Git repository'
+        return
+    endif
+
+    let l:remotes = systemlist('git -C ' . shellescape(l:root) . ' remote')
+    let l:remote = get(l:remotes, 0, '')
+    if empty(l:remote)
+        echoerr 'No Git remote found'
+        return
+    endif
+
+    let l:remote_url = trim(system('git -C ' . shellescape(l:root) . ' remote get-url ' . shellescape(l:remote)))
+    if v:shell_error || empty(l:remote_url)
+        echoerr 'Could not determine Git remote URL'
+        return
+    endif
+
+    let l:remote_url = substitute(l:remote_url, '^git@\([^:]*\):', 'https://\1/', '')
+    let l:remote_url = substitute(l:remote_url, '^ssh://git@', 'https://', '')
+    let l:remote_url = substitute(l:remote_url, '^git+ssh://git@', 'https://', '')
+    let l:remote_url = substitute(l:remote_url, '/\?$', '', '')
+    let l:remote_url = substitute(l:remote_url, '\.git$', '', '')
+
+    let l:branch = trim(system('git -C ' . shellescape(l:root) . ' symbolic-ref --short HEAD 2>/dev/null'))
+    if empty(l:branch)
+        let l:branch = trim(system('git -C ' . shellescape(l:root) . ' rev-parse HEAD'))
+    endif
+
+    let l:relative = strpart(l:file, strlen(l:root) + 1)
+    let l:relative = substitute(l:relative, ' ', '%20', 'g')
+    let l:branch = substitute(l:branch, ' ', '%20', 'g')
+    let l:host = tolower(matchstr(l:remote_url, '^https\?://[^/]*'))
+    if l:host =~# 'github\.com'
+        let l:url = l:remote_url . '/blob/' . l:branch . '/' . l:relative
+    elseif l:host =~# 'gitlab\.'
+        let l:url = l:remote_url . '/-/blob/' . l:branch . '/' . l:relative
+    elseif l:host =~# 'bitbucket\.'
+        let l:url = l:remote_url . '/src/' . l:branch . '/' . l:relative
+    else
+        let l:url = l:remote_url . '/blob/' . l:branch . '/' . l:relative
+    endif
+
+    if executable('open')
+        let l:browser = 'open'
+    elseif executable('xdg-open')
+        let l:browser = 'xdg-open'
+    elseif executable('cmd.exe')
+        let l:browser = 'cmd.exe'
+    else
+        echo l:url
+        return
+    endif
+
+    call jobstart([l:browser, l:url], {'detach': v:true})
+    echo 'Opened ' . l:url
+endfunction
+
 
 function! GetSessionPath()
     let g:gitroot = trim(system("git rev-parse --show-toplevel"))

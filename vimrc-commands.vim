@@ -45,6 +45,7 @@
     command! RemoteGitFileReference call GetGitRemoteCodeReferenceLink()
     command! GithubLink call GithubLink()
     command! GithubLinkCurrentLine call GithubLinkCurrentLine()
+    command! GitOpen call GitOpen()
     command! OpenChangedFiles call EditChangedFiles()
 "}
 
