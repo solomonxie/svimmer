@@ -67,59 +67,31 @@ function! LoadVimrc()
 endfunction
 
 
-function! GetGithubLink(with_line)
-    "Expected URL
-        "https://github.com/user/repo/blob/master/path/to/script.py#L13"
-    "Formatted string
-        "https://${REPO}/blob/${BRANCH}/${FILEPATH}#{LINE-NUMBER}"
-    let repo_url = trim(system("git remote get-url origin | sed -E 's#^git@([^:]+):#https://\\1/#; s#\\.git$##'"))
-    let branch = trim(system("git rev-parse --abbrev-ref HEAD"))
-    let relpath = trim(system("git ls-files --full-name " . shellescape(expand("%:p"))))
-    let url = repo_url."/blob/".branch."/".relpath
-    if a:with_line
-        let url = url . "#L" . line(".")
-    endif
-    let @+ = url
-    echo "Copied Github Link"
-endfunction
-
-function! GetGitRemoteCodeReferenceLink()
-    call GetGithubLink(1)
-endfunction
-
-function! GithubLink()
-    call GetGithubLink(0)
-endfunction
-
-function! GithubLinkCurrentLine()
-    call GetGithubLink(1)
-endfunction
-
-function! GitOpen() abort
+function! s:GitRemoteFileUrl(with_line) abort
     let l:file = expand('%:p')
     if empty(l:file) || &buftype !=# ''
         echoerr 'Current buffer is not a file'
-        return
+        return ''
     endif
 
     let l:file_dir = expand('%:p:h')
     let l:root = trim(system('git -C ' . shellescape(l:file_dir) . ' rev-parse --show-toplevel'))
     if v:shell_error || empty(l:root)
         echoerr 'Current file is not in a Git repository'
-        return
+        return ''
     endif
 
     let l:remotes = systemlist('git -C ' . shellescape(l:root) . ' remote')
     let l:remote = get(l:remotes, 0, '')
     if empty(l:remote)
         echoerr 'No Git remote found'
-        return
+        return ''
     endif
 
     let l:remote_url = trim(system('git -C ' . shellescape(l:root) . ' remote get-url ' . shellescape(l:remote)))
     if v:shell_error || empty(l:remote_url)
         echoerr 'Could not determine Git remote URL'
-        return
+        return ''
     endif
 
     let l:remote_url = substitute(l:remote_url, '^git@\([^:]*\):', 'https://\1/', '')
@@ -145,6 +117,39 @@ function! GitOpen() abort
         let l:url = l:remote_url . '/src/' . l:branch . '/' . l:relative
     else
         let l:url = l:remote_url . '/blob/' . l:branch . '/' . l:relative
+    endif
+
+    if a:with_line
+        let l:url .= '#L' . line('.')
+    endif
+    return l:url
+endfunction
+
+function! GetGithubLink(with_line) abort
+    let l:url = s:GitRemoteFileUrl(a:with_line)
+    if empty(l:url)
+        return
+    endif
+    let @+ = l:url
+    echo 'Copied Git remote link'
+endfunction
+
+function! GetGitRemoteCodeReferenceLink()
+    call GetGithubLink(1)
+endfunction
+
+function! GithubLink()
+    call GetGithubLink(0)
+endfunction
+
+function! GithubLinkCurrentLine()
+    call GetGithubLink(1)
+endfunction
+
+function! GitOpen() abort
+    let l:url = s:GitRemoteFileUrl(0)
+    if empty(l:url)
+        return
     endif
 
     if executable('open')
