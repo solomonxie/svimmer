@@ -77,4 +77,8 @@ if string.find(vim.o['runtimepath'], 'nvim%-marks') then
     require('nvim-marks').setup()
 end
 
+if string.find(vim.o['runtimepath'], 'nvim%-repo%-browser') then
+    require('repo-browser').setup()
+end
+
 print('misc-plugins.lua loaded')
