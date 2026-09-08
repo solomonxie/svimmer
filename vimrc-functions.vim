@@ -67,14 +67,16 @@ function! LoadVimrc()
 endfunction
 
 
-function! s:GitRemoteFileUrl(with_line) abort
+function! s:GitRemoteFileUrl(with_line, ...) abort
     let l:file = expand('%:p')
-    if empty(l:file) || &buftype !=# ''
+    let l:target = a:0 >= 1 ? a:1 : l:file
+    let l:kind = a:0 >= 2 ? a:2 : 'blob'
+    if empty(l:target) || (a:0 == 0 && &buftype !=# '')
         echoerr 'Current buffer is not a file'
         return ''
     endif
 
-    let l:file_dir = expand('%:p:h')
+    let l:file_dir = a:0 >= 1 ? l:target : expand('%:p:h')
     let l:root = trim(system('git -C ' . shellescape(l:file_dir) . ' rev-parse --show-toplevel'))
     if v:shell_error || empty(l:root)
         echoerr 'Current file is not in a Git repository'
@@ -105,18 +107,18 @@ function! s:GitRemoteFileUrl(with_line) abort
         let l:branch = trim(system('git -C ' . shellescape(l:root) . ' rev-parse HEAD'))
     endif
 
-    let l:relative = strpart(l:file, strlen(l:root) + 1)
+    let l:relative = strpart(l:target, strlen(l:root) + 1)
     let l:relative = substitute(l:relative, ' ', '%20', 'g')
     let l:branch = substitute(l:branch, ' ', '%20', 'g')
     let l:host = tolower(matchstr(l:remote_url, '^https\?://[^/]*'))
     if l:host =~# 'github\.com'
-        let l:url = l:remote_url . '/blob/' . l:branch . '/' . l:relative
+        let l:url = l:remote_url . '/' . l:kind . '/' . l:branch . '/' . l:relative
     elseif l:host =~# 'gitlab\.'
-        let l:url = l:remote_url . '/-/blob/' . l:branch . '/' . l:relative
+        let l:url = l:remote_url . '/-/' . l:kind . '/' . l:branch . '/' . l:relative
     elseif l:host =~# 'bitbucket\.'
         let l:url = l:remote_url . '/src/' . l:branch . '/' . l:relative
     else
-        let l:url = l:remote_url . '/blob/' . l:branch . '/' . l:relative
+        let l:url = l:remote_url . '/' . l:kind . '/' . l:branch . '/' . l:relative
     endif
 
     if a:with_line
@@ -147,7 +149,11 @@ function! GithubLinkCurrentLine()
 endfunction
 
 function! GitOpen() abort
-    let l:url = s:GitRemoteFileUrl(0)
+    if empty(expand('%:p')) || &buftype !=# ''
+        let l:url = s:GitRemoteFileUrl(0, getcwd(), 'tree')
+    else
+        let l:url = s:GitRemoteFileUrl(0)
+    endif
     if empty(l:url)
         return
     endif
