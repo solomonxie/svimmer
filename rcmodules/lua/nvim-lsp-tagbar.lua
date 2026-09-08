@@ -137,14 +137,14 @@ end
 
 function M.sync_cursor()
     if not (M.win and vim.api.nvim_win_is_valid(M.win) and M.buf and vim.api.nvim_buf_is_valid(M.buf)
-            and M.src_buf and vim.api.nvim_get_current_buf() == M.src_buf) then
+            and M.src_win and vim.api.nvim_win_is_valid(M.src_win)) then
         return
     end
     local jumps = vim.b[M.buf].jumps
     if not jumps or vim.tbl_isempty(jumps) then
         return
     end
-    local idx = line_for_cursor(jumps, vim.api.nvim_win_get_cursor(0)[1] - 1)
+    local idx = line_for_cursor(jumps, vim.api.nvim_win_get_cursor(M.src_win)[1] - 1)
     if not idx then
         return
     end
@@ -229,10 +229,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
--- No per-buffer filter: sync_cursor() itself checks the moved-in buffer is
--- M.src_buf and bails out cheaply (no LSP call) otherwise.
 vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-    callback = M.sync_cursor,
+    callback = function(ev)
+        if ev.buf == M.src_buf then
+            M.sync_cursor()
+        end
+    end,
 })
 
 -- Temporary: run :LspTagbarDebug with the bar open, cursor inside a
