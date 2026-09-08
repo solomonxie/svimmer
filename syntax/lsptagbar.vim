@@ -5,11 +5,11 @@ if exists('b:current_syntax')
   finish
 endif
 
-syntax match lsptagbarClass  "\<CLASS\>"
-syntax match lsptagbarMethod "\<METHOD\>"
-syntax match lsptagbarFunc   "\<FUNC\>"
-syntax match lsptagbarConst  "\<CONST\>"
-syntax match lsptagbarStruct "\<STRUCT\>"
+syntax match lsptagbarClass  "\[C\]"
+syntax match lsptagbarMethod "\[M\]"
+syntax match lsptagbarFunc   "\[F\]"
+syntax match lsptagbarConst  "\[K\]"
+syntax match lsptagbarStruct "\[S\]"
 
 highlight default link lsptagbarClass  Type
 highlight default link lsptagbarMethod Function
