@@ -287,7 +287,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 
 "vim/rcmodules/lua/nvim-lsp-tagbar.lua
 " map ft (toggle bottom symbol bar)
-" buffer-local inside the bar: <CR> jump to symbol + close, q/<Esc> close
+" buffer-local inside the bar: <CR> jump to symbol + close, p jump to parent symbol, q/<Esc> close
 
 "vim/rcmodules/fzf.vim
 " map fd, map fa, map fb, map fc, map fm, map FD, map FA

@@ -80,20 +80,23 @@ local function is_import_node(pos)
     return false
 end
 
-local function build_lines(list, depth, lines, jumps)
+local function build_lines(list, depth, parent_idx, lines, jumps)
     for _, s in ipairs(list) do
         local label = KIND_LABEL[s.kind]
         local kept = label and not is_bare_reference(s) and not is_import_node(jump_pos(s))
+        local child_parent_idx = parent_idx
         if kept then
             table.insert(lines, string.rep('  ', depth) .. label .. ' ' .. s.name)
-            table.insert(jumps, { pos = jump_pos(s), range = s.range or s.location.range })
+            table.insert(jumps, { pos = jump_pos(s), range = s.range or s.location.range, parent = parent_idx })
+            child_parent_idx = #lines
         end
         if s.children and #s.children > 0 then
             -- kept nodes recurse one deeper only if this node itself was
             -- shown; filtered-out containers still walk their children at
             -- the same depth so a stray Function under an unlisted kind
-            -- (e.g. Namespace) isn't lost.
-            build_lines(s.children, kept and (depth + 1) or depth, lines, jumps)
+            -- (e.g. Namespace) isn't lost. Either way children's parent
+            -- link points at the nearest kept ancestor, not a filtered one.
+            build_lines(s.children, kept and (depth + 1) or depth, child_parent_idx, lines, jumps)
         end
     end
 end
@@ -103,6 +106,16 @@ function M.close()
         vim.api.nvim_win_close(M.win, true)
     end
     M.win, M.buf = nil, nil
+end
+
+local function goto_parent()
+    local jumps = vim.b[M.buf].jumps
+    local entry = jumps[vim.api.nvim_win_get_cursor(0)[1]]
+    local parent = entry and entry.parent
+    if not parent then
+        return
+    end
+    vim.api.nvim_win_set_cursor(0, { parent, 0 })
 end
 
 local function goto_jump()
@@ -162,7 +175,7 @@ local function render(result, empty_msg)
         lines = { empty_msg or 'No symbols' }
     else
         local tree = is_document_symbol(result) and result or nest_by_container_name(result)
-        build_lines(tree, 0, lines, jumps)
+        build_lines(tree, 0, nil, lines, jumps)
         if vim.tbl_isempty(lines) then
             lines = { 'No matching symbols' }
         end
@@ -206,6 +219,7 @@ function M.open()
 
     local opts = { buffer = M.buf, silent = true }
     vim.keymap.set('n', '<CR>', goto_jump, opts)
+    vim.keymap.set('n', 'p', goto_parent, opts)
     vim.keymap.set('n', 'q', M.close, opts)
     vim.keymap.set('n', '<Esc>', M.close, opts)
 
