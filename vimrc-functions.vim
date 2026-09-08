@@ -51,6 +51,21 @@ function! FlashRelativeNumber() abort
     set relativenumber
     augroup FlashRelativeNumberOff
         autocmd!
+    augroup END
+    " Arm the auto-hide on the next event-loop tick, not immediately: the
+    " visual-mode mapping does :<C-u>call FlashRelativeNumber()<CR>gv, and
+    " that trailing gv (restoring the selection) is itself a cursor move --
+    " arming synchronously would let it self-trigger before the user ever
+    " gets to type their real jump.
+    call timer_start(0, {-> s:ArmUnflash()})
+endfunction
+
+function! s:ArmUnflash() abort
+    if !&relativenumber
+        return  " toggled off already (e.g. race with another flash)
+    endif
+    augroup FlashRelativeNumberOff
+        autocmd!
         autocmd CursorMoved <buffer> call s:UnflashRelativeNumber()
     augroup END
 endfunction
