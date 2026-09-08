@@ -242,9 +242,10 @@ cnoremap <Esc>f <S-Right>
 " current block; use LSP's actual definition lookup instead.
 nnoremap gd :lua vim.lsp.buf.definition()<CR>
 nnoremap <Leader>d :lua vim.lsp.buf.definition()<CR>
-nnoremap <Leader>D :lua vim.diagnostic.open_float()<CR>
+" nnoremap <Leader>D :lua vim.diagnostic.open_float()<CR>
 nnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
 nnoremap <Leader>u :lua vim.lsp.buf.references()<CR>
+nnoremap <Leader>ca :lua vim.lsp.buf.code_action()<CR>
 nnoremap <C-p> :lua vim.diagnostic.goto_prev()<CR>
 nnoremap <C-n> :lua vim.diagnostic.goto_next()<CR>
 nnoremap K :lua vim.lsp.buf.hover({border = 'rounded'}) <CR>
