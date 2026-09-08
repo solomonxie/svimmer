@@ -15,7 +15,7 @@ set nofoldenable  "Cancel all folds when enter vim
 
 call plug#begin('~/.vim/plugged')
 
-    Plug 'neovim/nvim-lspconfig'
+    Plug 'neovim/nvim-lspconfig', {'tag': 'v2.5.0'}
     Plug 'hrsh7th/nvim-compe'
 
 call plug#end()
