@@ -82,6 +82,6 @@ end
 
 if string.find(vim.o['runtimepath'], 'nvim%-lsp%-tagbar') then
     require('nvim-lsp-tagbar').setup({
-        height = 20,
+        height = 15,
     })
 end
