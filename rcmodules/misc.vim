@@ -114,11 +114,14 @@ Plug 'kizza/actionmenu.nvim', {'commit': 'e8d547b'}  "Popup Context Menu
 
 
 "REF: https://github.com/solomonxie/nvim-marks
-Plug 'solomonxie/nvim-marks', {'branch': 'master'}
+Plug 'solomonxie/nvim-marks', { 'branch': 'master' }
 let g:nvim_marks_persistent_dir = expand('~/Documents/gdrive/nvim-marks')
 
 "REF: https://github.com/solomonxie/nvim-repo-browser
-Plug 'solomonxie/nvim-repo-browser', {'branch': 'master', 'do': 'npm install && npm run build' }
+Plug 'solomonxie/nvim-repo-browser', { 'branch': 'master', 'do': 'npm install && npm run build' }
+
+"REF: https://github.com/solomonxie/nvim-lsp-tagbar
+Plug 'solomonxie/nvim-lsp-tagbar', { 'branch': 'master' }
 
 "REF: https://github.com/hashivim/vim-terraform
 " Syntax highlighting for Terraform

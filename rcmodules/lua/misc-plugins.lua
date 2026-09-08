@@ -73,7 +73,6 @@ end
 
 -- Src: vim/rcmodules/misc.vim
 if string.find(vim.o['runtimepath'], 'nvim%-marks') then
-    print('nvim-marks called setup')
     require('nvim-marks').setup()
 end
 
@@ -81,4 +80,8 @@ if string.find(vim.o['runtimepath'], 'nvim%-repo%-browser') then
     require('repo-browser').setup()
 end
 
-print('misc-plugins.lua loaded')
+if string.find(vim.o['runtimepath'], 'nvim%-lsp%-tagbar') then
+    require('nvim-lsp-tagbar').setup({
+        height = 20,
+    })
+end
