@@ -5,12 +5,12 @@
 local M = {}
 
 local KIND_LABEL = {
-    [5] = 'CLASS',
-    [6] = 'METHOD',
-    [9] = 'METHOD',  -- Constructor
-    [12] = 'FUNC',
-    [14] = 'CONST',
-    [23] = 'STRUCT',
+    [5] = '[C]',
+    [6] = '[M]',
+    [9] = '[M]',  -- Constructor
+    [12] = '[F]',
+    [14] = '[K]',
+    [23] = '[S]',
 }
 
 M.win, M.buf, M.src_win, M.src_buf = nil, nil, nil, nil
