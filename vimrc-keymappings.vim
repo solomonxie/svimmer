@@ -149,7 +149,7 @@ nnoremap \ `
 " nnoremap <leader>l :call ToggleRelativeNumber()<CR>
 nnoremap <silent> <leader>l :call FlashRelativeNumber()<CR>
 vnoremap <silent> <leader>l :<C-u>call FlashRelativeNumber()<CR>gv
-nnoremap <silent> fw :call FlashRelativeNumber()<CR>
+" nnoremap <silent> fw :call FlashRelativeNumber()<CR>
 
 " vnoremap <Leader>f "1y:call GrepOpen("<C-r>1")<CR>
 nnoremap <Leader>aa :ggVG<CR>
@@ -279,14 +279,14 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " map q (buffer-local, close netrw)
 " plugin defaults, not set by me (buffer-local inside netrw window): -/%/d/D/R/mf/mt/mc ... see :help netrw-quickmap
 
-"vim/rcmodules/tagbar.vim (disabled, ctags-based, replaced by lua/nvim-lsp-tagbar.lua)
+"vim/rcmodules/tagbar.vim (disabled, ctags-based, replaced by Plug 'solomonxie/nvim-lsp-tagbar')
 " map ft, map g], map g[
 " plugin defaults, not set by me (buffer-local inside Tagbar window): see :help tagbar-keys
 
-"vim/rcmodules/outline.vim (disabled: buggy split_command, flat display for pylsp -- replaced by lua/nvim-lsp-tagbar.lua)
+"vim/rcmodules/outline.vim (disabled: buggy split_command, flat display for pylsp -- replaced by Plug 'solomonxie/nvim-lsp-tagbar')
 " map ft (toggle symbol outline)
 
-"vim/rcmodules/lua/nvim-lsp-tagbar.lua
+"Plug 'solomonxie/nvim-lsp-tagbar'
 " map ft (toggle bottom symbol bar)
 " buffer-local inside the bar: <CR> jump to symbol + close, p jump to parent symbol, q/<Esc> close
 

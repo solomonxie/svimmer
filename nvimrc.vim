@@ -67,8 +67,8 @@ call plug#begin('~/vim_plugged')
         " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
         " source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
         " source ~/myconf/dotfiles/vim/rcmodules/ctags.vim  "300ms+, 99% CPU
-        " source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+, ctag based, heavy -- replaced by lua/nvim-lsp-tagbar.lua
-        " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR, ctag based -- replaced by lua/nvim-lsp-tagbar.lua
+        " source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+, ctag based, heavy -- replaced by Plug 'solomonxie/nvim-lsp-tagbar'
+        " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR, ctag based -- replaced by Plug 'solomonxie/nvim-lsp-tagbar'
         " source ~/myconf/dotfiles/vim/rcmodules/markbar.vim
         " source ~/myconf/dotfiles/vim/rcmodules/syntastic.vim
         " source ~/myconf/dotfiles/vim/rcmodules/telescope.vim  "SLOW
@@ -91,7 +91,7 @@ call plug#begin('~/vim_plugged')
         source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
         source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
         source ~/myconf/dotfiles/vim/rcmodules/lsp-makefile.vim  "autotools-language-server, not in Mason
-        " source ~/myconf/dotfiles/vim/rcmodules/outline.vim  "Buggy split_command (leaves stray "vs" buffer), flat display for flat-SymbolInformation servers like pylsp -- replaced by lua/nvim-lsp-tagbar.lua
+        " source ~/myconf/dotfiles/vim/rcmodules/outline.vim  "Buggy split_command (leaves stray "vs" buffer), flat display for flat-SymbolInformation servers like pylsp -- replaced by Plug 'solomonxie/nvim-lsp-tagbar'
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
         " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
         source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
@@ -144,8 +144,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
-" Own minimal LSP symbol bar, replaces outline/tagbar/vista
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvim-lsp-tagbar.lua
+" LSP symbol bar, replaces outline/tagbar/vista: Plug 'solomonxie/nvim-lsp-tagbar'
 " Others:
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua

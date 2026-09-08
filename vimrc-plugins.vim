@@ -113,6 +113,9 @@ call plug#begin('~/.vim/plugged')
             else
                 echomsg 'Missing dependency: brew install ctags'
             endif
+
+        "<LSP Symbol Bar> (no ctags, replaces tagbar/vista/outline above)
+            Plug 'solomonxie/nvim-lsp-tagbar', { 'tag': 'v0.1.0' }
             if &filetype == 'python'
                 if executable('ped')
                     Plug 'sloria/vim-ped'  "(Python) Jump to 3rd party modules
