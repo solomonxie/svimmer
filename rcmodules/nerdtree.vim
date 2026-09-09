@@ -75,6 +75,32 @@ function! SafeNERDTreeQuit() abort
 endfunction
 autocmd FileType nerdtree nnoremap <buffer> q :call SafeNERDTreeQuit()<CR>
 
+" Auto-refresh NERDTree root every second, replacing manual R press.
+" Timer only runs while the NERDTree buffer is open.
+let s:nerdtree_refresh_timer = -1
+
+function! s:NerdTreeAutoRefresh(timer) abort
+    silent! NERDTreeRefreshRoot
+endfunction
+
+function! s:StartNerdTreeAutoRefresh() abort
+    if s:nerdtree_refresh_timer ==# -1
+        let s:nerdtree_refresh_timer = timer_start(1000, function('s:NerdTreeAutoRefresh'), {'repeat': -1})
+    endif
+endfunction
+
+function! s:StopNerdTreeAutoRefresh() abort
+    if s:nerdtree_refresh_timer !=# -1
+        call timer_stop(s:nerdtree_refresh_timer)
+        let s:nerdtree_refresh_timer = -1
+    endif
+endfunction
+
+if has('timers')
+    autocmd FileType nerdtree call s:StartNerdTreeAutoRefresh()
+    autocmd BufWinLeave NERD_tree_* call s:StopNerdTreeAutoRefresh()
+endif
+
 
 " Customize icons on Nerdtree
 let g:NERDTreeDirArrowExpandable = '▸'
