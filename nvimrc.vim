@@ -142,6 +142,7 @@ luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
+luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-terraform.lua
 " luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
 luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
 " Others:
