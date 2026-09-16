@@ -83,5 +83,23 @@ end
 if string.find(vim.o['runtimepath'], 'nvim%-lsp%-tagbar') then
     require('nvim-lsp-tagbar').setup({
         height = 15,
+        -- emmylua_ls emits no symbol for anonymous functions, so command
+        -- and autocmd handlers are matched by name here instead.
+        queries = {
+            lua = {
+                { label = '[U]', query = [[
+                    ((function_call
+                       name: (_) @fn
+                       (#eq? @fn "vim.api.nvim_create_user_command")
+                       arguments: (arguments (string content: (string_content) @name))) @scope)
+                ]] },
+                { label = '[A]', query = [[
+                    ((function_call
+                       name: (_) @fn
+                       (#eq? @fn "vim.api.nvim_create_autocmd")
+                       arguments: (arguments . (_) @name)) @scope)
+                ]] },
+            },
+        },
     })
 end
