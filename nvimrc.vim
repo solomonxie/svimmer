@@ -395,5 +395,31 @@ set foldtext=         " Neovim: setting this to empty keeps syntax highlighting 
 
 
 
+" --- Open known binary files with macOS default app instead of as text ---
+let s:binary_exts = [
+    \ 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp', 'ico', 'heic',
+    \ 'mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv',
+    \ 'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a',
+    \ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+    \ 'zip', 'tar', 'gz', '7z', 'rar', 'dmg',
+    \ ]
+let s:binary_patterns = []
+for s:ext in s:binary_exts
+    call add(s:binary_patterns, '*.'.s:ext)
+    call add(s:binary_patterns, '*.'.toupper(s:ext))
+endfor
+
+function! s:OpenWithSystemApp()
+    let l:file = expand('<afile>:p')
+    let l:buf = expand('<abuf>')
+    call jobstart(['open', l:file], {'detach': v:true})
+    call timer_start(0, {-> execute('silent! bwipeout '.l:buf)})
+endfunction
+
+augroup BinaryFileOpener
+    autocmd!
+    execute 'autocmd BufReadCmd '.join(s:binary_patterns, ',').' call s:OpenWithSystemApp()'
+augroup END
+
 " --- Local Overrides ---
 silent! source ~/.vimrc-local.vim
