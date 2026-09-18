@@ -11,6 +11,7 @@ local my_lsp_servers = {
     'terraformls',  -- Terraform
     -- 'lua_ls',  -- super slow, 18s+ to load (it analyzes whole repo on first load)
     'emmylua_ls',  -- Lua, Rust-based replacement for lua_ls; see vim/.emmyrc.json
+    'bashls',  -- Bash, sh, zsh
 }
 
 require('mason').setup({
@@ -33,3 +34,8 @@ for _, lsp in ipairs(my_lsp_servers) do
     vim.lsp.enable(lsp)  --New syntax after nvim v0.11
     vim.lsp.config(lsp, {})  --New syntax after nvim v0.11
 end
+
+-- bashls ships filetypes {bash, sh}; zsh scripts parse close enough that its
+-- document symbols are worth having there too (shell functions and globals).
+-- Must follow the loop above, which resets each server's config.
+vim.lsp.config('bashls', { filetypes = { 'bash', 'sh', 'zsh' } })
