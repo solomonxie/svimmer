@@ -2,13 +2,13 @@
 
 Neovim config: vim-plug plugins, LSP via Mason, and one `rcmodules/` file per plugin so each can be toggled from `nvimrc.vim`.
 
-Links the repo to `~/.config/nvim`.
+Clone straight into `~/.config/nvim`. `install.sh` only matters if you clone it somewhere else; it then links the repo there.
 
 ## Install
 
 ```sh
-git clone https://github.com/solomonxie/svimmer.git ~/.dotfiles/svimmer
-~/.dotfiles/svimmer/install.sh
+git clone https://github.com/solomonxie/svimmer.git ~/.config/nvim
+~/.config/nvim/install.sh
 ```
 
 Existing symlinks are replaced; real files at a target path are moved to `<path>.bak.<timestamp>`.
