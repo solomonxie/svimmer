@@ -12,4 +12,10 @@ link() {  # link <path in repo, empty = repo root> <dest>
   echo "linked $dest -> $src"
 }
 
-link "" ~/.config/nvim
+# install.sh       Neovim: the full config at ~/.config/nvim
+# install.sh mini  plain Vim (e.g. a Linux server): ~/.vimrc -> vimrc-mini.vim, no plugins
+if [ "${1:-}" = mini ]; then
+  link vimrc-mini.vim ~/.vimrc
+else
+  link "" ~/.config/nvim
+fi

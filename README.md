@@ -13,6 +13,15 @@ git clone https://github.com/solomonxie/svimmer.git ~/.config/nvim
 
 Existing symlinks are replaced; real files at a target path are moved to `<path>.bak.<timestamp>`.
 
+## Plain Vim
+
+`vimrc-mini.vim` is a self-contained vimrc for stock Vim (Linux servers, Raspberry Pi): no plugins, no Neovim-only settings.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/solomonxie/svimmer/master/vimrc-mini.vim -o ~/.vimrc
+# or, with the repo cloned: ~/.config/nvim/install.sh mini
+```
+
 
 
 ## Perfomrance
