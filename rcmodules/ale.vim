@@ -149,7 +149,7 @@ let g:ale_python_pyright_config = {
 " ===Ruff===
 " HELP: :help ale-python-ruff
 " HELP: pip install ruff
-let g:ale_python_ruff_format_executable = '/Users/solomonxie/virtualenv/venv/bin/ruff'
+let g:ale_python_ruff_format_executable = expand('~/virtualenv/venv/bin/ruff')
 let g:ale_python_ruff_format_options = '--ignore F401'
 
 " --- FIXERS ---

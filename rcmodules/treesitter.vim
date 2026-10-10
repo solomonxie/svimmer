@@ -29,4 +29,4 @@ augroup END
 
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/treesitter.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/treesitter.lua']

@@ -23,7 +23,7 @@ let g:UltiSnipsEditSplit="vertical"
 
 " Specify snippets locations ==> MUST BE FULL PATH (`~` DOESN'T WORK) !!
 " let g:UltiSnipsSnippetsDir = expand("~/.vim/mysnippets")
-let g:UltiSnipsSnippetDirectories=[expand('~/vim_plugged/vim-snippets/UltiSnips/'), expand('~/myconf/dotfiles/vim/mysnippets')]
+let g:UltiSnipsSnippetDirectories=[expand('~/vim_plugged/vim-snippets/UltiSnips/'), expand('~/.config/nvim/mysnippets')]
 
 " [  Lazy Load Plugins  ]-----------{
     augroup load_ultisnips

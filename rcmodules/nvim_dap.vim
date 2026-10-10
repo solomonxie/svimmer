@@ -32,4 +32,4 @@ Plug 'nvim-neotest/nvim-nio', {'tag': 'v1.10.1'}  "Async utils for ui
 Plug 'theHamsta/nvim-dap-virtual-text'
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim_dap.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/nvim_dap.lua']

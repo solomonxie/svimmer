@@ -48,77 +48,77 @@ let g:lua_configs = []  "Append if a plugin module requires a Lua config after a
 
 call plug#begin('~/vim_plugged')
     "{Common}
-        source ~/myconf/dotfiles/vim/rcmodules/perf_profiling.vim  "Performance Profiling tips
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_provider.vim  "Important
-        source ~/myconf/dotfiles/vim/rcmodules/misc.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/hop.vim  "Textobject hop
+        source ~/.config/nvim/rcmodules/perf_profiling.vim  "Performance Profiling tips
+        source ~/.config/nvim/rcmodules/nvim_provider.vim  "Important
+        source ~/.config/nvim/rcmodules/misc.vim
+        " source ~/.config/nvim/rcmodules/hop.vim  "Textobject hop
     "{UI}
-        " source ~/myconf/dotfiles/vim/rcmodules/indent_line.vim  "BUGGY
-        source ~/myconf/dotfiles/vim/rcmodules/blankline.vim  "INDENT-LINE
-        " source ~/myconf/dotfiles/vim/rcmodules/airline.vim  "681ms+
-        source ~/myconf/dotfiles/vim/rcmodules/buftabline.vim  "Blazing fast!
-        source ~/myconf/dotfiles/vim/rcmodules/lightline.vim  "Blazing fast!
-        " source ~/myconf/dotfiles/vim/rcmodules/statusline.vim
-        source ~/myconf/dotfiles/vim/rcmodules/nerdtree.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/neotree.vim  "BUGGY!!! HEAVY
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim-tree.vim  "fast, simple, but sometimes annoying
-        source ~/myconf/dotfiles/vim/rcmodules/netrw.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/vinegar.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/chadtree.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/semshi.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ctags.vim  "300ms+, 99% CPU
-        " source ~/myconf/dotfiles/vim/rcmodules/tagbar.vim  "300ms+, ctag based, heavy
-        " source ~/myconf/dotfiles/vim/rcmodules/vista.vim  "TAG BAR, ctag based
-        " source ~/myconf/dotfiles/vim/rcmodules/markbar.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/syntastic.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/telescope.vim  "SLOW
-        " source ~/myconf/dotfiles/vim/rcmodules/whichkey.vim
+        " source ~/.config/nvim/rcmodules/indent_line.vim  "BUGGY
+        source ~/.config/nvim/rcmodules/blankline.vim  "INDENT-LINE
+        " source ~/.config/nvim/rcmodules/airline.vim  "681ms+
+        source ~/.config/nvim/rcmodules/buftabline.vim  "Blazing fast!
+        source ~/.config/nvim/rcmodules/lightline.vim  "Blazing fast!
+        " source ~/.config/nvim/rcmodules/statusline.vim
+        source ~/.config/nvim/rcmodules/nerdtree.vim
+        " source ~/.config/nvim/rcmodules/neotree.vim  "BUGGY!!! HEAVY
+        " source ~/.config/nvim/rcmodules/nvim-tree.vim  "fast, simple, but sometimes annoying
+        source ~/.config/nvim/rcmodules/netrw.vim
+        " source ~/.config/nvim/rcmodules/vinegar.vim
+        " source ~/.config/nvim/rcmodules/chadtree.vim
+        " source ~/.config/nvim/rcmodules/semshi.vim
+        " source ~/.config/nvim/rcmodules/ctags.vim  "300ms+, 99% CPU
+        " source ~/.config/nvim/rcmodules/tagbar.vim  "300ms+, ctag based, heavy
+        " source ~/.config/nvim/rcmodules/vista.vim  "TAG BAR, ctag based
+        " source ~/.config/nvim/rcmodules/markbar.vim
+        " source ~/.config/nvim/rcmodules/syntastic.vim
+        " source ~/.config/nvim/rcmodules/telescope.vim  "SLOW
+        " source ~/.config/nvim/rcmodules/whichkey.vim
     "{Completion | Usages | Definitions}
-        " source ~/myconf/dotfiles/vim/rcmodules/replace.vim
-        source ~/myconf/dotfiles/vim/rcmodules/fzf.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ale.vim  "Async linting
-        " source ~/myconf/dotfiles/vim/rcmodules/deoplete.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ultisnips.vim  "DISABLED for now, see snippets.vim
-        source ~/myconf/dotfiles/vim/rcmodules/anyjump.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/YCM.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/coc.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/coq.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ncm2.vim
-        source ~/myconf/dotfiles/vim/rcmodules/autopairs.vim  "Brakets/Quotes
-        source ~/myconf/dotfiles/vim/rcmodules/treesitter.vim
+        " source ~/.config/nvim/rcmodules/replace.vim
+        source ~/.config/nvim/rcmodules/fzf.vim
+        " source ~/.config/nvim/rcmodules/ale.vim  "Async linting
+        " source ~/.config/nvim/rcmodules/deoplete.vim
+        " source ~/.config/nvim/rcmodules/ultisnips.vim  "DISABLED for now, see snippets.vim
+        source ~/.config/nvim/rcmodules/anyjump.vim
+        " source ~/.config/nvim/rcmodules/YCM.vim
+        " source ~/.config/nvim/rcmodules/coc.vim
+        " source ~/.config/nvim/rcmodules/coq.vim
+        " source ~/.config/nvim/rcmodules/ncm2.vim
+        source ~/.config/nvim/rcmodules/autopairs.vim  "Brakets/Quotes
+        source ~/.config/nvim/rcmodules/treesitter.vim
     "{Language Servers - LSP}
         " LSP
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_lspconfig.vim  "Required!
-        source ~/myconf/dotfiles/vim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
-        source ~/myconf/dotfiles/vim/rcmodules/lsp-makefile.vim  "autotools-language-server, not in Mason
-        " source ~/myconf/dotfiles/vim/rcmodules/outline.vim  "Buggy split_command (leaves stray "vs" buffer)
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim_lsp_compl.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim_compe.vim  "Deprecated
-        source ~/myconf/dotfiles/vim/rcmodules/nvim_cmp.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/lspsaga.vim  "Buggy
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim  "For general debugging
+        source ~/.config/nvim/rcmodules/nvim_lspconfig.vim  "Required!
+        source ~/.config/nvim/rcmodules/lsp-mason.vim  "LSP Installer, all languages
+        source ~/.config/nvim/rcmodules/lsp-makefile.vim  "autotools-language-server, not in Mason
+        " source ~/.config/nvim/rcmodules/outline.vim  "Buggy split_command (leaves stray "vs" buffer)
+        " source ~/.config/nvim/rcmodules/nvim_lsp_compl.vim
+        " source ~/.config/nvim/rcmodules/nvim_compe.vim  "Deprecated
+        source ~/.config/nvim/rcmodules/nvim_cmp.vim
+        " source ~/.config/nvim/rcmodules/lspsaga.vim  "Buggy
+        " source ~/.config/nvim/rcmodules/nvim_dap.vim  "For general debugging
     "{Git}
-        source ~/myconf/dotfiles/vim/rcmodules/tig.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/fugitive.vim
-        source ~/myconf/dotfiles/vim/rcmodules/gitgutter.vim  "50ms+
-        " source ~/myconf/dotfiles/vim/rcmodules/gitsigns.vim  "BLAZING FAST: 0.2262ms
-        " source ~/myconf/dotfiles/vim/rcmodules/blame.vim
+        source ~/.config/nvim/rcmodules/tig.vim
+        " source ~/.config/nvim/rcmodules/fugitive.vim
+        source ~/.config/nvim/rcmodules/gitgutter.vim  "50ms+
+        " source ~/.config/nvim/rcmodules/gitsigns.vim  "BLAZING FAST: 0.2262ms
+        " source ~/.config/nvim/rcmodules/blame.vim
     "{Python}
-        " source ~/myconf/dotfiles/vim/rcmodules/jedi.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/ped.vim
+        " source ~/.config/nvim/rcmodules/jedi.vim
+        " source ~/.config/nvim/rcmodules/ped.vim
     "{NodeJS}
-        " source ~/myconf/dotfiles/vim/rcmodules/vimspector.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/nvim_dap.vim
+        " source ~/.config/nvim/rcmodules/vimspector.vim
+        " source ~/.config/nvim/rcmodules/nvim_dap.vim
     "{AI}
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-copilot.vim
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-llm_nvim.vim  "Complex settings, buggy UI
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-gp.vim  "Ugly design, not easy to use
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-codecompanion.vim  "Not yet knowing how to autocomplete
-        " source ~/myconf/dotfiles/vim/rcmodules/llm-yetanotherpilot.vim
+        " source ~/.config/nvim/rcmodules/llm-copilot.vim
+        " source ~/.config/nvim/rcmodules/llm-gen.vim  "For local LLMs (Ollama)
+        " source ~/.config/nvim/rcmodules/llm-llm_nvim.vim  "Complex settings, buggy UI
+        " source ~/.config/nvim/rcmodules/llm-chatgpt.vim  "Failed to setup, too many heavy deps caused many errors
+        " source ~/.config/nvim/rcmodules/llm-gp.vim  "Ugly design, not easy to use
+        " source ~/.config/nvim/rcmodules/llm-codecompanion.vim  "Not yet knowing how to autocomplete
+        " source ~/.config/nvim/rcmodules/llm-yetanotherpilot.vim
     "{Others}
-        " source ~/myconf/dotfiles/vim/rcmodules/dadbod.vim  "DB client
+        " source ~/.config/nvim/rcmodules/dadbod.vim  "DB client
 call plug#end()
 echom 'All plugins loaded.' |redraw
 
@@ -135,29 +135,29 @@ for path in g:lua_configs
 endfor
 
 " LSPs:
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-python.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-sql.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-vim.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-css.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-js.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-html.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-cpp.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-terraform.lua
-" luafile ~/myconf/dotfiles/vim/rcmodules/lua/lsp-ruby.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/markdown.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-python.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-sql.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-vim.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-css.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-js.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-html.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-cpp.lua
+luafile ~/.config/nvim/rcmodules/lua/lsp-terraform.lua
+" luafile ~/.config/nvim/rcmodules/lua/lsp-ruby.lua
+luafile ~/.config/nvim/rcmodules/lua/markdown.lua
 " Others:
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-functions.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/misc-plugins.lua
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/snippets.lua
+luafile ~/.config/nvim/rcmodules/lua/nvimrc-functions.lua
+luafile ~/.config/nvim/rcmodules/lua/misc-plugins.lua
+luafile ~/.config/nvim/rcmodules/lua/snippets.lua
 
 
 " --- IMPORT MODULES ---
-source ~/myconf/dotfiles/vim/vimrc-functions.vim
-source ~/myconf/dotfiles/vim/vimrc-commands.vim
-source ~/myconf/dotfiles/vim/vimrc-keymappings.vim
-source ~/myconf/dotfiles/vim/vimrc-ui.vim
+source ~/.config/nvim/vimrc-functions.vim
+source ~/.config/nvim/vimrc-commands.vim
+source ~/.config/nvim/vimrc-keymappings.vim
+source ~/.config/nvim/vimrc-ui.vim
 
-luafile ~/myconf/dotfiles/vim/rcmodules/lua/nvimrc-ui.lua
+luafile ~/.config/nvim/rcmodules/lua/nvimrc-ui.lua
 
 
 

@@ -78,7 +78,7 @@ endfunction
 
 function! LoadVimrc()
     :tabnew
-    :source ~/dotfiles/vim/workspace.vim
+    :source ~/.config/nvim/workspace.vim
 endfunction
 
 

@@ -7,7 +7,7 @@ Plug 'Kurama622/llm.nvim', {'commit': 'd10c83e'}
 
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-llm_nvim.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/llm-llm_nvim.lua']
 
 
 " ============= End of File ==================

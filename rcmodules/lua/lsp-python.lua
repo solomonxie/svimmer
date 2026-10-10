@@ -17,7 +17,7 @@ vim.lsp.config('pylsp', {
             -- -- configurationSources = { "flake8" },  -- CONFLICT WITH pylsp.plugins.flake8.config
             -- init_options = { lint = false },
             plugins = {
-                pylint =  { enabled = false, args = { "--rcfile", vim.fn.expand("~/myconf/dotfiles/etc/pylintrc") } },
+                pylint =  { enabled = false, args = { "--rcfile", vim.fn.expand("~/.config/pylintrc") } },
                 flake8 = { enabled = false },
                 pylsp_flake8 = { enabled = false },
                 pylsp_mypy =  { enabled = false },

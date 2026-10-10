@@ -8,4 +8,4 @@ Plug 'nvim-telescope/telescope.nvim', {'commit': '3333a52'}  "Popup UI
 Plug 'folke/trouble.nvim', {'commit': 'bd67efe'}  "Optional: Telescope enhancements
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-chatgpt.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/llm-chatgpt.lua']

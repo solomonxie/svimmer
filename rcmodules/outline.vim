@@ -5,7 +5,7 @@ Plug 'hedyhli/outline.nvim', {'tag': 'v1.2.0'}
 
 noremap ft <cmd>Outline<CR>
 
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/outline.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/outline.lua']
 
 
 " ============= End of File ==================

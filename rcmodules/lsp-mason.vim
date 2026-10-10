@@ -12,7 +12,7 @@ Plug 'mason-org/mason-lspconfig.nvim', {'tag': 'v2.3.0'}  "Auto install/enable/c
 Plug 'neovim/nvim-lspconfig', {'tag': 'v2.5.0'}
 
 " All pre-enabled LSPs are defined here:
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/lsp-mason.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/lsp-mason.lua']
 
 
 " ============= End of File ==================

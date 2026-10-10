@@ -1,0 +1,9 @@
+.*
+!.gitignore
+*.pyc
+backup/
+undo/
+sessions/
+swap/
+tags/
+plugged/

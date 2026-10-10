@@ -11,7 +11,7 @@ nnoremap <silent> ff :NvimTreeFindFile!<CR>zz
 " Setup runs after plug#end() via the g:lua_configs loop in nvimrc.vim --
 " vim-plug only adds nvim-tree's lua/ dir to package.path once plug#end()
 " finishes, so require("nvim-tree") here (inline, mid Plug block) would fail.
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim-tree.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/nvim-tree.lua']
 
 " Close nvim-tree when it's the only window left (official nvim-tree recipe)
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() =~# '^NvimTree_' | quit | endif

@@ -16,7 +16,7 @@ Plug 'hrsh7th/cmp-omni', {'commit': '4ef610b'}
 " Plug 'uga-rosa/cmp-dictionary'
 Plug 'ray-x/cmp-treesitter', {'commit': '958fcfa'}
 
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/nvim_cmp.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/nvim_cmp.lua']
 
 
 " ============= End of File ==================

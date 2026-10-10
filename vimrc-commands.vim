@@ -88,7 +88,7 @@
 
 
 "[Reload Vimrc]--------------------------{
-    command! SO :source ~/myconf/dotfiles/vim/nvimrc.vim
+    command! SO :source ~/.config/nvim/nvimrc.vim
 "}
 
 

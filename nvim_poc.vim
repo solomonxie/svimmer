@@ -8,7 +8,7 @@ vnoremap ,. <Esc>:nohl<CR><ESC>
 nnoremap ,. <Esc>:nohl<CR><ESC>
 noremap <Leader>q :bdelete<CR><ESC>
 noremap <A-c> <C-w>c
-source ~/dotfiles/vim/rcmodules/nvim_provider.vim  "IMPORTANT!
+source ~/.config/nvim/rcmodules/nvim_provider.vim  "IMPORTANT!
 nnoremap <Leader>R :source .git/workspace.vim<CR><ESC>
 set nofoldenable  "Cancel all folds when enter vim
 

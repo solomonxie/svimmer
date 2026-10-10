@@ -109,7 +109,7 @@ vnoremap <Leader>y "+y
 nnoremap <Leader>p "+p
 vnoremap <Leader>p "+p
 
-nnoremap <Leader>L :source ~/myconf/dotfiles/vim/nvimrc.vim<CR>
+nnoremap <Leader>L :source ~/.config/nvim/nvimrc.vim<CR>
 
 nnoremap <leader>R :call LoadSession()<CR><ESC>
 

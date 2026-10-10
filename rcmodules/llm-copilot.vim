@@ -24,7 +24,7 @@ Plug 'CopilotC-Nvim/CopilotChat.nvim', {'tag': 'v4.7.4'}  "Require nvim>0.10
 Plug 'nvim-lua/plenary.nvim', {'tag': 'v0.1.4'}
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-copilot.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/llm-copilot.lua']
 
 
 " ============= End of File ==================

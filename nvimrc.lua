@@ -11,32 +11,32 @@ return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
     use 'ap/vim-buftabline'
 
-    -- luafile "~/myconf/dotfiles/vim/luamodule/perf_profiling.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/nvim_provider.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/basic.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/hop.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/indent_line.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/buftabline.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/lightline.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/nerdtree.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/netrw.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/semshi.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/tagbar.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/fzf.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/ultisnips.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/anyjump.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/autopairs.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/nvim_lspconfig.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/nvim_compe.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/tig.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/gitgutter.lua"
-    -- luafile "~/myconf/dotfiles/vim/luamodule/blame.lua"
+    -- luafile "~/.config/nvim/luamodule/perf_profiling.lua"
+    -- luafile "~/.config/nvim/luamodule/nvim_provider.lua"
+    -- luafile "~/.config/nvim/luamodule/basic.lua"
+    -- luafile "~/.config/nvim/luamodule/hop.lua"
+    -- luafile "~/.config/nvim/luamodule/indent_line.lua"
+    -- luafile "~/.config/nvim/luamodule/buftabline.lua"
+    -- luafile "~/.config/nvim/luamodule/lightline.lua"
+    -- luafile "~/.config/nvim/luamodule/nerdtree.lua"
+    -- luafile "~/.config/nvim/luamodule/netrw.lua"
+    -- luafile "~/.config/nvim/luamodule/semshi.lua"
+    -- luafile "~/.config/nvim/luamodule/tagbar.lua"
+    -- luafile "~/.config/nvim/luamodule/fzf.lua"
+    -- luafile "~/.config/nvim/luamodule/ultisnips.lua"
+    -- luafile "~/.config/nvim/luamodule/anyjump.lua"
+    -- luafile "~/.config/nvim/luamodule/autopairs.lua"
+    -- luafile "~/.config/nvim/luamodule/nvim_lspconfig.lua"
+    -- luafile "~/.config/nvim/luamodule/nvim_compe.lua"
+    -- luafile "~/.config/nvim/luamodule/tig.lua"
+    -- luafile "~/.config/nvim/luamodule/gitgutter.lua"
+    -- luafile "~/.config/nvim/luamodule/blame.lua"
 
     -- BUILT-IN SETTINGS
-    vim.cmd('source ~/myconf/dotfiles/vim/vimrc-functions.vim')
-    vim.cmd('source ~/myconf/dotfiles/vim/vimrc-commands.vim')
-    vim.cmd('source ~/myconf/dotfiles/vim/vimrc-keymappings.vim')
-    vim.cmd('source ~/myconf/dotfiles/vim/vimrc-ui.vim')
+    vim.cmd('source ~/.config/nvim/vimrc-functions.vim')
+    vim.cmd('source ~/.config/nvim/vimrc-commands.vim')
+    vim.cmd('source ~/.config/nvim/vimrc-keymappings.vim')
+    vim.cmd('source ~/.config/nvim/vimrc-ui.vim')
 
     --------------------------------------------------------------------
     -- Automatically set up your configuration after cloning packer.nvim

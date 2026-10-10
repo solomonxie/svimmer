@@ -7,7 +7,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'commit': '42fc28b'}
 
 
 " Post-Vimplug setup
-let g:lua_configs += ['~/myconf/dotfiles/vim/rcmodules/lua/llm-codecompanion.lua']
+let g:lua_configs += ['~/.config/nvim/rcmodules/lua/llm-codecompanion.lua']
 
 
 " ============= End of File ==================
