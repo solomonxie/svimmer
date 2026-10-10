@@ -7,11 +7,11 @@ Links the repo to `~/.config/nvim`.
 ## Install
 
 ```sh
-git clone https://github.com/solomonxie/svimmer.git ~/myconf/svimmer
-~/myconf/svimmer/install.sh
+git clone https://github.com/solomonxie/svimmer.git ~/.dotfiles/svimmer
+~/.dotfiles/svimmer/install.sh
 ```
 
-Anything already at a target path is moved to `<path>.bak.<timestamp>`.
+Existing symlinks are replaced; real files at a target path are moved to `<path>.bak.<timestamp>`.
 
 
 

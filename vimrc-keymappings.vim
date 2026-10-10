@@ -13,7 +13,7 @@
 
 " Get Full path of ~, e.g., /home/ubuntu
 let $HOME = expand('~')
-let $DOTFILES = expand('~') . '/myconf/dotfiles'
+let $DOTFILES = expand('~') . '/.dotfiles'
 
 " --- GENERAL GLOBAL MAPPINGS ---
 let mapleader = ","

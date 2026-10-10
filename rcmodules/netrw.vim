@@ -1,7 +1,7 @@
 "<NetRW File Tree>
 " ============================================================================
 " Netrw Directory Listing                                        (netrw v170)
-"   ~/myconf/dotfiles
+"   ~/.dotfiles
 "   Sorted by      name
 "   Sort sequence: [\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,\.o$,\.obj$,\.info$,\.swp$,\.bak$,\~$
 "   Hiding:        \(^\|\s\s\)\zs\.\S\+
