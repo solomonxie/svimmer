@@ -1,4 +1,4 @@
-# svimmer
+# vim-for-speed
 
 Neovim config: vim-plug plugins, LSP via Mason, and one `rcmodules/` file per plugin so each can be toggled from `nvimrc.vim`.
 
@@ -7,7 +7,7 @@ Clone straight into `~/.config/nvim`. `install.sh` only matters if you clone it 
 ## Install
 
 ```sh
-git clone https://github.com/solomonxie/svimmer.git ~/.config/nvim
+git clone https://github.com/solomonxie/vim-for-speed.git ~/.config/nvim
 ~/.config/nvim/install.sh
 ```
 
@@ -18,7 +18,7 @@ Existing symlinks are replaced; real files at a target path are moved to `<path>
 `vimrc-mini.vim` is a self-contained vimrc for stock Vim (Linux servers, Raspberry Pi): no plugins, no Neovim-only settings.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/solomonxie/svimmer/master/vimrc-mini.vim -o ~/.vimrc
+curl -fsSL https://raw.githubusercontent.com/solomonxie/vim-for-speed/master/vimrc-mini.vim -o ~/.vimrc
 # or, with the repo cloned: ~/.config/nvim/install.sh mini
 ```
 
