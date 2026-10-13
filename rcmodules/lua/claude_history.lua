@@ -752,6 +752,10 @@ function M.pane_toggle(all)
         buffer = pane.buf,
         callback = function() vim.schedule(function() if pane_open() then follow(false) end end) end,
     })
+    -- Show the row under the cursor (the latest session) right away; render_pane marked it as
+    -- already shown, so the first follow() would skip it until the cursor moved.
+    pane.last = nil
+    vim.schedule(function() if pane_open() then follow(false) end end)
 end
 
 vim.api.nvim_create_autocmd('WinClosed', {
