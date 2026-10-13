@@ -149,6 +149,7 @@ luafile ~/.config/nvim/rcmodules/lua/markdown.lua
 luafile ~/.config/nvim/rcmodules/lua/nvimrc-functions.lua
 luafile ~/.config/nvim/rcmodules/lua/misc-plugins.lua
 luafile ~/.config/nvim/rcmodules/lua/snippets.lua
+luafile ~/.config/nvim/rcmodules/lua/claude_history.lua
 
 
 " --- IMPORT MODULES ---
@@ -171,6 +172,7 @@ set smartcase  "Case sensitive when there's upper case in search
 set hidden "Enable to switch buffer without saving
 set number "show line number
 set mouse=a  "a -> all, enbles mouse in Tmux (but text selection will trigger visual mode)
+set mousemodel=extend  "Right-click extends selection instead of opening the nvim PopUp menu
 " Disable mouse selection into visual mode
 "set mouse=nicr
 "noremap <LeftDrag> <LeftMouse>

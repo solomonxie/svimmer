@@ -10,17 +10,40 @@ Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'  "Slow down vim significantly
 
 ">> Key Mappings
-nnoremap <Leader>f :NERDTree<CR>
+nnoremap <Leader>f :<C-U>call NerdTreeAtProjectRoot()<CR>
 " nnoremap <Leader>F :NERDTreeFind<CR>zz
 " nnoremap FF :NERDTree<CR>
 nnoremap ff :<C-U>call NerdTreeFindOrRoot()<CR>zz
 
-function! NerdTreeFindOrRoot()
-    if empty(expand('%'))
-        NERDTree
-    else
-        NERDTreeFind
+" Git root of the current file (symlinks resolved, so a symlinked checkout
+" still matches the path NERDTreeFind resolves), else the cwd.
+function! s:NerdTreeProjectRoot() abort
+    let l:dir = empty(expand('%')) ? getcwd() : fnamemodify(resolve(expand('%:p')), ':h')
+    let l:root = trim(system('git -C ' . shellescape(l:dir) . ' rev-parse --show-toplevel'))
+    return v:shell_error == 0 && isdirectory(l:root) ? resolve(l:root) : resolve(getcwd())
+endfunction
+
+function! NerdTreeAtProjectRoot() abort
+    exec 'NERDTree ' . fnameescape(s:NerdTreeProjectRoot())
+endfunction
+
+" Always rooted at the project root, then reveal the current file in it
+function! NerdTreeFindOrRoot() abort
+    let l:root = s:NerdTreeProjectRoot()
+    " g:NERDTree is undefined until the lazy-loaded plugin's first command runs
+    if !exists('g:NERDTree') || !g:NERDTree.ExistsForTab()
+                \ || g:NERDTree.ForCurrentTab().root.path.str() !=# l:root
+        let l:file = expand('%:p')
+        exec 'NERDTree ' . fnameescape(l:root)
+        if empty(l:file)
+            return
+        endif
+        wincmd p
+    elseif empty(expand('%'))
+        NERDTreeFocus
+        return
     endif
+    NERDTreeFind
 endfunction
 " nnoremap <Leader>F :NERDTree %:p:h<CR>
 " Add '%' for changing root accordingly
@@ -29,7 +52,7 @@ endfunction
 " nnoremap gD :NERDTree<CR>
 
 ">> UI settings
-let NERDTreeQuitOnOpen=1   " Open|Close NERDtree when files was opened
+let NERDTreeQuitOnOpen=0   " Keep NERDTree open after opening a file
 let NERDTreeMinimalUI=1    " Start NERDTree in minimal UI mode (No help lines)
 let NERDTreeDirArrows=1    " Display arrows instead of ascii art in NERDTree
 let NERDTreeHighlightCursorline = 1  "Conflict with other addon-plugins for nerdtree
@@ -75,12 +98,170 @@ function! SafeNERDTreeQuit() abort
 endfunction
 autocmd FileType nerdtree nnoremap <buffer> q :call SafeNERDTreeQuit()<CR>
 
+" Dim the tree while another window has focus, so its cursorline doesn't
+" compete with the file window's. NERDTree opens files under eventignore=all
+" (no WinLeave/WinEnter), so sync on SafeState, which fires on every idle.
+function! s:NerdTreeDimColors() abort
+    highlight default NERDTreeDim ctermfg=241 ctermbg=232 guifg=#666462 guibg=#141413
+    highlight default NERDTreeDimDirty ctermfg=64 ctermbg=232 guifg=#5f8700 guibg=#141413
+    highlight default NERDTreeDimCursorLine ctermfg=NONE ctermbg=234 guibg=#1c1c1c
+endfunction
+call s:NerdTreeDimColors()
+autocmd ColorScheme * call s:NerdTreeDimColors()
+
+let s:nerdtree_dim_groups = ['Normal', 'NormalNC', 'EndOfBuffer', 'Directory',
+            \ 'NERDTreeDir', 'NERDTreeUp', 'NERDTreeFile', 'NERDTreeCWD', 'NERDTreeExecFile',
+            \ 'NERDTreeOpenable', 'NERDTreeClosable', 'NERDTreeDirSlash',
+            \ 'NERDTreeLinkFile', 'NERDTreeLinkDir', 'NERDTreeLinkTarget']
+let s:nerdtree_dim_hl = join(map(copy(s:nerdtree_dim_groups), 'v:val . ":NERDTreeDim"'), ',')
+            \ . ',NERDTreeGitDirtyFile:NERDTreeDimDirty,NERDTreeGitDirtyDir:NERDTreeDimDirty'
+            \ . ',CursorLine:NERDTreeDimCursorLine'
+
+function! s:NerdTreeSyncDim() abort
+    if !exists('g:NERDTree') || !g:NERDTree.IsOpen()
+        return
+    endif
+    let l:treeWin = win_getid(g:NERDTree.GetWinNum())
+    let l:wanted = l:treeWin ==# win_getid() ? '' : s:nerdtree_dim_hl
+    if getwinvar(l:treeWin, '&winhighlight') !=# l:wanted
+        call setwinvar(l:treeWin, '&winhighlight', l:wanted)
+    endif
+endfunction
+if exists('##SafeState')
+    autocmd SafeState * call s:NerdTreeSyncDim()
+endif
+
+" Pin the side tree to its window: = - :bn :bp would swap a file into it.
+" Only for the side (tab) tree -- a window tree replaces itself by design.
+function! s:PinNerdTreeWindow() abort
+    if exists('b:NERDTree') && b:NERDTree.isTabTree()
+        setlocal winfixbuf
+        nnoremap <buffer> = <Nop>
+        nnoremap <buffer> - <Nop>
+    endif
+endfunction
+autocmd User NERDTreeInit call s:PinNerdTreeWindow()
+" winfixbuf is window-local: reopening the tree (toggle, ,f) puts the existing
+" buffer in a new window without NERDTreeInit, so re-pin it. Otherwise quickfix
+" <CR> may pick the tree as the previous window and open the file there.
+autocmd BufWinEnter NERD_tree_tab_* call s:PinNerdTreeWindow()
+
 " Auto-refresh NERDTree root every second, replacing manual R press.
 " Timer only runs while the NERDTree buffer is open.
 let s:nerdtree_refresh_timer = -1
 
+" A refresh re-reads the whole tree from disk (~600ms with ~1000 lines open),
+" blocking j/k -- so hold it off while the cursor is moving in the tree.
+let s:nerdtree_last_move = 0.0
+autocmd CursorMoved NERD_tree_* let s:nerdtree_last_move = reltimefloat(reltime())
+
 function! s:NerdTreeAutoRefresh(timer) abort
+    if reltimefloat(reltime()) - s:nerdtree_last_move < 2
+        return
+    endif
     silent! NERDTreeRefreshRoot
+    silent! call s:NerdTreeGitHighlight()
+endfunction
+
+" Highlight dirty files/folders in NERDTree. Base follows :ChangeGitDiffBase
+" (g:gitgutter_diff_base), default HEAD. Git is re-queried at most every 3s.
+" Own colors rather than Diff* links: badwolf's DiffChange is a near-invisible bg
+function! s:NerdTreeGitHighlightColors() abort
+    highlight default NERDTreeGitDirtyFile cterm=bold ctermfg=154 gui=bold guifg=#aeee00
+    highlight default NERDTreeGitDirtyDir ctermfg=154 guifg=#aeee00
+endfunction
+call s:NerdTreeGitHighlightColors()
+autocmd ColorScheme * call s:NerdTreeGitHighlightColors()
+let s:git_dirty = {}
+let s:git_dirty_key = ''
+let s:git_dirty_at = 0.0
+
+function! s:NerdTreeGitDirtySet(root) abort
+    let l:base = get(g:, 'gitgutter_diff_base', '')
+    let l:base = empty(l:base) ? 'HEAD' : l:base
+    let l:key = a:root . '@' . l:base
+    if l:key ==# s:git_dirty_key && reltimefloat(reltime()) - s:git_dirty_at < 3
+        return s:git_dirty
+    endif
+    let s:git_dirty_key = l:key
+    let s:git_dirty_at = reltimefloat(reltime())
+    let s:git_dirty = {}
+    " Paths relative to the tree root (not the git toplevel) so symlinked roots match
+    let l:git = 'git -C ' . shellescape(a:root) . ' '
+    call system(l:git . 'rev-parse --git-dir')
+    if v:shell_error != 0
+        return s:git_dirty
+    endif
+    let l:files = systemlist(l:git . 'diff --name-only --relative ' . shellescape(l:base))
+                \ + systemlist(l:git . 'ls-files --others --exclude-standard')
+    for l:rel in l:files
+        let l:path = a:root . '/' . l:rel
+        let s:git_dirty[l:path] = 'NERDTreeGitDirtyFile'
+        let l:dir = fnamemodify(l:path, ':h')
+        while len(l:dir) > len(a:root) && !has_key(s:git_dirty, l:dir)
+            let s:git_dirty[l:dir] = 'NERDTreeGitDirtyDir'
+            let l:dir = fnamemodify(l:dir, ':h')
+        endwhile
+    endfor
+    return s:git_dirty
+endfunction
+
+function! s:NerdTreeGitHighlight() abort
+    if !g:NERDTree.IsOpen()
+        return
+    endif
+    let l:curWin = win_getid()
+    noautocmd call win_gotoid(win_getid(g:NERDTree.GetWinNum()))
+    let l:dirty = s:NerdTreeGitDirtySet(b:NERDTree.root.path.str())
+    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': []}
+    " Skip when neither the tree nor the git set changed since last time
+    let l:sig = b:changedtick . '@' . s:git_dirty_at
+    if get(b:, 'nerdtree_git_hl_sig', '') ==# l:sig
+        noautocmd call win_gotoid(l:curWin)
+        return
+    endif
+    let b:nerdtree_git_hl_sig = l:sig
+    " One top-down pass tracking the dir at each indent level. ui.getPath()
+    " walks upward per line, which is O(n^2) and froze big trees for seconds.
+    let l:ui = b:NERDTree.ui
+    let l:dirs = {}
+    let l:root = substitute(b:NERDTree.root.path.str(), '/$', '', '')
+    let l:rootLine = l:ui.getRootLineNum()
+    for l:lnum in empty(l:dirty) ? [] : range(l:rootLine + 1, line('$'))
+        let l:line = getline(l:lnum)
+        let l:name = l:ui._stripMarkup(l:line)
+        if empty(l:name)
+            continue
+        endif
+        let l:indent = l:ui._indentLevelFor(l:line)
+        let l:isDir = l:name =~# '/$'
+        let l:name = substitute(l:name, '/$', '', '')
+        let l:path = get(l:dirs, l:indent - 1, l:root) . '/' . l:name
+        if l:isDir
+            let l:dirs[l:indent] = l:path
+        endif
+        let l:group = get(l:dirty, l:path, '')
+        if empty(l:group)
+            continue
+        endif
+        " Highlight just the name, not the indent/arrow/icon
+        let l:col = stridx(l:line, l:name)
+        if l:col >= 0
+            call add(l:positions[l:group], [l:lnum, l:col + 1, strlen(l:name)])
+        endif
+    endfor
+    for l:m in getmatches()
+        if l:m.group =~# '^NERDTreeGitDirty'
+            call matchdelete(l:m.id)
+        endif
+    endfor
+    for [l:group, l:pos] in items(l:positions)
+        " Older vims accept at most 8 positions per matchaddpos() call
+        for l:i in range(0, len(l:pos) - 1, 8)
+            call matchaddpos(l:group, l:pos[l:i : l:i + 7])
+        endfor
+    endfor
+    noautocmd call win_gotoid(l:curWin)
 endfunction
 
 function! s:StartNerdTreeAutoRefresh() abort
@@ -98,8 +279,15 @@ endfunction
 
 if has('timers')
     autocmd FileType nerdtree call s:StartNerdTreeAutoRefresh()
+    " BufWinLeave stops the timer, but reshowing the buffer doesn't re-fire FileType
+    autocmd BufWinEnter NERD_tree_* call s:StartNerdTreeAutoRefresh()
     autocmd BufWinLeave NERD_tree_* call s:StopNerdTreeAutoRefresh()
 endif
+" Open/close re-renders the buffer and shifts lines; re-highlight right away
+" instead of waiting for the next timer tick (git set is cached, so this is cheap)
+autocmd TextChanged NERD_tree_* silent! call s:NerdTreeGitHighlight()
+" :ChangeGitDiffBase (gitgutter.vim) -- drop the cached git set and repaint now
+autocmd User GitDiffBaseChanged let s:git_dirty_key = '' | silent! call s:NerdTreeGitHighlight()
 
 
 " Customize icons on Nerdtree
@@ -166,4 +354,71 @@ endif
 
 
 " ============= End of File ==================
+" Follow the current buffer: reveal it in the open tree without taking focus.
+" Only for files under the tree root, so the root never jumps. Opening from the
+" tree itself runs under eventignore=all and is already highlighted anyway.
+let s:nerdtree_revealing = 0
+function! s:NerdTreeRevealCurrent() abort
+    if s:nerdtree_revealing || !exists('g:NERDTree') || !g:NERDTree.IsOpen()
+                \ || exists('b:NERDTree') || &buftype !=# '' || empty(expand('%'))
+        return
+    endif
+    " Tree may still be initializing (BufEnter mid-creation): no root yet
+    let l:tree = g:NERDTree.ForCurrentTab()
+    if type(l:tree) != v:t_dict
+        return
+    endif
+    let l:file = resolve(expand('%:p'))
+    let l:root = substitute(resolve(l:tree.root.path.str()), '/$', '', '')
+    if !filereadable(l:file) || stridx(l:file, l:root . '/') != 0
+        return
+    endif
+    let s:nerdtree_revealing = 1
+    let l:win = win_getid()
+    try
+        silent NERDTreeFind
+    finally
+        noautocmd call win_gotoid(l:win)
+        let s:nerdtree_revealing = 0
+    endtry
+endfunction
+autocmd BufEnter * call s:NerdTreeRevealCurrent()
+
+" Only NERDTree left in the tab:
+" - after :q/:wq/ZZ (QuitPre) -> quit nvim, as before the tree stayed open.
+"   Unsaved hidden buffers block the quit; show one of them instead.
+" - after :bdelete (,q), which closes every window showing the buffer -> keep
+"   the tree and open an empty window beside it.
+" Deferred because layout changes are not allowed mid-:quit/:bdelete.
+let s:nerdtree_quit_requested = 0
+autocmd QuitPre * let s:nerdtree_quit_requested = 1
+" QuitPre also fires for :q on a split with other windows left; drop it once idle
+if exists('##SafeState')
+    autocmd SafeState * let s:nerdtree_quit_requested = 0
+endif
+
+function! s:NerdTreeKeepEditWindow(quit, ...) abort
+    if winnr('$') != 1 || !exists('b:NERDTree') || !b:NERDTree.isTabTree()
+        return
+    endif
+    if a:quit
+        let l:modified = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&modified")')
+        if empty(l:modified)
+            quit
+            return
+        endif
+    endif
+    rightbelow vnew
+    wincmd p
+    exec 'vertical resize ' . g:NERDTreeWinSize
+    wincmd p
+    if a:quit
+        exec 'buffer ' . l:modified[0]
+        echohl ErrorMsg | echo 'No write since last change' | echohl None
+    endif
+endfunction
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree')
+            \ | call timer_start(0, function('s:NerdTreeKeepEditWindow', [s:nerdtree_quit_requested]))
+            \ | let s:nerdtree_quit_requested = 0 | endif
+
 echom 'Loaded ' . expand('<sfile>:t') |redraw

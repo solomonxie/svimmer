@@ -15,6 +15,13 @@ Plug 'bronson/vim-visual-star-search', {'commit': '7c32edb'}
 
 "REF: https://github.com/tpope/vim-commentary
 Plug 'tpope/vim-commentary', {'commit': '64a654e'}  "Blazing fast!!
+" On ,c instead of gc (gc opens the Claude history pane). Mapping <Plug>Commentary here,
+" before the plugin loads, stops it from adding its own gc maps.
+xmap <leader>c  <Plug>Commentary
+nmap <leader>c  <Plug>Commentary
+omap <leader>c  <Plug>Commentary
+nmap <leader>cc <Plug>CommentaryLine
+nmap <leader>cu <Plug>Commentary<Plug>Commentary
 autocmd FileType sql setlocal commentstring=--\ %s
 
 "REF: https://github.com/bronson/vim-trailing-whitespace

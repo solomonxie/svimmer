@@ -10,7 +10,7 @@ let g:lightline = {
   \ 'colorscheme': 'deus',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'readonly', 'gitbranch', 'modified', 'filetype', 'relativepath', 'spell' ],
+  \             [ 'readonly', 'gitbranch', 'modified', 'filetype', 'projectpath', 'spell' ],
   \   ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
@@ -18,12 +18,13 @@ let g:lightline = {
   \   ]
   \ },
   \ 'component': {
-  \   'mycustom1': 'Solomon X.',
+  \   'mycustom1': 'me',
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
   \   'readonly': 'FuncLightlineReadonly',
   \   'lineinfo': 'LightlineLineinfo',
+  \   'projectpath': 'LightlineProjectPath',
   \ },
 \}
 
@@ -36,17 +37,27 @@ function! FuncLightlineReadonly()
     return &readonly && &filetype !=# 'help' ? 'RO' : ''
 endfunction
 
-function! LightlineFilename()
-    "REF: https://github.com/itchyny/lightline.vim/issues/293
-    "\ 'component_function': {
-    "\    'filename': 'LightlineFilename',
-    "\  }
-    let root = fnamemodify(get(b:, 'git_dir'), ':h')
-    let path = expand('%:p')
-    if path[:len(root)-1] ==# root
-        return path[len(root)+1:]
+" Path relative to the project (git root of cwd) if the file is inside it,
+" otherwise the full path. Unlike %f, this doesn't depend on how the buffer was opened.
+let s:project_roots = {}  "Cache: cwd -> project root
+function! s:ProjectRoot() abort
+    let l:cwd = getcwd()
+    if !has_key(s:project_roots, l:cwd)
+        let l:root = trim(system('git -C ' . shellescape(l:cwd) . ' rev-parse --show-toplevel 2>/dev/null'))
+        let s:project_roots[l:cwd] = resolve(v:shell_error == 0 && isdirectory(l:root) ? l:root : l:cwd)
     endif
-    return expand
+    return s:project_roots[l:cwd]
+endfunction
+
+function! LightlineProjectPath() abort
+    if &buftype !=# '' | return expand('%:t') | endif
+    if expand('%') ==# '' | return '[No Name]' | endif
+    let l:path = resolve(expand('%:p'))
+    let l:root = s:ProjectRoot() . '/'
+    if stridx(l:path, l:root) == 0
+        return l:path[len(l:root):]
+    endif
+    return fnamemodify(expand('%:p'), ':~')
 endfunction
 
 "REF: https://yeripratama.com/blog/customizing-vim-lightline/

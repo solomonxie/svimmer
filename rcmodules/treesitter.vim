@@ -28,5 +28,18 @@ augroup TreesitterFolding
 augroup END
 
 
+" Autoread reloads (see checktime timer in nvimrc.vim) can leave highlights at
+" their old byte offsets, splitting words like t|ry. Re-parse from scratch.
+augroup TreesitterReloadFix
+    autocmd!
+    autocmd FileChangedShellPost * lua
+        \ local b = tonumber(vim.fn.expand('<abuf>'))
+        \ if vim.treesitter.highlighter.active[b] then
+        \     vim.treesitter.stop(b)
+        \     vim.treesitter.start(b)
+        \ end
+augroup END
+
+
 " Post-Vimplug setup
 let g:lua_configs += ['~/.config/nvim/rcmodules/lua/treesitter.lua']

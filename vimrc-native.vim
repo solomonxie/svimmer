@@ -77,6 +77,13 @@ Plug 'bronson/vim-visual-star-search', {'commit': '7c32edb'}
 
 "REF: https://github.com/tpope/vim-commentary
 Plug 'tpope/vim-commentary', {'commit': '64a654e'}  "Blazing fast!!
+" On ,c instead of gc, same as the Neovim config (gc opens its Claude history pane). Mapping <Plug>Commentary here,
+" before the plugin loads, stops it from adding its own gc maps.
+xmap <leader>c  <Plug>Commentary
+nmap <leader>c  <Plug>Commentary
+omap <leader>c  <Plug>Commentary
+nmap <leader>cc <Plug>CommentaryLine
+nmap <leader>cu <Plug>Commentary<Plug>Commentary
 autocmd FileType sql setlocal commentstring=--\ %s
 
 "REF: https://github.com/bronson/vim-trailing-whitespace
@@ -218,7 +225,7 @@ let g:lightline = {
   \ 'colorscheme': 'deus',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'readonly', 'gitbranch', 'modified', 'filetype', 'relativepath', 'spell' ],
+  \             [ 'readonly', 'gitbranch', 'modified', 'filetype', 'projectpath', 'spell' ],
   \   ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
@@ -226,12 +233,13 @@ let g:lightline = {
   \   ]
   \ },
   \ 'component': {
-  \   'mycustom1': 'Solomon X.',
+  \   'mycustom1': 'me',
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
   \   'readonly': 'FuncLightlineReadonly',
   \   'lineinfo': 'LightlineLineinfo',
+  \   'projectpath': 'LightlineProjectPath',
   \ },
 \}
 
@@ -244,17 +252,27 @@ function! FuncLightlineReadonly()
     return &readonly && &filetype !=# 'help' ? 'RO' : ''
 endfunction
 
-function! LightlineFilename()
-    "REF: https://github.com/itchyny/lightline.vim/issues/293
-    "\ 'component_function': {
-    "\    'filename': 'LightlineFilename',
-    "\  }
-    let root = fnamemodify(get(b:, 'git_dir'), ':h')
-    let path = expand('%:p')
-    if path[:len(root)-1] ==# root
-        return path[len(root)+1:]
+" Path relative to the project (git root of cwd) if the file is inside it,
+" otherwise the full path. Unlike %f, this doesn't depend on how the buffer was opened.
+let s:project_roots = {}  "Cache: cwd -> project root
+function! s:ProjectRoot() abort
+    let l:cwd = getcwd()
+    if !has_key(s:project_roots, l:cwd)
+        let l:root = trim(system('git -C ' . shellescape(l:cwd) . ' rev-parse --show-toplevel 2>/dev/null'))
+        let s:project_roots[l:cwd] = resolve(v:shell_error == 0 && isdirectory(l:root) ? l:root : l:cwd)
     endif
-    return expand
+    return s:project_roots[l:cwd]
+endfunction
+
+function! LightlineProjectPath() abort
+    if &buftype !=# '' | return expand('%:t') | endif
+    if expand('%') ==# '' | return '[No Name]' | endif
+    let l:path = resolve(expand('%:p'))
+    let l:root = s:ProjectRoot() . '/'
+    if stridx(l:path, l:root) == 0
+        return l:path[len(l:root):]
+    endif
+    return fnamemodify(expand('%:p'), ':~')
 endfunction
 
 "REF: https://yeripratama.com/blog/customizing-vim-lightline/
@@ -301,17 +319,40 @@ Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'  "Slow down vim significantly
 
 ">> Key Mappings
-nnoremap <Leader>f :NERDTree<CR>
+nnoremap <Leader>f :<C-U>call NerdTreeAtProjectRoot()<CR>
 " nnoremap <Leader>F :NERDTreeFind<CR>zz
 " nnoremap FF :NERDTree<CR>
 nnoremap ff :<C-U>call NerdTreeFindOrRoot()<CR>zz
 
-function! NerdTreeFindOrRoot()
-    if empty(expand('%'))
-        NERDTree
-    else
-        NERDTreeFind
+" Git root of the current file (symlinks resolved, so a symlinked checkout
+" still matches the path NERDTreeFind resolves), else the cwd.
+function! s:NerdTreeProjectRoot() abort
+    let l:dir = empty(expand('%')) ? getcwd() : fnamemodify(resolve(expand('%:p')), ':h')
+    let l:root = trim(system('git -C ' . shellescape(l:dir) . ' rev-parse --show-toplevel'))
+    return v:shell_error == 0 && isdirectory(l:root) ? resolve(l:root) : resolve(getcwd())
+endfunction
+
+function! NerdTreeAtProjectRoot() abort
+    exec 'NERDTree ' . fnameescape(s:NerdTreeProjectRoot())
+endfunction
+
+" Always rooted at the project root, then reveal the current file in it
+function! NerdTreeFindOrRoot() abort
+    let l:root = s:NerdTreeProjectRoot()
+    " g:NERDTree is undefined until the lazy-loaded plugin's first command runs
+    if !exists('g:NERDTree') || !g:NERDTree.ExistsForTab()
+                \ || g:NERDTree.ForCurrentTab().root.path.str() !=# l:root
+        let l:file = expand('%:p')
+        exec 'NERDTree ' . fnameescape(l:root)
+        if empty(l:file)
+            return
+        endif
+        wincmd p
+    elseif empty(expand('%'))
+        NERDTreeFocus
+        return
     endif
+    NERDTreeFind
 endfunction
 " nnoremap <Leader>F :NERDTree %:p:h<CR>
 " Add '%' for changing root accordingly
@@ -320,7 +361,7 @@ endfunction
 " nnoremap gD :NERDTree<CR>
 
 ">> UI settings
-let NERDTreeQuitOnOpen=1   " Open|Close NERDtree when files was opened
+let NERDTreeQuitOnOpen=0   " Keep NERDTree open after opening a file
 let NERDTreeMinimalUI=1    " Start NERDTree in minimal UI mode (No help lines)
 let NERDTreeDirArrows=1    " Display arrows instead of ascii art in NERDTree
 let NERDTreeHighlightCursorline = 1  "Conflict with other addon-plugins for nerdtree
@@ -366,12 +407,170 @@ function! SafeNERDTreeQuit() abort
 endfunction
 autocmd FileType nerdtree nnoremap <buffer> q :call SafeNERDTreeQuit()<CR>
 
+" Dim the tree while another window has focus, so its cursorline doesn't
+" compete with the file window's. NERDTree opens files under eventignore=all
+" (no WinLeave/WinEnter), so sync on SafeState, which fires on every idle.
+function! s:NerdTreeDimColors() abort
+    highlight default NERDTreeDim ctermfg=241 ctermbg=232 guifg=#666462 guibg=#141413
+    highlight default NERDTreeDimDirty ctermfg=64 ctermbg=232 guifg=#5f8700 guibg=#141413
+    highlight default NERDTreeDimCursorLine ctermfg=NONE ctermbg=234 guibg=#1c1c1c
+endfunction
+call s:NerdTreeDimColors()
+autocmd ColorScheme * call s:NerdTreeDimColors()
+
+let s:nerdtree_dim_groups = ['Normal', 'NormalNC', 'EndOfBuffer', 'Directory',
+            \ 'NERDTreeDir', 'NERDTreeUp', 'NERDTreeFile', 'NERDTreeCWD', 'NERDTreeExecFile',
+            \ 'NERDTreeOpenable', 'NERDTreeClosable', 'NERDTreeDirSlash',
+            \ 'NERDTreeLinkFile', 'NERDTreeLinkDir', 'NERDTreeLinkTarget']
+let s:nerdtree_dim_hl = join(map(copy(s:nerdtree_dim_groups), 'v:val . ":NERDTreeDim"'), ',')
+            \ . ',NERDTreeGitDirtyFile:NERDTreeDimDirty,NERDTreeGitDirtyDir:NERDTreeDimDirty'
+            \ . ',CursorLine:NERDTreeDimCursorLine'
+
+function! s:NerdTreeSyncDim() abort
+    if !exists('g:NERDTree') || !g:NERDTree.IsOpen()
+        return
+    endif
+    let l:treeWin = win_getid(g:NERDTree.GetWinNum())
+    let l:wanted = l:treeWin ==# win_getid() ? '' : s:nerdtree_dim_hl
+    if getwinvar(l:treeWin, '&winhighlight') !=# l:wanted
+        call setwinvar(l:treeWin, '&winhighlight', l:wanted)
+    endif
+endfunction
+if exists('##SafeState')
+    autocmd SafeState * call s:NerdTreeSyncDim()
+endif
+
+" Pin the side tree to its window: = - :bn :bp would swap a file into it.
+" Only for the side (tab) tree -- a window tree replaces itself by design.
+function! s:PinNerdTreeWindow() abort
+    if exists('b:NERDTree') && b:NERDTree.isTabTree()
+        if exists('+winfixbuf') | setlocal winfixbuf | endif
+        nnoremap <buffer> = <Nop>
+        nnoremap <buffer> - <Nop>
+    endif
+endfunction
+autocmd User NERDTreeInit call s:PinNerdTreeWindow()
+" winfixbuf is window-local: reopening the tree (toggle, ,f) puts the existing
+" buffer in a new window without NERDTreeInit, so re-pin it. Otherwise quickfix
+" <CR> may pick the tree as the previous window and open the file there.
+autocmd BufWinEnter NERD_tree_tab_* call s:PinNerdTreeWindow()
+
 " Auto-refresh NERDTree root every second, replacing manual R press.
 " Timer only runs while the NERDTree buffer is open.
 let s:nerdtree_refresh_timer = -1
 
+" A refresh re-reads the whole tree from disk (~600ms with ~1000 lines open),
+" blocking j/k -- so hold it off while the cursor is moving in the tree.
+let s:nerdtree_last_move = 0.0
+autocmd CursorMoved NERD_tree_* let s:nerdtree_last_move = reltimefloat(reltime())
+
 function! s:NerdTreeAutoRefresh(timer) abort
+    if reltimefloat(reltime()) - s:nerdtree_last_move < 2
+        return
+    endif
     silent! NERDTreeRefreshRoot
+    silent! call s:NerdTreeGitHighlight()
+endfunction
+
+" Highlight dirty files/folders in NERDTree. Base follows :ChangeGitDiffBase
+" (g:gitgutter_diff_base), default HEAD. Git is re-queried at most every 3s.
+" Own colors rather than Diff* links: badwolf's DiffChange is a near-invisible bg
+function! s:NerdTreeGitHighlightColors() abort
+    highlight default NERDTreeGitDirtyFile cterm=bold ctermfg=154 gui=bold guifg=#aeee00
+    highlight default NERDTreeGitDirtyDir ctermfg=154 guifg=#aeee00
+endfunction
+call s:NerdTreeGitHighlightColors()
+autocmd ColorScheme * call s:NerdTreeGitHighlightColors()
+let s:git_dirty = {}
+let s:git_dirty_key = ''
+let s:git_dirty_at = 0.0
+
+function! s:NerdTreeGitDirtySet(root) abort
+    let l:base = get(g:, 'gitgutter_diff_base', '')
+    let l:base = empty(l:base) ? 'HEAD' : l:base
+    let l:key = a:root . '@' . l:base
+    if l:key ==# s:git_dirty_key && reltimefloat(reltime()) - s:git_dirty_at < 3
+        return s:git_dirty
+    endif
+    let s:git_dirty_key = l:key
+    let s:git_dirty_at = reltimefloat(reltime())
+    let s:git_dirty = {}
+    " Paths relative to the tree root (not the git toplevel) so symlinked roots match
+    let l:git = 'git -C ' . shellescape(a:root) . ' '
+    call system(l:git . 'rev-parse --git-dir')
+    if v:shell_error != 0
+        return s:git_dirty
+    endif
+    let l:files = systemlist(l:git . 'diff --name-only --relative ' . shellescape(l:base))
+                \ + systemlist(l:git . 'ls-files --others --exclude-standard')
+    for l:rel in l:files
+        let l:path = a:root . '/' . l:rel
+        let s:git_dirty[l:path] = 'NERDTreeGitDirtyFile'
+        let l:dir = fnamemodify(l:path, ':h')
+        while len(l:dir) > len(a:root) && !has_key(s:git_dirty, l:dir)
+            let s:git_dirty[l:dir] = 'NERDTreeGitDirtyDir'
+            let l:dir = fnamemodify(l:dir, ':h')
+        endwhile
+    endfor
+    return s:git_dirty
+endfunction
+
+function! s:NerdTreeGitHighlight() abort
+    if !g:NERDTree.IsOpen()
+        return
+    endif
+    let l:curWin = win_getid()
+    noautocmd call win_gotoid(win_getid(g:NERDTree.GetWinNum()))
+    let l:dirty = s:NerdTreeGitDirtySet(b:NERDTree.root.path.str())
+    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': []}
+    " Skip when neither the tree nor the git set changed since last time
+    let l:sig = b:changedtick . '@' . s:git_dirty_at
+    if get(b:, 'nerdtree_git_hl_sig', '') ==# l:sig
+        noautocmd call win_gotoid(l:curWin)
+        return
+    endif
+    let b:nerdtree_git_hl_sig = l:sig
+    " One top-down pass tracking the dir at each indent level. ui.getPath()
+    " walks upward per line, which is O(n^2) and froze big trees for seconds.
+    let l:ui = b:NERDTree.ui
+    let l:dirs = {}
+    let l:root = substitute(b:NERDTree.root.path.str(), '/$', '', '')
+    let l:rootLine = l:ui.getRootLineNum()
+    for l:lnum in empty(l:dirty) ? [] : range(l:rootLine + 1, line('$'))
+        let l:line = getline(l:lnum)
+        let l:name = l:ui._stripMarkup(l:line)
+        if empty(l:name)
+            continue
+        endif
+        let l:indent = l:ui._indentLevelFor(l:line)
+        let l:isDir = l:name =~# '/$'
+        let l:name = substitute(l:name, '/$', '', '')
+        let l:path = get(l:dirs, l:indent - 1, l:root) . '/' . l:name
+        if l:isDir
+            let l:dirs[l:indent] = l:path
+        endif
+        let l:group = get(l:dirty, l:path, '')
+        if empty(l:group)
+            continue
+        endif
+        " Highlight just the name, not the indent/arrow/icon
+        let l:col = stridx(l:line, l:name)
+        if l:col >= 0
+            call add(l:positions[l:group], [l:lnum, l:col + 1, strlen(l:name)])
+        endif
+    endfor
+    for l:m in getmatches()
+        if l:m.group =~# '^NERDTreeGitDirty'
+            call matchdelete(l:m.id)
+        endif
+    endfor
+    for [l:group, l:pos] in items(l:positions)
+        " Older vims accept at most 8 positions per matchaddpos() call
+        for l:i in range(0, len(l:pos) - 1, 8)
+            call matchaddpos(l:group, l:pos[l:i : l:i + 7])
+        endfor
+    endfor
+    noautocmd call win_gotoid(l:curWin)
 endfunction
 
 function! s:StartNerdTreeAutoRefresh() abort
@@ -389,8 +588,15 @@ endfunction
 
 if has('timers')
     autocmd FileType nerdtree call s:StartNerdTreeAutoRefresh()
+    " BufWinLeave stops the timer, but reshowing the buffer doesn't re-fire FileType
+    autocmd BufWinEnter NERD_tree_* call s:StartNerdTreeAutoRefresh()
     autocmd BufWinLeave NERD_tree_* call s:StopNerdTreeAutoRefresh()
 endif
+" Open/close re-renders the buffer and shifts lines; re-highlight right away
+" instead of waiting for the next timer tick (git set is cached, so this is cheap)
+autocmd TextChanged NERD_tree_* silent! call s:NerdTreeGitHighlight()
+" :ChangeGitDiffBase (gitgutter.vim) -- drop the cached git set and repaint now
+autocmd User GitDiffBaseChanged let s:git_dirty_key = '' | silent! call s:NerdTreeGitHighlight()
 
 
 " Customize icons on Nerdtree
@@ -454,6 +660,74 @@ if &runtimepath =~ 'nerdtree-syntax-highlight'
     " let g:NERDTreeDisableExactMatchHighlight = 1
     " let g:NERDTreeDisablePatternMatchHighlight = 1
 endif
+
+
+" Follow the current buffer: reveal it in the open tree without taking focus.
+" Only for files under the tree root, so the root never jumps. Opening from the
+" tree itself runs under eventignore=all and is already highlighted anyway.
+let s:nerdtree_revealing = 0
+function! s:NerdTreeRevealCurrent() abort
+    if s:nerdtree_revealing || !exists('g:NERDTree') || !g:NERDTree.IsOpen()
+                \ || exists('b:NERDTree') || &buftype !=# '' || empty(expand('%'))
+        return
+    endif
+    " Tree may still be initializing (BufEnter mid-creation): no root yet
+    let l:tree = g:NERDTree.ForCurrentTab()
+    if type(l:tree) != v:t_dict
+        return
+    endif
+    let l:file = resolve(expand('%:p'))
+    let l:root = substitute(resolve(l:tree.root.path.str()), '/$', '', '')
+    if !filereadable(l:file) || stridx(l:file, l:root . '/') != 0
+        return
+    endif
+    let s:nerdtree_revealing = 1
+    let l:win = win_getid()
+    try
+        silent NERDTreeFind
+    finally
+        noautocmd call win_gotoid(l:win)
+        let s:nerdtree_revealing = 0
+    endtry
+endfunction
+autocmd BufEnter * call s:NerdTreeRevealCurrent()
+
+" Only NERDTree left in the tab:
+" - after :q/:wq/ZZ (QuitPre) -> quit nvim, as before the tree stayed open.
+"   Unsaved hidden buffers block the quit; show one of them instead.
+" - after :bdelete (,q), which closes every window showing the buffer -> keep
+"   the tree and open an empty window beside it.
+" Deferred because layout changes are not allowed mid-:quit/:bdelete.
+let s:nerdtree_quit_requested = 0
+autocmd QuitPre * let s:nerdtree_quit_requested = 1
+" QuitPre also fires for :q on a split with other windows left; drop it once idle
+if exists('##SafeState')
+    autocmd SafeState * let s:nerdtree_quit_requested = 0
+endif
+
+function! s:NerdTreeKeepEditWindow(quit, ...) abort
+    if winnr('$') != 1 || !exists('b:NERDTree') || !b:NERDTree.isTabTree()
+        return
+    endif
+    if a:quit
+        let l:modified = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&modified")')
+        if empty(l:modified)
+            quit
+            return
+        endif
+    endif
+    rightbelow vnew
+    wincmd p
+    exec 'vertical resize ' . g:NERDTreeWinSize
+    wincmd p
+    if a:quit
+        exec 'buffer ' . l:modified[0]
+        echohl ErrorMsg | echo 'No write since last change' | echohl None
+    endif
+endfunction
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree')
+            \ | call timer_start(0, function('s:NerdTreeKeepEditWindow', [s:nerdtree_quit_requested]))
+            \ | let s:nerdtree_quit_requested = 0 | endif
 
 
 " ==================== PLUGIN: netrw ====================
@@ -526,8 +800,8 @@ augroup END
 let g:fzf_preview_window = ['right:40%', 'ctrl-/']  " up|down|left|right
 
 let $FZF_DEFAULT_OPTS='--layout=reverse --info=inline'
-" .git/ and venv/ stay excluded via ~/.config/fd/ignore (etc/fd/ignore), even with --hidden
-let $FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard || fd --type f --type l --hidden --follow"
+" --no-ignore-vcs: skip .gitignore (so .env etc. are findable); junk stays excluded via ~/.config/fd/ignore (etc/fd/ignore)
+let $FZF_DEFAULT_COMMAND="fd --type f --type l --hidden --follow --no-ignore-vcs"
 " command! -bang -nargs=? -complete=dir Files
 "         \ call fzf#vim#files(<q-args>, { 'options': "--prompt '>' $FZF_DEFAULT_OPTS"}, <bang>0)
 
@@ -584,8 +858,8 @@ nnoremap fa :Ag<CR>
 nnoremap fb :Buffers<CR>
 " nnoremap fl :BLines<CR>
 " nnoremap ft :BTags<CR>
-" nnoremap fh :History:<CR>
-nnoremap fc :History:<CR>
+nnoremap fh :History:<CR>
+nnoremap fc :Commands<CR>
 nnoremap fm :Marks<CR>
 " nnoremap tc :History:<CR>
 " nnoremap th :History<CR>
@@ -777,7 +1051,7 @@ let g:gitgutter_use_location_list = 1
 let g:gitgutter_highlight_linenrs = 1  "highlight line number only
 let g:gitgutter_preview_win_floating = 1  "for vim compatible let g:gitgutter_terminal_reports_focus = 0
 " let g:gitgutter_map_keys = 0  "Cancel pre-set mapping
-" let g:gitgutter_highlight_lines = 1  "Will hide removed line (annoying)
+let g:gitgutter_highlight_lines = 1  "GitHub-like line bg, toggle with :GitGutterLineHighlightsToggle
 " let g:gitgutter_diff_relative_to = 'working_tree'
 
 
@@ -791,6 +1065,18 @@ let g:gitgutter_sign_removed = '▎'  "The char '▎' is shown as a highlight ba
 highlight GitGutterAdd guifg=green ctermfg=green
 highlight GitGutterChange guifg=yellow ctermfg=yellow
 highlight GitGutterDelete guifg=red ctermfg=red
+" Line bg for added/changed lines. Removed lines no longer exist in the buffer,
+" so gitgutter would paint the line *below* them; keep that one blank and rely
+" on the red sign instead. Re-applied on ColorScheme since `colorscheme` runs
+" later in nvimrc and clears highlights.
+function! s:GitGutterLineColors() abort
+    highlight GitGutterAddLine          ctermbg=22 guibg=#1a3a24
+    highlight GitGutterChangeLine       ctermbg=58 guibg=#3a3a1a
+    highlight GitGutterDeleteLine       ctermbg=NONE guibg=NONE
+    highlight GitGutterChangeDeleteLine ctermbg=58 guibg=#3a3a1a
+endfunction
+call s:GitGutterLineColors()
+autocmd ColorScheme * call s:GitGutterLineColors()
 
 
 " >> KEY MAPPINGS
@@ -802,7 +1088,48 @@ nnoremap gP :GitGutterPreviewHunk<CR>
 " nnoremap gp :GitGutterPrevHunk<CR>
 " nnoremap gP :GitGutterPreviewHunk<CR>
 
-command! ChangeGitDiffBase let g:gitgutter_diff_base = 'master'
+" :ChangeGitDiffBase          -> diff against where this branch forked from main (fallback: master)
+" :ChangeGitDiffBase <ref>    -> diff against any branch/tag/commit, e.g. HEAD~3, origin/develop
+" :ChangeGitDiffBase HEAD     -> back to default (uncommitted changes only)
+command! -nargs=? -complete=customlist,s:GitRefComplete ChangeGitDiffBase call s:ChangeGitDiffBase(<q-args>)
+
+function! s:ChangeGitDiffBase(ref) abort
+    let l:git = 'git -C ' . shellescape(expand('%:p:h')) . ' '
+    let l:ref = a:ref
+    if empty(l:ref)
+        for l:candidate in ['main', 'master', 'origin/main', 'origin/master']
+            call system(l:git . 'rev-parse --verify --quiet ' . shellescape(l:candidate))
+            if v:shell_error == 0
+                let l:ref = l:candidate
+                break
+            endif
+        endfor
+        if empty(l:ref)
+            echohl ErrorMsg | echo 'ChangeGitDiffBase: no main/master branch found' | echohl None
+            return
+        endif
+        let l:base = trim(system(l:git . 'merge-base HEAD ' . shellescape(l:ref)))
+        let l:label = 'merge-base with ' . l:ref
+    else
+        let l:base = trim(system(l:git . 'rev-parse --verify --quiet ' . shellescape(l:ref)))
+        let l:label = l:ref
+    endif
+    if v:shell_error != 0 || empty(l:base)
+        echohl ErrorMsg | echo 'ChangeGitDiffBase: invalid ref: ' . l:ref | echohl None
+        return
+    endif
+    let g:gitgutter_diff_base = l:base
+    GitGutterAll
+    if exists('#User#GitDiffBaseChanged')
+        doautocmd <nomodeline> User GitDiffBaseChanged
+    endif
+    echo 'Git diff base: ' . l:label . ' (' . l:base[:7] . ')'
+endfunction
+
+function! s:GitRefComplete(arglead, cmdline, cursorpos) abort
+    let l:refs = systemlist('git -C ' . shellescape(expand('%:p:h')) . ' for-each-ref --format="%(refname:short)" refs/heads refs/remotes refs/tags')
+    return filter(['HEAD'] + l:refs, 'v:val =~# "^" . escape(a:arglead, "\\.^$~[]*")')
+endfunction
 
 " Aoivd hanging when loading big files
 autocmd BufEnter * call Disable_plugins()
@@ -951,7 +1278,7 @@ function! s:GitRemoteFileUrl(with_line, ...) abort
         let l:branch = trim(system('git -C ' . shellescape(l:root) . ' rev-parse HEAD'))
     endif
 
-    let l:relative = strpart(l:target, strlen(l:root) + 1)
+    let l:relative = l:target ==# l:root ? '' : strpart(l:target, strlen(l:root) + 1)
     let l:relative = substitute(l:relative, ' ', '%20', 'g')
     let l:branch = substitute(l:branch, ' ', '%20', 'g')
     let l:host = tolower(matchstr(l:remote_url, '^https\?://[^/]*'))
@@ -965,6 +1292,7 @@ function! s:GitRemoteFileUrl(with_line, ...) abort
         let l:url = l:remote_url . '/' . l:kind . '/' . l:branch . '/' . l:relative
     endif
 
+    let l:url = substitute(l:url, '/$', '', '')
     if a:with_line
         let l:url .= '#L' . line('.')
     endif
@@ -994,7 +1322,9 @@ endfunction
 
 function! GitOpen() abort
     if empty(expand('%:p')) || &buftype !=# ''
-        let l:url = s:GitRemoteFileUrl(0, getcwd(), 'tree')
+        " No file (empty buffer, NERDTree...): open the repo root, not cwd
+        let l:root = trim(system('git -C ' . shellescape(getcwd()) . ' rev-parse --show-toplevel'))
+        let l:url = s:GitRemoteFileUrl(0, v:shell_error ? getcwd() : l:root, 'tree')
     else
         let l:url = s:GitRemoteFileUrl(0)
     endif
@@ -1018,14 +1348,16 @@ function! GitOpen() abort
 endfunction
 
 
+" One session per project, named by its slugified full path, e.g.
+" ~/.vim/sessions/Users-me-workspace-myproject.vim
+" Kept outside the repo: in a git worktree .git is a file, not a dir. Override with g:session_dir.
 function! GetSessionPath()
     let g:gitroot = trim(system("git rev-parse --show-toplevel"))
-    if isdirectory(g:gitroot)
-        let session_path = g:gitroot . "/.git/workspace.vim"
-    else
-        let session_path = "/tmp/lastsession.vim"
-    endif
-    return session_path
+    let project = isdirectory(g:gitroot) ? g:gitroot : getcwd()
+    let slug = substitute(substitute(project, '[^A-Za-z0-9._-]\+', '-', 'g'), '^-\+', '', '')
+    let session_dir = expand(get(g:, 'session_dir', '~/.vim/sessions'))
+    call mkdir(session_dir, 'p')
+    return session_dir . '/' . slug . '.vim'
 endfunction
 
 
@@ -1047,16 +1379,24 @@ function! SaveSessionSimple()
     call add(steps, 'let g:gitroot = "'. g:gitroot . '"')
     call add(steps, 'let s:wipebuf = bufnr("%")')  "Mark initial/empty buffer
     " Record buffers
+    let l:files = []
     for bufnr in buffer_list
         let l:bufname = expand('#' .. bufnr .. ':p')
-        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !isdirectory(l:bufname)
-            call add(steps, '$argadd ' . fnameescape(expand('#' . bufnr . ':p')))
+        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !empty(bufname(bufnr)) && !isdirectory(l:bufname)
+            call add(l:files, l:bufname)
+            call add(steps, '$argadd ' . fnameescape(l:bufname))
         endif
     endfor
-    " Record others
-    call add(steps, 'edit ' . fnameescape(expand('#'. bufnr('%') .':p')))  "Set focused file
-    call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
-    call add(steps, 'normal! zz')  "Center view on restored cursor line
+    " Record others. Focus may be on NERDTree or an unnamed buffer, where a bare
+    " `edit` fails with E32, so fall back to the first recorded file.
+    let l:focused = expand('%:p')
+    if index(l:files, l:focused) >= 0
+        call add(steps, 'edit ' . fnameescape(l:focused))  "Set focused file
+        call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
+        call add(steps, 'normal! zz')  "Center view on restored cursor line
+    elseif !empty(l:files)
+        call add(steps, 'edit ' . fnameescape(l:files[0]))
+    endif
     call add(steps, 'silent exe "bwipe " . s:wipebuf')  "Remove initial/empty buffer
     " echom 'Steps: ' . string(steps)
     if len(steps) > 0
@@ -1388,7 +1728,7 @@ endfunction
 "<Git>------------------------------------------------------------------{
     command! RemoteGitFileReference call GetGitRemoteCodeReferenceLink()
     command! GithubLink call GithubLink()
-    command! OpenGithubLink call GithubLink()
+    command! OpenGithubLink call GitOpen()
     command! GithubLinkCurrentLine call GithubLinkCurrentLine()
     command! GitOpen call GitOpen()
     command! OpenChangedFiles call EditChangedFiles()
@@ -1466,6 +1806,8 @@ inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 vnoremap br "1y:bufdo %s/<C-r>1/<C-r>1/ge \| update
 " nnoremap fw /<C-r>+<CR>
 " nnoremap fw :call SearchInFile('<C-r>+')<CR>
+" Search clipboard text literally (\V: no regex; special chars and multi-line OK)
+nnoremap <silent> fw :let @/ = '\V' . substitute(escape(trim(getreg('+'), "\n", 2), '\/'), '\n', '\\n', 'g') \| call histadd('/', @/) \| set hlsearch<CR>n
 
 " Centralize
 " nnoremap n nzzzv
@@ -1594,7 +1936,36 @@ nnoremap <Leader>ay :%y+<CR>
 nnoremap <Leader>ad :%d+<CR>
 
 noremap <Leader>s :vsplit<CR><C-w>l
-noremap <Leader>q :bdelete<CR><ESC>
+" Show the next listed buffer in this window before deleting, so the window
+" (and the layout next to NERDTree) survives. Last buffer falls back to :bdelete.
+" Close a side window (quickfix, help...) and return to the window it was opened
+" from. Plain :close focuses whichever window takes over the space, often NERDTree.
+function! CloseWindowGoBack() abort
+    let l:prev = win_getid(winnr('#'))
+    close
+    if l:prev != 0
+        call win_gotoid(l:prev)
+    endif
+endfunction
+
+function! s:CloseBuffer() abort
+    let l:buf = bufnr('%')
+    " Quickfix/location list, help, etc.: just close the window
+    if &buftype !=# '' && winnr('$') > 1
+        call CloseWindowGoBack()
+        return
+    endif
+    if &modified
+        echohl ErrorMsg | echo 'No write since last change' | echohl None
+        return
+    endif
+    let l:others = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != l:buf')
+    if buflisted(l:buf) && !empty(l:others)
+        execute 'buffer ' . get(filter(copy(l:others), 'v:val > l:buf'), 0, l:others[-1])
+    endif
+    execute 'bdelete ' . l:buf
+endfunction
+nnoremap <silent> <Leader>q :call <SID>CloseBuffer()<CR>
 nnoremap <Leader>tc :tabnew<CR>
 nnoremap <Leader>tq :windo bdelete<CR>
 
@@ -1879,6 +2250,7 @@ set smartcase  "Case sensitive when there's upper case in search
 set hidden "Enable to switch buffer without saving
 set number "show line number
 set mouse=a  "a -> all, enbles mouse in Tmux (but text selection will trigger visual mode)
+set mousemodel=extend  "Right-click extends selection instead of opening a PopUp menu
 " Disable mouse selection into visual mode
 "set mouse=nicr
 "noremap <LeftDrag> <LeftMouse>
@@ -1904,6 +2276,8 @@ set completeopt=menu,menuone,noinsert,noselect
 let g:omni_sql_default_compl_type = 'syntax'
 
 autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
+" References, quickfix and location lists
+autocmd FileType qf nnoremap <buffer><silent><nowait> q :call CloseWindowGoBack()<CR>
 
 set nopaste  "IMPORTANT: If it's on, vim will auto indent (messed up) on your paste
 set showcmd " show keypress at right-bottom

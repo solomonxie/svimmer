@@ -19,7 +19,7 @@ let g:gitgutter_use_location_list = 1
 let g:gitgutter_highlight_linenrs = 1  "highlight line number only
 let g:gitgutter_preview_win_floating = 1  "for vim compatible let g:gitgutter_terminal_reports_focus = 0
 " let g:gitgutter_map_keys = 0  "Cancel pre-set mapping
-" let g:gitgutter_highlight_lines = 1  "Will hide removed line (annoying)
+let g:gitgutter_highlight_lines = 1  "GitHub-like line bg, toggle with :GitGutterLineHighlightsToggle
 " let g:gitgutter_diff_relative_to = 'working_tree'
 
 
@@ -33,6 +33,18 @@ let g:gitgutter_sign_removed = '▎'  "The char '▎' is shown as a highlight ba
 highlight GitGutterAdd guifg=green ctermfg=green
 highlight GitGutterChange guifg=yellow ctermfg=yellow
 highlight GitGutterDelete guifg=red ctermfg=red
+" Line bg for added/changed lines. Removed lines no longer exist in the buffer,
+" so gitgutter would paint the line *below* them; keep that one blank and rely
+" on the red sign instead. Re-applied on ColorScheme since `colorscheme` runs
+" later in nvimrc and clears highlights.
+function! s:GitGutterLineColors() abort
+    highlight GitGutterAddLine          ctermbg=22 guibg=#1a3a24
+    highlight GitGutterChangeLine       ctermbg=58 guibg=#3a3a1a
+    highlight GitGutterDeleteLine       ctermbg=NONE guibg=NONE
+    highlight GitGutterChangeDeleteLine ctermbg=58 guibg=#3a3a1a
+endfunction
+call s:GitGutterLineColors()
+autocmd ColorScheme * call s:GitGutterLineColors()
 
 
 " >> KEY MAPPINGS
@@ -44,7 +56,48 @@ nnoremap gP :GitGutterPreviewHunk<CR>
 " nnoremap gp :GitGutterPrevHunk<CR>
 " nnoremap gP :GitGutterPreviewHunk<CR>
 
-command! ChangeGitDiffBase let g:gitgutter_diff_base = 'master'
+" :ChangeGitDiffBase          -> diff against where this branch forked from main (fallback: master)
+" :ChangeGitDiffBase <ref>    -> diff against any branch/tag/commit, e.g. HEAD~3, origin/develop
+" :ChangeGitDiffBase HEAD     -> back to default (uncommitted changes only)
+command! -nargs=? -complete=customlist,s:GitRefComplete ChangeGitDiffBase call s:ChangeGitDiffBase(<q-args>)
+
+function! s:ChangeGitDiffBase(ref) abort
+    let l:git = 'git -C ' . shellescape(expand('%:p:h')) . ' '
+    let l:ref = a:ref
+    if empty(l:ref)
+        for l:candidate in ['main', 'master', 'origin/main', 'origin/master']
+            call system(l:git . 'rev-parse --verify --quiet ' . shellescape(l:candidate))
+            if v:shell_error == 0
+                let l:ref = l:candidate
+                break
+            endif
+        endfor
+        if empty(l:ref)
+            echohl ErrorMsg | echo 'ChangeGitDiffBase: no main/master branch found' | echohl None
+            return
+        endif
+        let l:base = trim(system(l:git . 'merge-base HEAD ' . shellescape(l:ref)))
+        let l:label = 'merge-base with ' . l:ref
+    else
+        let l:base = trim(system(l:git . 'rev-parse --verify --quiet ' . shellescape(l:ref)))
+        let l:label = l:ref
+    endif
+    if v:shell_error != 0 || empty(l:base)
+        echohl ErrorMsg | echo 'ChangeGitDiffBase: invalid ref: ' . l:ref | echohl None
+        return
+    endif
+    let g:gitgutter_diff_base = l:base
+    GitGutterAll
+    if exists('#User#GitDiffBaseChanged')
+        doautocmd <nomodeline> User GitDiffBaseChanged
+    endif
+    echo 'Git diff base: ' . l:label . ' (' . l:base[:7] . ')'
+endfunction
+
+function! s:GitRefComplete(arglead, cmdline, cursorpos) abort
+    let l:refs = systemlist('git -C ' . shellescape(expand('%:p:h')) . ' for-each-ref --format="%(refname:short)" refs/heads refs/remotes refs/tags')
+    return filter(['HEAD'] + l:refs, 'v:val =~# "^" . escape(a:arglead, "\\.^$~[]*")')
+endfunction
 
 " Aoivd hanging when loading big files
 autocmd BufEnter * call Disable_plugins()

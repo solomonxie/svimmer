@@ -28,6 +28,8 @@ inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 vnoremap br "1y:bufdo %s/<C-r>1/<C-r>1/ge \| update
 " nnoremap fw /<C-r>+<CR>
 " nnoremap fw :call SearchInFile('<C-r>+')<CR>
+" Search clipboard text literally (\V: no regex; special chars and multi-line OK)
+nnoremap <silent> fw :let @/ = '\V' . substitute(escape(trim(getreg('+'), "\n", 2), '\/'), '\n', '\\n', 'g') \| call histadd('/', @/) \| set hlsearch<CR>n
 
 " Centralize
 " nnoremap n nzzzv
@@ -156,7 +158,36 @@ nnoremap <Leader>ay :%y+<CR>
 nnoremap <Leader>ad :%d+<CR>
 
 noremap <Leader>s :vsplit<CR><C-w>l
-noremap <Leader>q :bdelete<CR><ESC>
+" Show the next listed buffer in this window before deleting, so the window
+" (and the layout next to NERDTree) survives. Last buffer falls back to :bdelete.
+" Close a side window (quickfix, help...) and return to the window it was opened
+" from. Plain :close focuses whichever window takes over the space, often NERDTree.
+function! CloseWindowGoBack() abort
+    let l:prev = win_getid(winnr('#'))
+    close
+    if l:prev != 0
+        call win_gotoid(l:prev)
+    endif
+endfunction
+
+function! s:CloseBuffer() abort
+    let l:buf = bufnr('%')
+    " Quickfix/location list, help, etc.: just close the window
+    if &buftype !=# '' && winnr('$') > 1
+        call CloseWindowGoBack()
+        return
+    endif
+    if &modified
+        echohl ErrorMsg | echo 'No write since last change' | echohl None
+        return
+    endif
+    let l:others = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != l:buf')
+    if buflisted(l:buf) && !empty(l:others)
+        execute 'buffer ' . get(filter(copy(l:others), 'v:val > l:buf'), 0, l:others[-1])
+    endif
+    execute 'bdelete ' . l:buf
+endfunction
+nnoremap <silent> <Leader>q :call <SID>CloseBuffer()<CR>
 nnoremap <Leader>tc :tabnew<CR>
 nnoremap <Leader>tq :windo bdelete<CR>
 
@@ -244,7 +275,7 @@ nnoremap <Leader>d :lua vim.lsp.buf.definition()<CR>
 " nnoremap <Leader>D :lua vim.diagnostic.open_float()<CR>
 nnoremap <Leader>r :lua vim.lsp.buf.rename('')<LEFT><LEFT>
 nnoremap <Leader>u :lua vim.lsp.buf.references()<CR>
-nnoremap <Leader>ca :lua vim.lsp.buf.code_action()<CR>
+" nnoremap <Leader>ca :lua vim.lsp.buf.code_action()<CR>
 nnoremap <C-p> :lua vim.diagnostic.goto_prev()<CR>
 nnoremap <C-n> :lua vim.diagnostic.goto_next()<CR>
 nnoremap K :lua vim.lsp.buf.hover({border = 'rounded'}) <CR>
@@ -253,6 +284,8 @@ nnoremap <Leader>o :lua vim.lsp.diagnostic.set_qflist()<CR>
 
 " :LspInfo is aliased to :checkhealth vim.lsp on nvim 0.11+; make sure `q` closes it
 autocmd FileType checkhealth,lspinfo nnoremap <buffer><silent><nowait> q :close<CR>
+" References (,u), quickfix and location lists
+autocmd FileType qf nnoremap <buffer><silent><nowait> q :call CloseWindowGoBack()<CR>
 
 " Render to HTML and open in the browser: buffer-local so it only exists in markdown
 " (gp/gP are already taken by gitgutter's plugin defaults, see rcmodules/gitgutter.vim notes)
@@ -263,7 +296,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " --- Plugin Keys ---
 "vim/rcmodules/misc.vim
 " map <LocalLeader>d
-" plugin defaults, not set by me: m=nvim-marks (overrides built-in set-mark), ds/cs/cS/ys/yS/yss/ySs/ySS=vim-surround, S/gS(visual)/<C-s>(insert)=vim-surround, gc/gcc/gcu=vim-commentary, */#(visual)=vim-visual-star-search, <Leader>bd=bclose.vim
+" plugin defaults, not set by me: m=nvim-marks (overrides built-in set-mark), ds/cs/cS/ys/yS/yss/ySs/ySS=vim-surround, S/gS(visual)/<C-s>(insert)=vim-surround, ,c/,cc/,cu=vim-commentary (gc=Claude history pane), */#(visual)=vim-visual-star-search, <Leader>bd=bclose.vim
 
 "vim/rcmodules/hop.vim
 " map fw
@@ -291,7 +324,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " buffer-local inside the bar: <CR> jump to symbol + close, p jump to parent symbol, q/<Esc> close
 
 "vim/rcmodules/fzf.vim
-" map fd, map fa, map fb, map fc, map fm, map FD, map FA
+" map fd, map fa, map fb, map fh (command history), map fc (commands), map fm, map FD, map FA
 " plugin defaults, not set by me (inside fzf popup): Ctrl-t/Ctrl-x/Ctrl-v=tab/split/vsplit, Ctrl-/=toggle preview ... see :help fzf-vim-mappings
 
 "vim/rcmodules/anyjump.vim

@@ -122,7 +122,7 @@ function! s:GitRemoteFileUrl(with_line, ...) abort
         let l:branch = trim(system('git -C ' . shellescape(l:root) . ' rev-parse HEAD'))
     endif
 
-    let l:relative = strpart(l:target, strlen(l:root) + 1)
+    let l:relative = l:target ==# l:root ? '' : strpart(l:target, strlen(l:root) + 1)
     let l:relative = substitute(l:relative, ' ', '%20', 'g')
     let l:branch = substitute(l:branch, ' ', '%20', 'g')
     let l:host = tolower(matchstr(l:remote_url, '^https\?://[^/]*'))
@@ -136,6 +136,7 @@ function! s:GitRemoteFileUrl(with_line, ...) abort
         let l:url = l:remote_url . '/' . l:kind . '/' . l:branch . '/' . l:relative
     endif
 
+    let l:url = substitute(l:url, '/$', '', '')
     if a:with_line
         let l:url .= '#L' . line('.')
     endif
@@ -165,7 +166,9 @@ endfunction
 
 function! GitOpen() abort
     if empty(expand('%:p')) || &buftype !=# ''
-        let l:url = s:GitRemoteFileUrl(0, getcwd(), 'tree')
+        " No file (empty buffer, NERDTree...): open the repo root, not cwd
+        let l:root = trim(system('git -C ' . shellescape(getcwd()) . ' rev-parse --show-toplevel'))
+        let l:url = s:GitRemoteFileUrl(0, v:shell_error ? getcwd() : l:root, 'tree')
     else
         let l:url = s:GitRemoteFileUrl(0)
     endif
@@ -189,14 +192,16 @@ function! GitOpen() abort
 endfunction
 
 
+" One session per project, named by its slugified full path, e.g.
+" stdpath('state')/sessions/Users-me-workspace-myproject.vim
+" Kept outside the repo: in a git worktree .git is a file, not a dir. Override with g:session_dir.
 function! GetSessionPath()
     let g:gitroot = trim(system("git rev-parse --show-toplevel"))
-    if isdirectory(g:gitroot)
-        let session_path = g:gitroot . "/.git/workspace.vim"
-    else
-        let session_path = "/tmp/lastsession.vim"
-    endif
-    return session_path
+    let project = isdirectory(g:gitroot) ? g:gitroot : getcwd()
+    let slug = substitute(substitute(project, '[^A-Za-z0-9._-]\+', '-', 'g'), '^-\+', '', '')
+    let session_dir = expand(get(g:, 'session_dir', stdpath('state') . '/sessions'))
+    call mkdir(session_dir, 'p')
+    return session_dir . '/' . slug . '.vim'
 endfunction
 
 
@@ -218,16 +223,24 @@ function! SaveSessionSimple()
     call add(steps, 'let g:gitroot = "'. g:gitroot . '"')
     call add(steps, 'let s:wipebuf = bufnr("%")')  "Mark initial/empty buffer
     " Record buffers
+    let l:files = []
     for bufnr in buffer_list
         let l:bufname = expand('#' .. bufnr .. ':p')
-        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !isdirectory(l:bufname)
-            call add(steps, '$argadd ' . fnameescape(expand('#' . bufnr . ':p')))
+        if bufexists(bufnr) && buflisted(bufnr) && getbufvar(bufnr, '&buftype') ==# '' && !empty(bufname(bufnr)) && !isdirectory(l:bufname)
+            call add(l:files, l:bufname)
+            call add(steps, '$argadd ' . fnameescape(l:bufname))
         endif
     endfor
-    " Record others
-    call add(steps, 'edit ' . fnameescape(expand('#'. bufnr('%') .':p')))  "Set focused file
-    call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
-    call add(steps, 'normal! zz')  "Center view on restored cursor line
+    " Record others. Focus may be on NERDTree or an unnamed buffer, where a bare
+    " `edit` fails with E32, so fall back to the first recorded file.
+    let l:focused = expand('%:p')
+    if index(l:files, l:focused) >= 0
+        call add(steps, 'edit ' . fnameescape(l:focused))  "Set focused file
+        call add(steps, 'call cursor(' . line('.') . ', ' . col('.') . ')')  "Restore cursor in focused file
+        call add(steps, 'normal! zz')  "Center view on restored cursor line
+    elseif !empty(l:files)
+        call add(steps, 'edit ' . fnameescape(l:files[0]))
+    endif
     call add(steps, 'silent exe "bwipe " . s:wipebuf')  "Remove initial/empty buffer
     " echom 'Steps: ' . string(steps)
     if len(steps) > 0

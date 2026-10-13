@@ -6,8 +6,8 @@
 let g:fzf_preview_window = ['right:40%', 'ctrl-/']  " up|down|left|right
 
 let $FZF_DEFAULT_OPTS='--layout=reverse --info=inline'
-" .git/ and venv/ stay excluded via ~/.config/fd/ignore (etc/fd/ignore), even with --hidden
-let $FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard || fd --type f --type l --hidden --follow"
+" --no-ignore-vcs: skip .gitignore (so .env etc. are findable); junk stays excluded via ~/.config/fd/ignore (etc/fd/ignore)
+let $FZF_DEFAULT_COMMAND="fd --type f --type l --hidden --follow --no-ignore-vcs"
 " command! -bang -nargs=? -complete=dir Files
 "         \ call fzf#vim#files(<q-args>, { 'options': "--prompt '>' $FZF_DEFAULT_OPTS"}, <bang>0)
 
@@ -81,8 +81,8 @@ nnoremap fa :Ag<CR>
 nnoremap fb :Buffers<CR>
 " nnoremap fl :BLines<CR>
 " nnoremap ft :BTags<CR>
-" nnoremap fh :History:<CR>
-nnoremap fc :History:<CR>
+nnoremap fh :History:<CR>
+nnoremap fc :Commands<CR>
 nnoremap fm :Marks<CR>
 " nnoremap tc :History:<CR>
 " nnoremap th :History<CR>
