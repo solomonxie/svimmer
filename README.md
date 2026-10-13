@@ -17,7 +17,7 @@ Existing symlinks are replaced; real files at a target path are moved to `<path>
 
 `install.sh [nvim|vim|mini]`, default `nvim`:
 
-- `nvim`: links the repo to `~/.config/nvim`.
+- `nvim`: links the repo to `~/.config/nvim` and adds `~/nvim-macos-<nvim_version>/bin` to `PATH` in `~/.bashrc-local`. The version is pinned in `install.sh`, since some settings only work on that release.
 - `vim`: links `~/.vimrc` to `vimrc-native.vim`: a standalone single-file replica of the Neovim config minus the Neovim-only parts (Lua, LSP, Treesitter, nvim-cmp). Fetches vim-plug itself; run `:PlugInstall` once.
 - `mini`: links `~/.vimrc` to `vimrc-mini.vim`: self-contained, no plugins, for stock Vim on servers. Also works without the repo:
 
