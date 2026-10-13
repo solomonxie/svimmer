@@ -13,16 +13,17 @@ git clone https://github.com/solomonxie/vim-for-speed.git ~/.config/nvim
 
 Existing symlinks are replaced; real files at a target path are moved to `<path>.bak.<timestamp>`.
 
-## Plain Vim
+## Vim
 
-`vimrc-mini.vim` is a self-contained vimrc for stock Vim (Linux servers, Raspberry Pi): no plugins, no Neovim-only settings.
+`install.sh [nvim|vim|mini]`, default `nvim`:
+
+- `nvim`: links the repo to `~/.config/nvim`.
+- `vim`: links `~/.vimrc` to `vimrc-native.vim`: a standalone single-file replica of the Neovim config minus the Neovim-only parts (Lua, LSP, Treesitter, nvim-cmp). Fetches vim-plug itself; run `:PlugInstall` once.
+- `mini`: links `~/.vimrc` to `vimrc-mini.vim`: self-contained, no plugins, for stock Vim on servers. Also works without the repo:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/solomonxie/vim-for-speed/master/vimrc-mini.vim -o ~/.vimrc
-# or, with the repo cloned: ~/.config/nvim/install.sh mini
 ```
-
-
 
 ## Perfomrance
 
