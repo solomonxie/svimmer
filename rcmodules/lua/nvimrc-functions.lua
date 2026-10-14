@@ -41,3 +41,32 @@ function LspRename()
         ))
     end)
 end
+
+
+-- gf on "path:15", "path:15:3", "path:L15" or "path:L12-30" opens path at that line
+-- (plain gF already does "path:15" but not the ":L15" form). Paths are tried as given, then from the
+-- current file's dir, then from the git root. Anything else falls back to the built-in gF.
+local function goto_file_line()
+    local line, col = vim.fn.getline('.'), vim.fn.col('.')
+    local init = 1
+    while true do
+        local s, e, path, lnum = line:find('([%w%._/~%-]+):L?(%d+)', init)
+        if not s then break end
+        if col >= s and col <= e then
+            local root = vim.fn.systemlist({ 'git', '-C', vim.fn.expand('%:p:h'), 'rev-parse', '--show-toplevel' })[1]
+            for _, dir in ipairs({ '', vim.fn.expand('%:p:h') .. '/', vim.v.shell_error == 0 and root .. '/' or nil }) do
+                local f = vim.fn.expand(dir .. path)
+                if vim.fn.filereadable(f) == 1 then
+                    vim.cmd('edit ' .. vim.fn.fnameescape(f))
+                    vim.api.nvim_win_set_cursor(0, { math.min(tonumber(lnum), vim.api.nvim_buf_line_count(0)), 0 })
+                    vim.cmd('normal! zz')
+                    return
+                end
+            end
+        end
+        init = e + 1
+    end
+    local ok, err = pcall(vim.cmd, 'normal! gF')
+    if not ok then vim.notify(err:gsub('^Vim%(normal%):', ''), vim.log.levels.ERROR) end
+end
+vim.keymap.set('n', 'gf', goto_file_line, { desc = 'Go to file, at line if path:N / path:LN' })
