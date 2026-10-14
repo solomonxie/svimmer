@@ -320,8 +320,8 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " map ft (toggle symbol outline)
 
 "Plug 'solomonxie/nvim-lsp-tagbar'
-" map ft (toggle bottom symbol bar)
-" buffer-local inside the bar: <CR> jump to symbol + close, p jump to parent symbol, q/<Esc> close
+" map ft (toggle right symbol bar)
+" buffer-local inside the bar: j/k preview symbol in the source window, o show/hide callers inline, <CR> jump to symbol + close, p jump to parent symbol, q/<Esc> close
 
 "vim/rcmodules/fzf.vim
 " map fd, map fa, map fb, map fh (command history), map fc (commands), map fm, map FD, map FA

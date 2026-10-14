@@ -39,3 +39,24 @@ end
 -- document symbols are worth having there too (shell functions and globals).
 -- Must follow the loop above, which resets each server's config.
 vim.lsp.config('bashls', { filetypes = { 'bash', 'sh', 'zsh' } })
+
+-- basedpyright only for what pylsp lacks: call hierarchy (`o` in the lsp-tagbar). pylsp stays the
+-- linter/completer, so basedpyright's diagnostics, hover and completion are switched off.
+vim.lsp.enable('basedpyright')
+vim.lsp.config('basedpyright', {
+    settings = {
+        basedpyright = {
+            analysis = { typeCheckingMode = 'off', diagnosticSeverityOverrides = {}, autoImportCompletions = false },
+            disableOrganizeImports = true,
+        },
+    },
+    handlers = { ['textDocument/publishDiagnostics'] = function() end },
+    on_attach = function(client)
+        local caps = client.server_capabilities
+        for _, k in ipairs({ 'hoverProvider', 'completionProvider', 'signatureHelpProvider', 'renameProvider',
+                'documentSymbolProvider', 'definitionProvider', 'referencesProvider', 'documentHighlightProvider',
+                'semanticTokensProvider', 'inlayHintProvider', 'codeActionProvider' }) do
+            caps[k] = nil
+        end
+    end,
+})

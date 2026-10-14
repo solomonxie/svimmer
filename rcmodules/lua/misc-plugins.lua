@@ -82,7 +82,10 @@ end
 
 if string.find(vim.o['runtimepath'], 'nvim%-lsp%-tagbar') then
     require('nvim-lsp-tagbar').setup({
-        height = 15,
+        -- right sidebar, as wide as NERDTree; j/k shows each symbol in the source window
+        position = 'right',
+        width = vim.g.NERDTreeWinSize or 40,
+        auto_preview = true,
         -- emmylua_ls emits no symbol for anonymous functions, so command
         -- and autocmd handlers are matched by name here instead.
         queries = {
