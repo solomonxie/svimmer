@@ -10,10 +10,12 @@ Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'  "Slow down vim significantly
 
 ">> Key Mappings
-nnoremap <Leader>f :<C-U>call NerdTreeAtProjectRoot()<CR>
+nnoremap <Leader>f :<C-U>let g:NERDTreeQuitOnOpen = 0 \| call NerdTreeAtProjectRoot()<CR>
 " nnoremap <Leader>F :NERDTreeFind<CR>zz
-" nnoremap FF :NERDTree<CR>
-nnoremap ff :<C-U>call NerdTreeFindOrRoot()<CR>zz
+" ff: the tree closes once a file is opened from it. FF: it stays open.
+" NERDTree reads NERDTreeQuitOnOpen on every open, so the key last used decides.
+nnoremap ff :<C-U>let g:NERDTreeQuitOnOpen = 1 \| call NerdTreeFindOrRoot()<CR>zz
+nnoremap FF :<C-U>let g:NERDTreeQuitOnOpen = 0 \| call NerdTreeFindOrRoot()<CR>zz
 
 " Git root of the current file (symlinks resolved, so a symlinked checkout
 " still matches the path NERDTreeFind resolves), else the cwd.
@@ -52,10 +54,18 @@ endfunction
 " nnoremap gD :NERDTree<CR>
 
 ">> UI settings
-let NERDTreeQuitOnOpen=0   " Keep NERDTree open after opening a file
+let NERDTreeQuitOnOpen=0   " Keep NERDTree open after opening a file (ff sets 1, FF/<Leader>f set 0)
 let NERDTreeMinimalUI=1    " Start NERDTree in minimal UI mode (No help lines)
 let NERDTreeDirArrows=1    " Display arrows instead of ascii art in NERDTree
 let NERDTreeHighlightCursorline = 1  "Conflict with other addon-plugins for nerdtree
+" No '*' and green highlight on executable files: clear the flag before NERDTree draws the name.
+" The 'init'/'refresh' path events fire right before each name is (re)cached. Registered on
+" vim-plug's `User nerdtree`, fired as the lazy-loaded plugin loads, before the first tree is built.
+function! s:NerdTreeNotExecutable(event) abort
+    let a:event.subject.isExecutable = 0
+endfunction
+autocmd User nerdtree ++once call g:NERDTreePathNotifier.AddListener('init', function('s:NerdTreeNotExecutable'))
+            \ | call g:NERDTreePathNotifier.AddListener('refresh', function('s:NerdTreeNotExecutable'))
 "let NERDTreeChDirMode=2    " Change current working directory based on root directory in NERDTree
 let g:NERDTreeHidden=1     " Don't show hidden files
 let NERDTreeWinSize=40     " Initial NERDTree width
@@ -104,6 +114,7 @@ autocmd FileType nerdtree nnoremap <buffer> q :call SafeNERDTreeQuit()<CR>
 function! s:NerdTreeDimColors() abort
     highlight default NERDTreeDim ctermfg=241 ctermbg=232 guifg=#666462 guibg=#141413
     highlight default NERDTreeDimDirty ctermfg=64 ctermbg=232 guifg=#5f8700 guibg=#141413
+    highlight default NERDTreeDimIgnored ctermfg=238 ctermbg=232 guifg=#444444 guibg=#141413
     highlight default NERDTreeDimCursorLine ctermfg=NONE ctermbg=234 guibg=#1c1c1c
 endfunction
 call s:NerdTreeDimColors()
@@ -115,6 +126,7 @@ let s:nerdtree_dim_groups = ['Normal', 'NormalNC', 'EndOfBuffer', 'Directory',
             \ 'NERDTreeLinkFile', 'NERDTreeLinkDir', 'NERDTreeLinkTarget']
 let s:nerdtree_dim_hl = join(map(copy(s:nerdtree_dim_groups), 'v:val . ":NERDTreeDim"'), ',')
             \ . ',NERDTreeGitDirtyFile:NERDTreeDimDirty,NERDTreeGitDirtyDir:NERDTreeDimDirty'
+            \ . ',NERDTreeGitIgnored:NERDTreeDimIgnored'
             \ . ',CursorLine:NERDTreeDimCursorLine'
 
 function! s:NerdTreeSyncDim() abort
@@ -163,18 +175,23 @@ function! s:NerdTreeAutoRefresh(timer) abort
     silent! call s:NerdTreeGitHighlight()
 endfunction
 
-" Highlight dirty files/folders in NERDTree. Base follows :ChangeGitDiffBase
-" (g:gitgutter_diff_base), default HEAD. Git is re-queried at most every 3s.
+" Highlight dirty files/folders in NERDTree, and grey out git-ignored ones. Base follows
+" :ChangeGitDiffBase (g:gitgutter_diff_base), default HEAD. Git is re-queried at most every 3s.
 " Own colors rather than Diff* links: badwolf's DiffChange is a near-invisible bg
 function! s:NerdTreeGitHighlightColors() abort
     highlight default NERDTreeGitDirtyFile cterm=bold ctermfg=154 gui=bold guifg=#aeee00
     highlight default NERDTreeGitDirtyDir ctermfg=154 guifg=#aeee00
+    highlight default NERDTreeGitIgnored ctermfg=243 guifg=#767676
 endfunction
 call s:NerdTreeGitHighlightColors()
 autocmd ColorScheme * call s:NerdTreeGitHighlightColors()
 let s:git_dirty = {}
+" Ignored paths; an ignored dir is listed once (git's --directory) and covers everything in it
+let s:git_ignored = {}
 let s:git_dirty_key = ''
 let s:git_dirty_at = 0.0
+" '(ign)' after the name of each ignored file/dir (not repeated for what's inside an ignored dir)
+let s:git_ignored_ns = has('nvim') ? nvim_create_namespace('nerdtree_git_ignored') : -1
 
 function! s:NerdTreeGitDirtySet(root) abort
     let l:base = get(g:, 'gitgutter_diff_base', '')
@@ -186,6 +203,7 @@ function! s:NerdTreeGitDirtySet(root) abort
     let s:git_dirty_key = l:key
     let s:git_dirty_at = reltimefloat(reltime())
     let s:git_dirty = {}
+    let s:git_ignored = {}
     " Paths relative to the tree root (not the git toplevel) so symlinked roots match
     let l:git = 'git -C ' . shellescape(a:root) . ' '
     call system(l:git . 'rev-parse --git-dir')
@@ -203,6 +221,9 @@ function! s:NerdTreeGitDirtySet(root) abort
             let l:dir = fnamemodify(l:dir, ':h')
         endwhile
     endfor
+    for l:rel in systemlist(l:git . 'ls-files --others --ignored --exclude-standard --directory')
+        let s:git_ignored[a:root . '/' . substitute(l:rel, '/$', '', '')] = 1
+    endfor
     return s:git_dirty
 endfunction
 
@@ -213,7 +234,8 @@ function! s:NerdTreeGitHighlight() abort
     let l:curWin = win_getid()
     noautocmd call win_gotoid(win_getid(g:NERDTree.GetWinNum()))
     let l:dirty = s:NerdTreeGitDirtySet(b:NERDTree.root.path.str())
-    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': []}
+    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': [], 'NERDTreeGitIgnored': []}
+    let l:ignLines = []
     " Skip when neither the tree nor the git set changed since last time
     let l:sig = b:changedtick . '@' . s:git_dirty_at
     if get(b:, 'nerdtree_git_hl_sig', '') ==# l:sig
@@ -225,9 +247,11 @@ function! s:NerdTreeGitHighlight() abort
     " walks upward per line, which is O(n^2) and froze big trees for seconds.
     let l:ui = b:NERDTree.ui
     let l:dirs = {}
+    " whether the dir at each indent level is ignored, so its contents are too
+    let l:ignoredDirs = {}
     let l:root = substitute(b:NERDTree.root.path.str(), '/$', '', '')
     let l:rootLine = l:ui.getRootLineNum()
-    for l:lnum in empty(l:dirty) ? [] : range(l:rootLine + 1, line('$'))
+    for l:lnum in empty(l:dirty) && empty(s:git_ignored) ? [] : range(l:rootLine + 1, line('$'))
         let l:line = getline(l:lnum)
         let l:name = l:ui._stripMarkup(l:line)
         if empty(l:name)
@@ -237,10 +261,15 @@ function! s:NerdTreeGitHighlight() abort
         let l:isDir = l:name =~# '/$'
         let l:name = substitute(l:name, '/$', '', '')
         let l:path = get(l:dirs, l:indent - 1, l:root) . '/' . l:name
+        let l:ignored = get(l:ignoredDirs, l:indent - 1, 0) || has_key(s:git_ignored, l:path)
         if l:isDir
             let l:dirs[l:indent] = l:path
+            let l:ignoredDirs[l:indent] = l:ignored
         endif
-        let l:group = get(l:dirty, l:path, '')
+        if has_key(s:git_ignored, l:path)
+            call add(l:ignLines, l:lnum)
+        endif
+        let l:group = get(l:dirty, l:path, l:ignored ? 'NERDTreeGitIgnored' : '')
         if empty(l:group)
             continue
         endif
@@ -251,7 +280,7 @@ function! s:NerdTreeGitHighlight() abort
         endif
     endfor
     for l:m in getmatches()
-        if l:m.group =~# '^NERDTreeGitDirty'
+        if l:m.group =~# '^NERDTreeGit\(Dirty\|Ignored\)'
             call matchdelete(l:m.id)
         endif
     endfor
@@ -261,6 +290,13 @@ function! s:NerdTreeGitHighlight() abort
             call matchaddpos(l:group, l:pos[l:i : l:i + 7])
         endfor
     endfor
+    if s:git_ignored_ns >= 0
+        call nvim_buf_clear_namespace(0, s:git_ignored_ns, 0, -1)
+        for l:lnum in l:ignLines
+            call nvim_buf_set_extmark(0, s:git_ignored_ns, l:lnum - 1, 0,
+                        \ {'virt_text': [[' (ign)', 'NERDTreeGitIgnored']], 'virt_text_pos': 'eol'})
+        endfor
+    endif
     noautocmd call win_gotoid(l:curWin)
 endfunction
 
@@ -311,6 +347,14 @@ let g:NERDTreeIndicatorMapCustom = {
 
 
 " --- Customized Abilities on Nerdtree ---
+" O on a file opens it like <CR>/o (NERDTree only binds O on folders: expand recursively), so ff's
+" close-on-open applies to it too. Added on NERDTreeInit: the plugin is lazy-loaded.
+function! NerdTreeOpenFileNode(node) abort
+    call a:node.activate({'reuse': 'all', 'where': 'p', 'keepopen': !nerdtree#closeTreeOnOpen()})
+endfunction
+autocmd User NERDTreeInit ++once call NERDTreeAddKeyMap({ 'key': 'O', 'scope': 'FileNode',
+            \ 'callback': 'NerdTreeOpenFileNode', 'quickhelpText': 'open file (like o)' })
+
 " call NERDTreeAddKeyMap({
 "         \ 'key': 'E',
 "         \ 'callback': 'MyNerdtreeFunc',

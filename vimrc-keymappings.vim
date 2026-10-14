@@ -302,7 +302,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " map fw
 
 "vim/rcmodules/nerdtree.vim
-" map <Leader>f, map ff
+" map <Leader>f, map ff (closes after opening a file), map FF (stays open)
 " plugin defaults, not set by me (buffer-local inside NERDTree window): o/t/T/i/s/x/X/m/r/R/D/C/u/?/q ... see :help NERDTreeMappings
 
 "vim/after/ftplugin/netrw.vim
