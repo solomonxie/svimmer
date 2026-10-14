@@ -3,11 +3,17 @@
 --   gc / :ClaudeHistory   toggle the history pane: this repo's sessions (incl. its git worktrees), folded
 --   :ClaudeHistory!       same, for every project
 --   :ClaudeHistoryGrep    fzf search through every prompt typed in this repo (! for every project)
+--   :ClaudeSend           (also on a visual range) pick a running session in tmux, type a prompt, and send it
+--                         with <file>:L<lines>; that transcript then opens in this window at your prompt.
+--                         Lists this repo's sessions like the pane does; :ClaudeSend! lists every project's
+--   ,k                    same, but skips the list for the last session sent to (or the only one in this repo)
 --
 -- In the pane, moving the cursor shows that session (at that prompt) in the window above:
+--   ● / ○      session running / not running
 --   <CR> / <Space> / o   open / close a session's prompts
 --   <CR> on a prompt     close the pane and jump into the transcript at it
 --   q / gc     close
+--   ?          show / hide help at the top of the pane (keys, commands, how it works); q also hides it
 --
 -- Each session <id>.jsonl is rendered right next to it as <yyyymmdd>-<HHMM>-<folder>-<title>.md, and re-rendered
 -- whenever the jsonl changes (on open, and every 1.5s while the transcript is loaded), so a live
@@ -95,7 +101,7 @@ local function demote(text, out)
 end
 
 -- Cheap scan for pickers: prompts and title without decoding every record.
-local function scan(path)
+local function scan_file(path)
     local res = { prompts = {}, title = nil, cwds = {} }
     local f = io.open(path, 'r')
     if not f then return res end
@@ -118,6 +124,18 @@ local function scan(path)
     end
     f:close()
     res.title = res.custom or res.title
+    return res
+end
+
+-- scan(), cached until the file changes: big sessions take a while to read.
+local scan_cache = {}
+local function scan(path)
+    local st = vim.uv.fs_stat(path)
+    local stamp = st and (st.size .. ':' .. st.mtime.sec .. '.' .. st.mtime.nsec)
+    local hit = scan_cache[path]
+    if hit and hit.stamp == stamp then return hit.res end
+    local res = scan_file(path)
+    scan_cache[path] = { stamp = stamp, res = res }
     return res
 end
 
@@ -296,6 +314,21 @@ local function belongs(f, s, root)
     return dir == encode(root) or vim.startswith(dir, encode(root) .. '--claude-worktrees-')
 end
 
+-- Running Claude processes, by session id: { pid, cwd, tmux pane id } from ~/.claude/sessions/<pid>.json.
+-- Those files can outlive a crashed process, so the pid is checked too.
+local function live_sessions()
+    local live = {}
+    for _, f in ipairs(vim.fn.glob(vim.fn.expand('~/.claude/sessions') .. '/*.json', false, true)) do
+        local ok, s = pcall(vim.json.decode, table.concat(vim.fn.readfile(f), '\n'))
+        if ok and type(s) == 'table' and s.sessionId and s.pid and vim.uv.kill(s.pid, 0) == 0 then
+            live[s.sessionId] = { pid = s.pid, cwd = s.cwd, pane = s.tmux and s.tmux:match('(%%%d+)$') }
+        end
+    end
+    return live
+end
+
+local function session_id(jsonl) return vim.fn.fnamemodify(jsonl, ':t:r') end
+
 -- Sessions newest first, each with its worktree folder, title and prompts.
 -- Main checkout: every session of the repo and its worktrees. A linked worktree: only its own
 -- (and those of worktrees nested in it). `all`: every project.
@@ -310,12 +343,36 @@ local function session_entries(all)
             vim.list_extend(files, vim.fn.glob(d .. '/*.jsonl', false, true))
         end
     end
+    -- and sessions started outside the repo (e.g. in its parent dir) that cd'd into it later:
+    -- they're stored under the dir they started in. grep is a quick prefilter; belongs() decides.
+    local outside = {}
+    if scope then
+        local listed = {}
+        for _, f in ipairs(files) do listed[f] = true end
+        -- one pattern, the worktrees' common path prefix: grep with one -e per worktree is ~10x slower
+        local prefix = scope.roots[1]
+        for _, root in ipairs(scope.roots) do
+            while not vim.startswith(root, prefix) do prefix = prefix:sub(1, -2) end
+        end
+        local cmd = { 'grep', '-lF', '-e', '"cwd":"' .. prefix, '--' }
+        vim.list_extend(cmd, vim.fn.glob(PROJECTS .. '/*/*.jsonl', false, true))
+        for _, f in ipairs(vim.fn.systemlist(cmd)) do
+            if not listed[f] then
+                files[#files + 1] = f
+                outside[f] = true
+            end
+        end
+    end
     local entries = {}
     for _, f in ipairs(files) do
         local s = scan(f)
         -- skip empty sessions, e.g. the stub left behind by /clear
         local real = vim.tbl_filter(function(p) return not vim.startswith(p.text, '/') end, s.prompts)
-        if #real > 0 and (not scope or scope.main or belongs(f, s, scope.top)) then
+        local ok = not scope or (scope.main and not outside[f]) or belongs(f, s, scope.top)
+        if outside[f] and scope.main then
+            ok = vim.iter(scope.roots):any(function(root) return belongs(f, s, root) end)
+        end
+        if #real > 0 and ok then
             entries[#entries + 1] = {
                 file = f,
                 mtime = mtime(f),
@@ -333,9 +390,16 @@ end
 -- transcript buffers
 ---------------------------------------------------------------------------
 
--- One normal buffer shows whichever session is selected: it's the rendered md file, and
--- switching session renames the buffer to the other md and re-reads it.
+-- One scratch buffer named BUFNAME shows whichever session is selected: switching session loads
+-- the other rendered md into it, and b:claude_md says which one it holds. A rendered md opened
+-- directly (:e) is a normal file buffer instead.
+local BUFNAME = 'Claude history'
 local transcript = { buf = nil }
+
+-- The rendered md a transcript buffer shows.
+local function md_of(buf)
+    return vim.b[buf].claude_md or vim.api.nvim_buf_get_name(buf)
+end
 
 local function is_transcript(buf)
     local jsonl = jsonl_of(vim.api.nvim_buf_get_name(buf))
@@ -452,6 +516,19 @@ end
 
 -- Point buf at md and (re)read it from disk.
 local function load_into(buf, md)
+    if vim.b[buf].claude_md then
+        -- Stop treesitter first, so an async parse of the old text can't read past the new end
+        -- ("treesitter.lua: Index out of bounds"). Setting the filetype restarts it.
+        pcall(vim.treesitter.stop, buf)
+        vim.bo[buf].readonly = false
+        vim.bo[buf].modifiable = true
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.fn.readfile(md))
+        vim.bo[buf].modified = false
+        vim.b[buf].claude_md = md
+        vim.bo[buf].filetype = 'markdown'
+        setup_transcript(buf)
+        return
+    end
     local old = vim.api.nvim_buf_get_name(buf)
     if old ~= md then
         -- a stale buffer already holding this md (e.g. opened directly) would block the rename
@@ -466,6 +543,9 @@ local function load_into(buf, md)
             end
         end
     end
+    -- Stop treesitter first: an async parse of the old text still running after edit! swaps
+    -- the lines reads past the new end ("treesitter.lua: Index out of bounds"). FileType restarts it.
+    pcall(vim.treesitter.stop, buf)
     vim.api.nvim_buf_call(buf, function()
         vim.bo.modifiable = true
         vim.cmd('silent! keepjumps edit!')
@@ -504,7 +584,7 @@ local function watch()
     watcher:start(1500, 1500, vim.schedule_wrap(function()
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
             if vim.api.nvim_buf_is_loaded(buf) and vim.b[buf].claude_history then
-                local name = vim.api.nvim_buf_get_name(buf)
+                local name = md_of(buf)
                 local jsonl = jsonl_of(name)
                 if jsonl and vim.uv.fs_stat(jsonl) then
                     local md, changed = ensure_md(jsonl, name)
@@ -520,11 +600,14 @@ local function show_in(win, jsonl, n)
     local md = ensure_md(jsonl)
     local buf = transcript.buf
     if not (buf and vim.api.nvim_buf_is_valid(buf)) then
-        buf = vim.fn.bufadd(md)
+        buf = vim.api.nvim_create_buf(true, false)
         transcript.buf = buf
-        vim.bo[buf].buflisted = true
+        vim.bo[buf].buftype = 'nofile'
+        vim.bo[buf].bufhidden = 'hide'
+        vim.b[buf].claude_md = ''
+        pcall(vim.api.nvim_buf_set_name, buf, BUFNAME)
     end
-    if vim.api.nvim_buf_get_name(buf) ~= md or not vim.api.nvim_buf_is_loaded(buf) then load_into(buf, md) end
+    if md_of(buf) ~= md then load_into(buf, md) end
     if vim.api.nvim_win_get_buf(win) ~= buf then vim.api.nvim_win_set_buf(win, buf) end
     style_window(win)
     vim.api.nvim_win_call(win, function()
@@ -552,6 +635,97 @@ function M.open(jsonl, n)
 end
 
 ---------------------------------------------------------------------------
+-- send file:lines + a prompt to a running session
+---------------------------------------------------------------------------
+
+local last_sent -- session id last sent to, preferred next time
+
+-- Running sessions in tmux among the pane's sessions (this repo and its worktrees, or every project
+-- with `all`): the last one sent to first, then those whose cwd holds `path`, then most recently active.
+local function send_candidates(path, all)
+    local live, list = live_sessions(), {}
+    for _, e in ipairs(session_entries(all)) do
+        local id = session_id(e.file)
+        local s = live[id]
+        if s and s.pane then
+            list[#list + 1] = {
+                id = id, pane = s.pane, cwd = s.cwd, jsonl = e.file, mtime = e.mtime,
+                here = s.cwd and inside(path, s.cwd),
+                label = ('%s  %s'):format(e.folder, e.title),
+            }
+        end
+    end
+    table.sort(list, function(a, b)
+        if (a.id == last_sent) ~= (b.id == last_sent) then return a.id == last_sent end
+        if a.here ~= b.here then return a.here end
+        return a.mtime > b.mtime
+    end)
+    return list
+end
+
+-- Once the session has recorded the prompt just sent (it has more than `before` prompts), show its
+-- transcript in this window at that prompt. Gives up after ~15s, e.g. if the paste never got submitted.
+local function show_sent(jsonl, before, win)
+    local tries = 0
+    local timer = vim.uv.new_timer()
+    timer:start(300, 300, vim.schedule_wrap(function()
+        tries = tries + 1
+        local n = #scan(jsonl).prompts
+        if n <= before and tries < 50 then return end
+        timer:stop()
+        timer:close()
+        if n <= before then
+            return vim.notify('claude_history: the session hasn\'t recorded the prompt yet', vim.log.levels.WARN)
+        end
+        if not vim.api.nvim_win_is_valid(win) then win = edit_window() end
+        vim.api.nvim_set_current_win(win)
+        show_in(win, jsonl, n)
+    end))
+end
+
+local function paste_to(s, text)
+    local before = #scan(s.jsonl).prompts
+    local win = edit_window()
+    vim.fn.system({ 'tmux', 'load-buffer', '-b', 'claude_send', '-' }, text)
+    -- -p: bracketed paste, so newlines in the text don't submit early
+    vim.fn.system({ 'tmux', 'paste-buffer', '-p', '-d', '-b', 'claude_send', '-t', s.pane })
+    vim.defer_fn(function() vim.fn.system({ 'tmux', 'send-keys', '-t', s.pane, 'Enter' }) end, 150)
+    last_sent = s.id
+    show_sent(s.jsonl, before, win)
+end
+
+-- Ask for a prompt and send "<file>:L<l1>-<l2>" plus it to a running session.
+-- `pick`: always choose from the list of running sessions. `all`: from every project, not just this repo's.
+function M.send(l1, l2, pick, all)
+    local path = vim.api.nvim_buf_get_name(0)
+    local cands = send_candidates(path ~= '' and path or vim.fn.getcwd(), all)
+    if #cands == 0 then
+        return vim.notify('claude_history: no running Claude session in tmux for '
+            .. (all and 'any project' or vim.fn.getcwd()) .. (all and '' or ' (:ClaudeSend! for every project)'),
+            vim.log.levels.WARN)
+    end
+    local function go(s)
+        if not s then return end
+        local ref = ''
+        if path ~= '' then
+            local rel = s.cwd and inside(path, s.cwd) and path:sub(#s.cwd + 2) or path
+            ref = rel .. ':L' .. l1 .. (l2 ~= l1 and ('-' .. l2) or '')
+        end
+        vim.ui.input({ prompt = ('Claude [%s] %s> '):format(s.label, ref) }, function(prompt)
+            if prompt == nil then return end
+            local text = vim.trim(ref .. '\n' .. prompt)
+            if text ~= '' then paste_to(s, text) end
+        end)
+    end
+    -- the usual target needs no picking; otherwise pick when it's ambiguous
+    if not pick and (cands[1].id == last_sent or #cands == 1 or (cands[1].here and not cands[2].here)) then
+        go(cands[1])
+    else
+        vim.ui.select(cands, { prompt = 'Send to Claude session', format_item = function(s) return s.label end }, go)
+    end
+end
+
+---------------------------------------------------------------------------
 -- history pane: one folded row per session, opening to its prompts
 ---------------------------------------------------------------------------
 
@@ -570,15 +744,52 @@ local function set_highlights()
         ClaudeHistoryFold = 'Normal',
         ClaudeHistoryBar = 'StatusLine',
         ClaudeHistoryKey = 'Special',
+        ClaudeHistoryAlive = 'DiagnosticOk',
+        ClaudeHistoryGone = 'Comment',
     }) do
         vim.api.nvim_set_hl(0, name, { link = target, default = true })
     end
 end
 
 local function pane_open() return pane.win ~= nil and vim.api.nvim_win_is_valid(pane.win) end
-local function key_of(it) return it and (it.jsonl .. ':' .. (it.n or 0)) end
+local function key_of(it) return it and it.jsonl and (it.jsonl .. ':' .. (it.n or 0)) end
 
--- Lines, highlight spans and per-line items for the pane.
+-- Shown at the top of the pane with ?, like NERDTree's quick help.
+local HELP = {
+    'Claude history',
+    '',
+    'In this pane',
+    '  j / k              move; the window above shows that session, at that prompt',
+    '  <CR> / <Space> / o open / close a session\'s prompts',
+    '  <CR> on a prompt   close the pane and jump into the transcript at it',
+    '  p                  back up from a prompt to its session',
+    '  q / gc / ft        close the pane',
+    '  ?                  show / hide this help (q also hides it)',
+    '',
+    '  ● / ○              session running / not running',
+    '  (N)                number of prompts in the session',
+    '',
+    'In a transcript',
+    '  ft                 toggle this pane, opened at that session and prompt',
+    '  ]] / [[            next / previous prompt',
+    '  za / zo / zc       toggle / open / close the reply under the cursor',
+    '  zR / zM            open / close every reply',
+    '  q                  close the transcript',
+    '',
+    'Commands',
+    '  gc / :ClaudeHistory     this repo\'s sessions (incl. its git worktrees)',
+    '  :ClaudeHistory!         every project\'s sessions',
+    '  :ClaudeHistoryGrep[!]   fzf search through every prompt typed here (! every project)',
+    '  :ClaudeSend[!] / ,k     send <file>:L<lines> + a prompt to a running session in tmux',
+    '',
+    'How it works',
+    '  Sessions come from ~/.claude/projects/<project>/<id>.jsonl, newest first.',
+    '  Each is rendered next to it as <yyyymmdd>-<HHMM>-<folder>-<title>.md and',
+    '  re-rendered whenever the jsonl changes (every 1.5s while shown), so a live',
+    '  session follows. Running = a live pid in ~/.claude/sessions/<pid>.json.',
+}
+
+-- Lines, highlight spans and per-line items for the pane (help lines get a { help = true } item).
 local function build(entries)
     local lines, marks, items = {}, {}, {}
     local function add(segments, item)
@@ -590,10 +801,28 @@ local function build(entries)
         lines[#lines + 1] = text
         items[#items + 1] = item
     end
+    if pane.help then
+        for _, l in ipairs(HELP) do
+            local text = l == '' and '"' or ('" ' .. l)
+            local s, e = text:find('^"   %S.-%s%s')
+            if l ~= '' and not l:match('^%s') then
+                add({ { text, 'ClaudeHistoryTitle' } }, { help = true })
+            elseif s then
+                -- key column: the text before the first run of 2+ spaces after the indent
+                add({ { text:sub(1, 4), 'Comment' }, { text:sub(5, e - 2), 'ClaudeHistoryKey' }, { text:sub(e - 1), 'Comment' } }, { help = true })
+            else
+                add({ { text, 'Comment' } }, { help = true })
+            end
+        end
+        add({ { '' } }, { help = true })
+    end
     local width = 0
     for _, e in ipairs(entries) do width = math.max(width, vim.fn.strdisplaywidth(e.folder)) end
+    local live = live_sessions()
     for _, e in ipairs(entries) do
+        local alive = live[session_id(e.file)] ~= nil
         add({
+            alive and { '● ', 'ClaudeHistoryAlive' } or { '○ ', 'ClaudeHistoryGone' },
             { os.date('%m-%d %H:%M', math.floor(e.mtime / 1e9)), 'ClaudeHistoryDate' }, { '  ' },
             { e.folder .. string.rep(' ', width - vim.fn.strdisplaywidth(e.folder)), 'ClaudeHistoryFolder' }, { '  ' },
             { e.title, 'ClaudeHistoryTitle' }, { '  ' },
@@ -621,7 +850,7 @@ local function render_pane(target)
     local opened, cur = {}, nil
     vim.api.nvim_win_call(pane.win, function()
         for i, it in ipairs(pane.items) do
-            if not it.n and vim.fn.foldclosed(i) == -1 then opened[it.jsonl] = true end
+            if it.jsonl and not it.n and vim.fn.foldclosed(i) == -1 then opened[it.jsonl] = true end
         end
         cur = key_of(pane.items[vim.fn.line('.')])
     end)
@@ -654,6 +883,13 @@ function M.pane_rerender()
     if pane_open() then render_pane() end
 end
 
+-- ? : show / hide the help at the top of the pane. Showing it moves the cursor up to it.
+local function toggle_help()
+    pane.help = not pane.help
+    render_pane()
+    if pane.help then vim.api.nvim_win_set_cursor(pane.win, { 1, 0 }) end
+end
+
 -- Window the pane shows sessions in; made next to the first window if every other one is pinned.
 local function target_window()
     if pane.src_win and vim.api.nvim_win_is_valid(pane.src_win) then return pane.src_win end
@@ -673,7 +909,7 @@ end
 -- Follow the pane cursor: show that session (at that prompt). `focus` also closes the pane and jumps there.
 local function follow(focus)
     local it = pane.items[vim.api.nvim_win_get_cursor(pane.win)[1]]
-    if not it then return end
+    if not it or not it.jsonl then return end
     if focus or key_of(it) ~= pane.last then
         pane.last = key_of(it)
         show_in(target_window(), it.jsonl, it.n)
@@ -700,17 +936,18 @@ end
 -- Session and prompt the cursor is on, if the current buffer is a transcript.
 local function transcript_position()
     if not vim.b.claude_history then return nil end
-    local jsonl = jsonl_of(vim.api.nvim_buf_get_name(0))
+    local jsonl = jsonl_of(md_of(0))
     if not jsonl then return nil end
     local l = vim.fn.search('^## \\d\\+\\. ', 'bcnW')
     return { jsonl = jsonl, n = l > 0 and tonumber(vim.fn.getline(l):match('^## (%d+)')) or nil }
 end
 
+
 function M.pane_toggle(all)
     if pane_open() then return M.pane_close() end
     local target = transcript_position()
     pane.src_win = not vim.wo.winfixbuf and vim.api.nvim_get_current_win() or nil
-    pane.all, pane.items = all, {}
+    pane.all, pane.items, pane.help = all, {}, false
     local scope = repo_scope()
     pane.scope_label = scope.main and (vim.fn.fnamemodify(scope.top, ':t') .. ' + all worktrees')
         or ('worktree ' .. vim.fn.fnamemodify(scope.top, ':t'))
@@ -723,12 +960,12 @@ function M.pane_toggle(all)
     for opt, val in pairs({
         number = false, relativenumber = false, signcolumn = 'no', wrap = false, cursorline = true,
         winfixheight = true, foldcolumn = '0', foldmethod = 'expr', foldlevel = 0, foldtext = '',
-        foldexpr = [[getline(v:lnum)=~'^\s'?'1':'>1']], fillchars = 'fold: ,eob: ',
+        foldexpr = [[getline(v:lnum)=~'^"\|^$'?'0':getline(v:lnum)=~'^\s'?'1':'>1']], fillchars = 'fold: ,eob: ',
         winhighlight = 'Folded:ClaudeHistoryFold,StatusLine:ClaudeHistoryBar',
         statusline = ' %#ClaudeHistoryTitle#Claude history%#ClaudeHistoryBar#'
             .. (all and '  (all projects)' or ('  ' .. pane.scope_label))
             .. '   %#ClaudeHistoryKey#<CR>/<Space>/o%#ClaudeHistoryBar# fold  %#ClaudeHistoryKey#<CR>%#ClaudeHistoryBar# on a prompt: jump in'
-            .. '  %#ClaudeHistoryKey#q%#ClaudeHistoryBar# close',
+            .. '  %#ClaudeHistoryKey#q%#ClaudeHistoryBar# close  %#ClaudeHistoryKey#?%#ClaudeHistoryBar# help',
     }) do
         vim.wo[pane.win][opt] = val
     end
@@ -740,12 +977,21 @@ function M.pane_toggle(all)
     end
 
     local o = { buffer = pane.buf, silent = true, nowait = true }
-    local function on_session_row() return pane.items[vim.fn.line('.')] and not pane.items[vim.fn.line('.')].n end
+    local function on_session_row()
+        local it = pane.items[vim.fn.line('.')]
+        return it and it.jsonl and not it.n
+    end
     vim.keymap.set('n', '<CR>', function()
+        local it = pane.items[vim.fn.line('.')]
+        if not (it and it.jsonl) then return end
         if on_session_row() then vim.cmd('normal! za') else follow(true) end
     end, o)
     for _, k in ipairs({ '<Space>', 'o' }) do vim.keymap.set('n', k, 'za', o) end
-    for _, k in ipairs({ 'q', 'gc', 'ft' }) do vim.keymap.set('n', k, M.pane_close, o) end
+    -- back up from a prompt row to its session row
+    vim.keymap.set('n', 'p', function() vim.fn.search([[^\S]], 'bcW') end, o)
+    for _, k in ipairs({ 'gc', 'ft' }) do vim.keymap.set('n', k, M.pane_close, o) end
+    vim.keymap.set('n', 'q', function() if pane.help then toggle_help() else M.pane_close() end end, o)
+    vim.keymap.set('n', '?', toggle_help, o)
     -- Scheduled: autocmds don't nest, so loading the transcript from inside CursorMoved
     -- would skip its BufRead/FileType handlers (no markdown highlighting, no keys).
     vim.api.nvim_create_autocmd('CursorMoved', {
@@ -816,5 +1062,13 @@ vim.api.nvim_create_user_command('ClaudeHistoryGrep', function(o) M.grep_prompts
 -- nvim's built-in commenting also lives on gc/gcc; commenting is on ,c (vim-commentary, see misc.vim)
 for _, m in ipairs({ { 'n', 'gcc' }, { 'x', 'gc' }, { 'o', 'gc' } }) do pcall(vim.keymap.del, m[1], m[2]) end
 vim.keymap.set('n', 'gc', function() M.pane_toggle(false) end, { silent = true, nowait = true, desc = 'Claude history pane' })
+vim.api.nvim_create_user_command('ClaudeSend', function(o) M.send(o.line1, o.line2, true, o.bang) end, { range = true, bang = true })
+vim.keymap.set('n', '<leader>k', function() M.send(vim.fn.line('.'), vim.fn.line('.')) end,
+    { silent = true, desc = 'Send file:line + prompt to Claude' })
+vim.keymap.set('x', '<leader>k', function()
+    local a, b = vim.fn.line('v'), vim.fn.line('.')
+    vim.api.nvim_feedkeys(vim.keycode('<Esc>'), 'nx', false)
+    M.send(math.min(a, b), math.max(a, b))
+end, { silent = true, desc = 'Send file:lines + prompt to Claude' })
 
 return M
