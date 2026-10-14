@@ -14,6 +14,19 @@
 -- re-read on focus / buffer enter whenever it changed. Signs are extmarks, so they follow edits above them, and
 -- the new line numbers are written out on save.
 -- There is one file per python version; this writes to every one that exists (or the one for `python3` on PATH).
+--
+-- The same breakpoints also go into a marked block in ~/.pdbrc (anything outside the block is left alone), so plain
+-- pdb / ipdb stop there too: python -m pdb script.py, breakpoint(), pytest --pdb / --trace. pdb never writes back.
+--
+-- BACKLOG (other languages; see the TARGETS placeholders below). Each is one more renderer of `bps`:
+--   Go (delve):  `dlv debug|test --init FILE`, lines `break bpN /abs/f.go:42` + `condition bpN cond`. Tested with
+--                delve 1.27: a location that's not in the binary only prints an error, the rest still get set.
+--                Needs a wrapper (dlv has no global init file) and `go install github.com/go-delve/delve/cmd/dlv`.
+--   C/C++/Rust (lldb):  `breakpoint set -f /abs/f.c -l 42 -c 'cond'`, sourced from ~/.lldbinit with
+--                `command source -s 1 -e 0 FILE` (-e 0: don't stop on files from other projects). Tested with
+--                Apple lldb: stops with the condition. gdb isn't installed; it would be `break f.c:42 if cond`
+--                via `gdb -x FILE`.
+--   Node:        no startup command file in `node inspect`; not worth it (use `debugger;` or DevTools).
 
 local M = {}
 
@@ -126,19 +139,80 @@ local function read()
     end
 end
 
-local function write()
+-- One line per breakpoint, sorted, from fmt(path, lnum, cond).
+local function render(fmt)
     local out = {}
     for path, lines in pairs(bps) do
         for lnum, cond in pairs(lines) do
-            table.insert(out, ('b %s:%d%s'):format(path, lnum, cond == '' and '' or ', ' .. cond))
+            table.insert(out, fmt(path, lnum, cond))
         end
     end
     table.sort(out)
+    return out
+end
+
+local PDBRC = vim.fn.expand('~/.pdbrc')
+local PDBRC_BEGIN = '# >>> nvim pudb_breakpoints (generated, edits inside are overwritten)'
+local PDBRC_END = '# <<< nvim pudb_breakpoints'
+
+local function write_pdbrc()
+    local keep = {}
+    local inside = false
+    local old = vim.uv.fs_stat(PDBRC) and vim.fn.readfile(PDBRC) or nil
+    if old then
+        for _, line in ipairs(old) do
+            if line == PDBRC_BEGIN then
+                inside = true
+            elseif line == PDBRC_END then
+                inside = false
+            elseif not inside then
+                table.insert(keep, line)
+            end
+        end
+    end
+    local block = render(function(path, lnum, cond)
+        return ('break %s:%d%s'):format(path, lnum, cond == '' and '' or ', ' .. cond)
+    end)
+    if #block == 0 and #keep == 0 then
+        if old then
+            vim.fn.delete(PDBRC)
+        end
+        return
+    end
+    if #block > 0 then
+        table.insert(keep, PDBRC_BEGIN)
+        vim.list_extend(keep, block)
+        table.insert(keep, PDBRC_END)
+    end
+    if not vim.deep_equal(keep, old) then
+        vim.fn.writefile(keep, PDBRC)
+    end
+end
+
+-- TARGETS: every debugger that gets the breakpoints. pudb's file is also the source of truth (read() above);
+-- the rest are write-only. Other languages go here, see BACKLOG at the top.
+local TARGETS = {
+    write_pdbrc,
+    -- write_delve_init,   -- placeholder: Go
+    -- write_lldb_cmds,    -- placeholder: C / C++ / Rust
+}
+
+local function write_others()
+    for _, target in ipairs(TARGETS) do
+        target()
+    end
+end
+
+local function write()
+    local out = render(function(path, lnum, cond)
+        return ('b %s:%d%s'):format(path, lnum, cond == '' and '' or ', ' .. cond)
+    end)
     vim.fn.mkdir(DIR, 'p', tonumber('700', 8))
     for _, f in ipairs(write_targets()) do
         vim.fn.writefile(out, f)
     end
     last_mtime = select(2, newest_file())
+    write_others()
 end
 
 local function reload_if_changed()
@@ -146,6 +220,8 @@ local function reload_if_changed()
     if t ~= last_mtime then
         read()
         place_all()
+        -- pudb changed its file: bring the write-only targets up to date (not pudb's files, that would loop)
+        write_others()
     end
 end
 
@@ -248,5 +324,7 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 })
 
 read()
+-- pudb may have changed its file while nvim wasn't running
+write_others()
 
 return M
