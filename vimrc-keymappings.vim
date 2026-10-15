@@ -158,36 +158,7 @@ nnoremap <Leader>ay :%y+<CR>
 nnoremap <Leader>ad :%d+<CR>
 
 noremap <Leader>s :vsplit<CR><C-w>l
-" Show the next listed buffer in this window before deleting, so the window
-" (and the layout next to NERDTree) survives. Last buffer falls back to :bdelete.
-" Close a side window (quickfix, help...) and return to the window it was opened
-" from. Plain :close focuses whichever window takes over the space, often NERDTree.
-function! CloseWindowGoBack() abort
-    let l:prev = win_getid(winnr('#'))
-    close
-    if l:prev != 0
-        call win_gotoid(l:prev)
-    endif
-endfunction
-
-function! s:CloseBuffer() abort
-    let l:buf = bufnr('%')
-    " Quickfix/location list, help, etc.: just close the window
-    if &buftype !=# '' && winnr('$') > 1
-        call CloseWindowGoBack()
-        return
-    endif
-    if &modified
-        echohl ErrorMsg | echo 'No write since last change' | echohl None
-        return
-    endif
-    let l:others = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != l:buf')
-    if buflisted(l:buf) && !empty(l:others)
-        execute 'buffer ' . get(filter(copy(l:others), 'v:val > l:buf'), 0, l:others[-1])
-    endif
-    execute 'bdelete ' . l:buf
-endfunction
-nnoremap <silent> <Leader>q :call <SID>CloseBuffer()<CR>
+nnoremap <silent> <Leader>q :call CloseBuffer()<CR>
 nnoremap <Leader>tc :tabnew<CR>
 nnoremap <Leader>tq :windo bdelete<CR>
 

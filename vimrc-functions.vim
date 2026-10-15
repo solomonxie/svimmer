@@ -534,5 +534,27 @@ function! SendContextToAI(...) range
     call system('tmux select-pane -t "{right-of}"')
 endfunction
 
+
+" Close a side window (quickfix, help...) and return to the window it was opened
+" from. Plain :close focuses whichever window takes over the space, often NERDTree.
+function! CloseWindowGoBack() abort
+    let l:prev = win_getid(winnr('#'))
+    close
+    if l:prev != 0
+        call win_gotoid(l:prev)
+    endif
+endfunction
+
+
+" Quickfix/help etc.: close the window. Files: :Bclose (bclose.vim) shows the
+" alternate buffer and keeps the window, so the layout next to NERDTree survives.
+function! CloseBuffer() abort
+    if &buftype !=# '' && winnr('$') > 1
+        call CloseWindowGoBack()
+    else
+        Bclose
+    endif
+endfunction
+
 " ============= End of File ==================
 echom 'Loaded ' . expand('<sfile>:t') |redraw
