@@ -1,6 +1,8 @@
 -- Browse Claude Code session history of the current repo in nvim.
 --
---   gc / :ClaudeHistory   toggle the history pane: this repo's sessions (incl. its git worktrees), folded
+--   gc / :ClaudeHistory   toggle the history pane: every session of this repo, from any of its worktrees, as a
+--                         folded tree: repo -> worktree -> worktrees made from it (a plan's impl worktrees)
+--                         -> session -> your prompts. Opens at your newest session in the worktree you're in.
 --   :ClaudeHistory!       same, for every project
 --   :ClaudeHistoryGrep    fzf search through every prompt typed in this repo (! for every project)
 --   :ClaudeSend           (also on a visual range) pick a running session in tmux, type a prompt, and send it
@@ -10,7 +12,8 @@
 --
 -- In the pane, moving the cursor shows that session (at that prompt) in the window above:
 --   ● / ○      session running / not running
---   <CR> / <Space> / o   open / close a session's prompts
+--   <CR> / <Space> / o   open / close a worktree or a session's prompts
+--   p          up to the parent row
 --   <CR> on a prompt     close the pane and jump into the transcript at it
 --   q / gc     close
 --   ?          show / hide help at the top of the pane (keys, commands, how it works); q also hides it
@@ -101,17 +104,32 @@ local function demote(text, out)
 end
 
 -- Cheap scan for pickers: prompts and title without decoding every record.
+-- Worktrees a `git worktree add` run by the Bash tool in this jsonl line made: adds[folder name] = the cwd
+-- it ran in. Any other path argument's last component goes in too, and just won't match a worktree.
+local function worktree_adds(line, adds)
+    if not (line:find('git worktree add', 1, true) and line:find('"name":"Bash"', 1, true)) then return end
+    local cwd = line:match('"cwd":"([^"]*)"')
+    if not cwd then return end
+    for cmd in line:gmatch('git worktree add[^"]*') do
+        for tok in cmd:match('^[^;&|\\]*'):gmatch('[%w_.~/-]+') do
+            if tok:find('/', 1, true) then adds[vim.fn.fnamemodify(tok, ':t')] = cwd end
+        end
+    end
+end
+
 local function scan_file(path)
-    local res = { prompts = {}, title = nil, cwds = {} }
+    -- cwds: cwd -> number of prompts typed there; adds: see worktree_adds()
+    local res = { prompts = {}, title = nil, cwds = {}, adds = {} }
     local f = io.open(path, 'r')
     if not f then return res end
     for line in f:lines() do
+        worktree_adds(line, res.adds)
         if line:find('"type":"user"', 1, true) and not line:find('"tool_result"', 1, true) then
             local rec = decode(line)
             local t = rec and prompt_text(rec)
             if rec and rec.cwd then
                 res.cwd = rec.cwd
-                res.cwds[rec.cwd] = true
+                res.cwds[rec.cwd] = (res.cwds[rec.cwd] or 0) + 1
             end
             if t then res.prompts[#res.prompts + 1] = { ts = rec.timestamp or '', text = t } end
         elseif line:find('"type":"custom-title"', 1, true) then
@@ -123,6 +141,14 @@ local function scan_file(path)
         end
     end
     f:close()
+    -- worktrees made by its subagents count as made by the session
+    for _, sub in ipairs(vim.fn.glob(path:gsub('%.jsonl$', '') .. '/subagents/*.jsonl', false, true)) do
+        local sf = io.open(sub, 'r')
+        if sf then
+            for line in sf:lines() do worktree_adds(line, res.adds) end
+            sf:close()
+        end
+    end
     res.title = res.custom or res.title
     return res
 end
@@ -304,14 +330,35 @@ local function inside(path, root)
     return path == root or vim.startswith(path, root .. '/')
 end
 
--- Whether a session belongs under `root`: it ran there (or in something nested in it,
--- e.g. <root>/.claude/worktrees/*) at some point, or it's stored under root's project dir.
-local function belongs(f, s, root)
-    for cwd in pairs(s.cwds) do
-        if inside(cwd, root) then return true end
+-- The worktree of the repo a path is in: the innermost of scope.roots holding it, or a removed
+-- worktree, a <main checkout>-* sibling that's no longer on disk. nil if it's outside the repo.
+local function node_of(path, scope)
+    local best
+    for _, root in ipairs(scope.roots) do
+        if inside(path, root) and (not best or #root > #best) then best = root end
     end
+    if best then return best end
+    local gone = path:match('^(' .. vim.pesc(scope.roots[1]) .. '%-[^/]+)')
+    if gone and not vim.uv.fs_stat(gone) then return gone end
+end
+
+-- The worktree a session is shown under: where you typed most of its prompts. `outside` sessions are
+-- stored outside the repo, so those with no prompt in it get nil; the rest fall back to their project dir.
+local function session_home(f, s, scope, outside)
+    local counts, home, most = {}, nil, 0
+    for cwd, n in pairs(s.cwds) do
+        local node = node_of(cwd, scope)
+        if node then counts[node] = (counts[node] or 0) + n end
+    end
+    for node, n in pairs(counts) do
+        if n > most then home, most = node, n end
+    end
+    if home or outside then return home end
     local dir = vim.fn.fnamemodify(f, ':h:t')
-    return dir == encode(root) or vim.startswith(dir, encode(root) .. '--claude-worktrees-')
+    for _, root in ipairs(scope.roots) do
+        if dir == encode(root) then return root end
+    end
+    return scope.roots[1]
 end
 
 -- Running Claude processes, by session id: { pid, cwd, tmux pane id } from ~/.claude/sessions/<pid>.json.
@@ -329,9 +376,9 @@ end
 
 local function session_id(jsonl) return vim.fn.fnamemodify(jsonl, ':t:r') end
 
--- Sessions newest first, each with its worktree folder, title and prompts.
--- Main checkout: every session of the repo and its worktrees. A linked worktree: only its own
--- (and those of worktrees nested in it). `all`: every project.
+-- Sessions newest first, each with its worktree folder, title and prompts: every session of the repo
+-- and its worktrees (also removed ones), from any of them, each with the worktree it's shown under
+-- (`home`). `all`: every project. Also returns the repo scope, nil with `all`.
 local function session_entries(all)
     local files, scope = {}, nil
     if all then
@@ -343,8 +390,8 @@ local function session_entries(all)
             vim.list_extend(files, vim.fn.glob(d .. '/*.jsonl', false, true))
         end
     end
-    -- and sessions started outside the repo (e.g. in its parent dir) that cd'd into it later:
-    -- they're stored under the dir they started in. grep is a quick prefilter; belongs() decides.
+    -- and sessions started outside the repo (e.g. in its parent dir) that cd'd into it later, or of removed
+    -- worktrees: they're stored under the dir they started in. grep is a quick prefilter; session_home() decides.
     local outside = {}
     if scope then
         local listed = {}
@@ -368,22 +415,109 @@ local function session_entries(all)
         local s = scan(f)
         -- skip empty sessions, e.g. the stub left behind by /clear
         local real = vim.tbl_filter(function(p) return not vim.startswith(p.text, '/') end, s.prompts)
-        local ok = not scope or (scope.main and not outside[f]) or belongs(f, s, scope.top)
-        if outside[f] and scope.main then
-            ok = vim.iter(scope.roots):any(function(root) return belongs(f, s, root) end)
-        end
-        if #real > 0 and ok then
+        local home = scope and session_home(f, s, scope, outside[f])
+        if #real > 0 and (not scope or home) then
             entries[#entries + 1] = {
                 file = f,
                 mtime = mtime(f),
                 folder = s.cwd and vim.fn.fnamemodify(s.cwd, ':t') or short_project(f),
                 title = s.title or one_line(s.prompts[1].text, 80),
                 prompts = s.prompts,
+                home = home,
+                adds = s.adds,
             }
         end
     end
     table.sort(entries, function(a, b) return a.mtime > b.mtime end)
-    return entries
+    return entries, scope
+end
+
+-- The repo as a tree of worktrees, the main checkout at the top. A worktree goes under the one whose
+-- session made it (`git worktree add`), e.g. a plan's impl worktrees; if that ran in the main checkout,
+-- under the worktree it's named after (<that>-<suffix>), but <X>-plan not under X: a plan starts a new
+-- branch of the tree. Removed worktrees stay while they have sessions.
+-- Node: { path, gone, sessions (newest first), kids (latest activity first), total, latest }.
+local function session_tree(entries, scope)
+    local main, nodes = scope.roots[1], {}
+    local function node(path)
+        nodes[path] = nodes[path] or { path = path, gone = not vim.uv.fs_stat(path), sessions = {}, kids = {} }
+        return nodes[path]
+    end
+    for _, root in ipairs(scope.roots) do node(root) end
+    for _, e in ipairs(entries) do table.insert(node(e.home).sessions, e) end
+    -- worktree folder name -> worktree it was made in; oldest first, so the newest session's add wins
+    local made_in = {}
+    for i = #entries, 1, -1 do
+        for name, cwd in pairs(entries[i].adds) do made_in[name] = node_of(cwd, scope) end
+    end
+    local by_name = {}
+    for path in pairs(nodes) do by_name[vim.fn.fnamemodify(path, ':t')] = path end
+    local function parent_of(path)
+        local name = vim.fn.fnamemodify(path, ':t')
+        local by = made_in[name]
+        if by and by ~= path and by ~= main and nodes[by] then return by end
+        local plan = name:match('^(.+)%-plan$')
+        local base = name:match('^(.+)%-[^-]+$')
+        while base do
+            if by_name[base] and base ~= plan then return by_name[base] end
+            base = base:match('^(.+)%-[^-]+$')
+        end
+        return main
+    end
+    local paths, parent = vim.tbl_keys(nodes), {}
+    table.sort(paths)
+    for _, path in ipairs(paths) do
+        if path ~= main then parent[path] = parent_of(path) end
+    end
+    -- a worktree made in its own descendant: the first of the cycle goes under the main checkout instead
+    for _, path in ipairs(paths) do
+        local seen, p = {}, parent[path]
+        while p and p ~= main and not seen[p] do
+            if p == path then
+                parent[path] = main
+                break
+            end
+            seen[p] = true
+            p = parent[p]
+        end
+    end
+    for _, path in ipairs(paths) do
+        if parent[path] then table.insert(nodes[parent[path]].kids, nodes[path]) end
+    end
+    local function finish(n)
+        n.total, n.latest = #n.sessions, n.sessions[1] and n.sessions[1].mtime or 0
+        local kids = {}
+        for _, k in ipairs(n.kids) do
+            finish(k)
+            if not (k.gone and k.total == 0) then kids[#kids + 1] = k end
+            n.total, n.latest = n.total + k.total, math.max(n.latest, k.latest)
+        end
+        table.sort(kids, function(a, b)
+            if a.latest ~= b.latest then return a.latest > b.latest end
+            return a.path < b.path
+        end)
+        n.kids = kids
+    end
+    finish(nodes[main])
+    return nodes[main]
+end
+
+-- Where to put the pane's cursor for a location in worktree node `n`: its newest session, else the
+-- newest one in the worktrees under it, else the worktree's own row.
+local function nearest(n)
+    if n.sessions[1] then return { jsonl = n.sessions[1].file, shut = true } end
+    for _, k in ipairs(n.kids) do
+        if k.total > 0 then return nearest(k) end
+    end
+    return { node = n.path }
+end
+
+local function find_node(n, path)
+    if n.path == path then return n end
+    for _, k in ipairs(n.kids) do
+        local hit = find_node(k, path)
+        if hit then return hit end
+    end
 end
 
 ---------------------------------------------------------------------------
@@ -746,13 +880,19 @@ local function set_highlights()
         ClaudeHistoryKey = 'Special',
         ClaudeHistoryAlive = 'DiagnosticOk',
         ClaudeHistoryGone = 'Comment',
+        ClaudeHistoryHere = 'DiagnosticWarn',
     }) do
         vim.api.nvim_set_hl(0, name, { link = target, default = true })
     end
 end
 
 local function pane_open() return pane.win ~= nil and vim.api.nvim_win_is_valid(pane.win) end
-local function key_of(it) return it and it.jsonl and (it.jsonl .. ':' .. (it.n or 0)) end
+-- Row identity, kept across redraws: a session (n = 0) or prompt, or a worktree row.
+local function key_of(it)
+    if not it then return nil end
+    if it.jsonl then return it.jsonl .. ':' .. (it.n or 0) end
+    return it.node and ('node:' .. it.node)
+end
 
 -- Shown at the top of the pane with ?, like NERDTree's quick help.
 local HELP = {
@@ -760,14 +900,22 @@ local HELP = {
     '',
     'In this pane',
     '  j / k              move; the window above shows that session, at that prompt',
-    '  <CR> / <Space> / o open / close a session\'s prompts',
+    '  <CR> / <Space> / o open / close a worktree, or a session\'s prompts',
     '  <CR> on a prompt   close the pane and jump into the transcript at it',
-    '  p                  back up from a prompt to its session',
+    '  p                  up to the parent row (prompt -> session -> worktree)',
     '  q / gc / ft        close the pane',
     '  ?                  show / hide this help (q also hides it)',
     '',
     '  ● / ○              session running / not running',
     '  (N)                number of prompts in the session',
+    '  [N]                number of sessions in the worktree and those under it',
+    '',
+    'The tree',
+    '  repo -> worktree -> worktrees made from it -> session -> prompts. A worktree',
+    '  goes under the one whose session ran its `git worktree add`, else under the',
+    '  one it\'s named after (<that>-<suffix>). A session goes under the worktree',
+    '  you typed most of its prompts in. Removed worktrees stay while they have',
+    '  sessions. It opens at your newest session in the worktree you\'re in.',
     '',
     'In a transcript',
     '  ft                 toggle this pane, opened at that session and prompt',
@@ -777,7 +925,7 @@ local HELP = {
     '  q                  close the transcript',
     '',
     'Commands',
-    '  gc / :ClaudeHistory     this repo\'s sessions (incl. its git worktrees)',
+    '  gc / :ClaudeHistory     this repo\'s sessions, as a tree of its worktrees',
     '  :ClaudeHistory!         every project\'s sessions',
     '  :ClaudeHistoryGrep[!]   fzf search through every prompt typed here (! every project)',
     '  :ClaudeSend[!] / ,k     send <file>:L<lines> + a prompt to a running session in tmux',
@@ -790,7 +938,9 @@ local HELP = {
 }
 
 -- Lines, highlight spans and per-line items for the pane (help lines get a { help = true } item).
-local function build(entries)
+-- Every row's item has its fold level: worktree rows open at their depth, a session one deeper,
+-- its prompts one deeper than that. With `all` (no tree) sessions are at level 1.
+local function build(entries, tree)
     local lines, marks, items = {}, {}, {}
     local function add(segments, item)
         local text = ''
@@ -806,36 +956,60 @@ local function build(entries)
             local text = l == '' and '"' or ('" ' .. l)
             local s, e = text:find('^"   %S.-%s%s')
             if l ~= '' and not l:match('^%s') then
-                add({ { text, 'ClaudeHistoryTitle' } }, { help = true })
+                add({ { text, 'ClaudeHistoryTitle' } }, { help = true, level = 0 })
             elseif s then
                 -- key column: the text before the first run of 2+ spaces after the indent
-                add({ { text:sub(1, 4), 'Comment' }, { text:sub(5, e - 2), 'ClaudeHistoryKey' }, { text:sub(e - 1), 'Comment' } }, { help = true })
+                add({ { text:sub(1, 4), 'Comment' }, { text:sub(5, e - 2), 'ClaudeHistoryKey' }, { text:sub(e - 1), 'Comment' } }, { help = true, level = 0 })
             else
-                add({ { text, 'Comment' } }, { help = true })
+                add({ { text, 'Comment' } }, { help = true, level = 0 })
             end
         end
-        add({ { '' } }, { help = true })
+        add({ { '' } }, { help = true, level = 0 })
     end
-    local width = 0
-    for _, e in ipairs(entries) do width = math.max(width, vim.fn.strdisplaywidth(e.folder)) end
     local live = live_sessions()
-    for _, e in ipairs(entries) do
-        local alive = live[session_id(e.file)] ~= nil
-        add({
-            alive and { '● ', 'ClaudeHistoryAlive' } or { '○ ', 'ClaudeHistoryGone' },
-            { os.date('%m-%d %H:%M', math.floor(e.mtime / 1e9)), 'ClaudeHistoryDate' }, { '  ' },
-            { e.folder .. string.rep(' ', width - vim.fn.strdisplaywidth(e.folder)), 'ClaudeHistoryFolder' }, { '  ' },
-            { e.title, 'ClaudeHistoryTitle' }, { '  ' },
-            { ('(%d)'):format(#e.prompts), 'ClaudeHistoryCount' },
-        }, { jsonl = e.file })
-        for i, p in ipairs(e.prompts) do
+    local function sessions(list, depth, show_folder)
+        local width = 0
+        if show_folder then
+            for _, e in ipairs(list) do width = math.max(width, vim.fn.strdisplaywidth(e.folder)) end
+        end
+        local pad = string.rep('  ', depth)
+        for _, e in ipairs(list) do
+            local alive = live[session_id(e.file)] ~= nil
             add({
-                { '   ' }, { ('%3d'):format(i), 'ClaudeHistoryPromptNo' }, { '  ' },
-                { local_ts(p.ts):sub(12), 'ClaudeHistoryTime' }, { '  ' },
-                { one_line(p.text, 160), 'ClaudeHistoryPrompt' },
-            }, { jsonl = e.file, n = i })
+                { pad },
+                alive and { '● ', 'ClaudeHistoryAlive' } or { '○ ', 'ClaudeHistoryGone' },
+                { os.date('%m-%d %H:%M', math.floor(e.mtime / 1e9)), 'ClaudeHistoryDate' }, { '  ' },
+                show_folder and { e.folder .. string.rep(' ', width - vim.fn.strdisplaywidth(e.folder)) .. '  ', 'ClaudeHistoryFolder' } or { '' },
+                { e.title, 'ClaudeHistoryTitle' }, { '  ' },
+                { ('(%d)'):format(#e.prompts), 'ClaudeHistoryCount' },
+            }, { jsonl = e.file, level = depth + 1 })
+            for i, p in ipairs(e.prompts) do
+                add({
+                    { pad .. '   ' }, { ('%3d'):format(i), 'ClaudeHistoryPromptNo' }, { '  ' },
+                    { local_ts(p.ts):sub(12), 'ClaudeHistoryTime' }, { '  ' },
+                    { one_line(p.text, 160), 'ClaudeHistoryPrompt' },
+                }, { jsonl = e.file, n = i, level = depth + 2 })
+            end
         end
     end
+    if not tree then
+        sessions(entries, 0, true)
+        return lines, marks, items
+    end
+    local here = pane.here
+    local function worktree(n, depth)
+        local name = vim.fn.fnamemodify(n.path, ':t')
+        add({
+            { string.rep('  ', depth) },
+            { name, n.path == here and 'ClaudeHistoryHere' or 'ClaudeHistoryFolder' },
+            n.gone and { '  (removed)', 'Comment' } or { '' },
+            { ('  [%d]'):format(n.total), 'ClaudeHistoryCount' },
+            n.path == here and { '  ← you are here', 'ClaudeHistoryHere' } or { '' },
+        }, { node = n.path, level = depth + 1 })
+        sessions(n.sessions, depth + 1, false)
+        for _, k in ipairs(n.kids) do worktree(k, depth + 1) end
+    end
+    worktree(tree, 0)
     return lines, marks, items
 end
 
@@ -845,37 +1019,51 @@ local function line_of(key)
     end
 end
 
--- (Re)draw the pane. Keeps open folds and the cursor; `target` = { jsonl, n } puts the cursor there instead.
+-- Pane folds come from the rows' levels: worktree and session rows start a fold, prompts sit in their session's.
+function _G.ClaudeHistoryPaneFold()
+    local it = pane.items[vim.v.lnum]
+    if not it or it.level == 0 then return '0' end
+    return it.n and tostring(it.level - 1) or ('>' .. it.level)
+end
+
+-- (Re)draw the pane. Keeps open folds and the cursor; `target` puts the cursor there instead:
+-- { jsonl, n } a session or prompt (`shut`: leave the session's prompts folded), or { node } a worktree.
+-- Only the folds holding the cursor are open the first time.
 local function render_pane(target)
     local opened, cur = {}, nil
     vim.api.nvim_win_call(pane.win, function()
         for i, it in ipairs(pane.items) do
-            if it.jsonl and not it.n and vim.fn.foldclosed(i) == -1 then opened[it.jsonl] = true end
+            if it.level > 0 and not it.n and vim.fn.foldclosed(i) == -1 then opened[key_of(it)] = true end
         end
         cur = key_of(pane.items[vim.fn.line('.')])
     end)
-    local lines, marks, items = build(session_entries(pane.all))
+    local entries, scope = session_entries(pane.all)
+    pane.tree = scope and session_tree(entries, scope) or nil
+    local lines, marks, items = build(entries, pane.tree)
     pane.items = items
     vim.bo[pane.buf].modifiable = true
     vim.api.nvim_buf_set_lines(pane.buf, 0, -1, false, #lines > 0 and lines or { '  (no Claude sessions here)' })
     vim.bo[pane.buf].modifiable = false
+    if #lines == 0 then pane.items = { { level = 0 } } end
     vim.api.nvim_buf_clear_namespace(pane.buf, NS, 0, -1)
     for _, m in ipairs(marks) do
         vim.api.nvim_buf_set_extmark(pane.buf, NS, m[1], m[2], { end_col = m[3], hl_group = m[4] })
     end
-    if target then
-        opened[target.jsonl] = true
-        cur = key_of(target)
-    end
+    if target then cur = key_of(target) end
     vim.api.nvim_win_call(pane.win, function()
-        vim.cmd('normal! zX')
-        for jsonl in pairs(opened) do
-            local l = line_of(jsonl .. ':0')
-            if l then vim.cmd(l .. 'foldopen') end
+        vim.cmd('normal! zXzR')
+        -- bottom-up, so each :foldclose closes the fold starting on that row, not an enclosing one
+        for i = #pane.items, 1, -1 do
+            local it = pane.items[i]
+            if it.level > 0 and not it.n and not opened[key_of(it)] then vim.cmd(i .. 'foldclose') end
         end
         local l = cur and line_of(cur) or 1
         pane.last = key_of(pane.items[l])
         vim.api.nvim_win_set_cursor(0, { l, 0 })
+        if target then
+            vim.cmd('normal! zv')
+            if target.shut then vim.cmd('normal! zc') end
+        end
     end)
 end
 
@@ -949,8 +1137,11 @@ function M.pane_toggle(all)
     pane.src_win = not vim.wo.winfixbuf and vim.api.nvim_get_current_win() or nil
     pane.all, pane.items, pane.help = all, {}, false
     local scope = repo_scope()
-    pane.scope_label = scope.main and (vim.fn.fnamemodify(scope.top, ':t') .. ' + all worktrees')
-        or ('worktree ' .. vim.fn.fnamemodify(scope.top, ':t'))
+    -- where you are: the current file, or the cwd for a buffer that isn't one
+    local file = vim.api.nvim_buf_get_name(0)
+    local here = vim.bo.buftype == '' and file ~= '' and file or vim.fn.getcwd()
+    pane.here = node_of(here, scope) or scope.top
+    pane.scope_label = vim.fn.fnamemodify(scope.roots[1], ':t') .. ' + all worktrees'
     pane.buf = vim.api.nvim_create_buf(false, true)
     vim.bo[pane.buf].bufhidden = 'wipe'
     vim.bo[pane.buf].filetype = 'claudehistory'
@@ -960,7 +1151,7 @@ function M.pane_toggle(all)
     for opt, val in pairs({
         number = false, relativenumber = false, signcolumn = 'no', wrap = false, cursorline = true,
         winfixheight = true, foldcolumn = '0', foldmethod = 'expr', foldlevel = 0, foldtext = '',
-        foldexpr = [[getline(v:lnum)=~'^"\|^$'?'0':getline(v:lnum)=~'^\s'?'1':'>1']], fillchars = 'fold: ,eob: ',
+        foldexpr = 'v:lua.ClaudeHistoryPaneFold()', fillchars = 'fold: ,eob: ',
         winhighlight = 'Folded:ClaudeHistoryFold,StatusLine:ClaudeHistoryBar',
         statusline = ' %#ClaudeHistoryTitle#Claude history%#ClaudeHistoryBar#'
             .. (all and '  (all projects)' or ('  ' .. pane.scope_label))
@@ -969,26 +1160,34 @@ function M.pane_toggle(all)
     }) do
         vim.wo[pane.win][opt] = val
     end
-    render_pane(target)
-    -- a transcript from another project isn't in this repo's list
+    render_pane(target or { node = pane.here })
     if target and not line_of(key_of(target)) and not all then
+        -- a transcript from another project isn't in this repo's tree
         pane.all = true
         render_pane(target)
+    elseif not target and pane.tree then
+        -- not in a transcript: the newest session of the worktree you're in (or of those under it)
+        local n = find_node(pane.tree, pane.here)
+        if n then render_pane(nearest(n)) end
     end
 
     local o = { buffer = pane.buf, silent = true, nowait = true }
-    local function on_session_row()
-        local it = pane.items[vim.fn.line('.')]
-        return it and it.jsonl and not it.n
-    end
     vim.keymap.set('n', '<CR>', function()
         local it = pane.items[vim.fn.line('.')]
-        if not (it and it.jsonl) then return end
-        if on_session_row() then vim.cmd('normal! za') else follow(true) end
+        if not it or it.level == 0 then return end
+        if it.n then follow(true) else vim.cmd('normal! za') end
     end, o)
     for _, k in ipairs({ '<Space>', 'o' }) do vim.keymap.set('n', k, 'za', o) end
-    -- back up from a prompt row to its session row
-    vim.keymap.set('n', 'p', function() vim.fn.search([[^\S]], 'bcW') end, o)
+    -- up to the parent row: a prompt's session, a session's worktree, a worktree's parent worktree
+    vim.keymap.set('n', 'p', function()
+        local l = vim.fn.line('.')
+        local it = pane.items[l]
+        if not it or it.level == 0 then return end
+        for i = l - 1, 1, -1 do
+            local up = pane.items[i]
+            if up.level > 0 and up.level < it.level then return vim.api.nvim_win_set_cursor(0, { i, 0 }) end
+        end
+    end, o)
     for _, k in ipairs({ 'gc', 'ft' }) do vim.keymap.set('n', k, M.pane_close, o) end
     vim.keymap.set('n', 'q', function() if pane.help then toggle_help() else M.pane_close() end end, o)
     vim.keymap.set('n', '?', toggle_help, o)
