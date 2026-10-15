@@ -17,35 +17,106 @@ nnoremap <Leader>f :<C-U>let g:NERDTreeQuitOnOpen = 0 \| call NerdTreeAtProjectR
 nnoremap ff :<C-U>let g:NERDTreeQuitOnOpen = 1 \| call NerdTreeFindOrRoot()<CR>zz
 nnoremap FF :<C-U>let g:NERDTreeQuitOnOpen = 0 \| call NerdTreeFindOrRoot()<CR>zz
 
-" Git root of the current file (symlinks resolved, so a symlinked checkout
-" still matches the path NERDTreeFind resolves), else the cwd.
+" Symlinks are never resolved: a file opened through a symlinked folder is shown in the tree
+" under that folder, as if it were a plain one. NERDTree itself resolves them (:NERDTree <dir>,
+" :NERDTreeFind), so ff/FF and the follow-current-file reveal below go through s:NerdTreeReveal.
+
+" Full path of the current buffer as it was opened, symlinked folders kept. nvim resolves
+" them in expand('%:p') / the buffer's full name, but bufname() keeps the path as typed,
+" relative to the cwd (also unresolved: getcwd() is $PWD's view).
+function! s:NerdTreeBufPath() abort
+    let l:name = bufname('%')
+    if empty(l:name)
+        return ''
+    endif
+    " a leading ~ is the only thing to expand; fnamemodify()/expand() on the whole name resolve links
+    let l:name = substitute(l:name, '^\~\ze\(/\|$\)', escape($HOME, '\&'), '')
+    let l:full = l:name =~# '^/' ? l:name : getcwd() . '/' . l:name
+    " drop ./ and ../ without resolving links
+    let l:parts = []
+    for l:p in split(l:full, '/')
+        if l:p ==# '..'
+            call remove(l:parts, -1)
+        elseif l:p !=# '.' && l:p !=# ''
+            call add(l:parts, l:p)
+        endif
+    endfor
+    let l:full = '/' . join(l:parts, '/')
+    " only trust it if it's the same file
+    return resolve(l:full) ==# resolve(expand('%:p')) ? l:full : expand('%:p')
+endfunction
+
+" Git root of the current file as reached through its path, else the cwd. git reports the
+" resolved toplevel, so it's mapped back: the root is the same number of levels up the
+" unresolved path as the toplevel is up the resolved one.
 function! s:NerdTreeProjectRoot() abort
-    let l:dir = empty(expand('%')) ? getcwd() : fnamemodify(resolve(expand('%:p')), ':h')
+    let l:dir = empty(expand('%')) ? getcwd() : fnamemodify(s:NerdTreeBufPath(), ':h')
     let l:root = trim(system('git -C ' . shellescape(l:dir) . ' rev-parse --show-toplevel'))
-    return v:shell_error == 0 && isdirectory(l:root) ? resolve(l:root) : resolve(getcwd())
+    if v:shell_error != 0 || !isdirectory(l:root)
+        return getcwd()
+    endif
+    let l:up = len(split(resolve(l:dir), '/')) - len(split(l:root, '/'))
+    let l:mapped = l:dir
+    for _ in range(max([l:up, 0]))
+        let l:mapped = fnamemodify(l:mapped, ':h')
+    endfor
+    " only when the mapping lands on the same dir (a symlink deeper down could break the count)
+    return resolve(l:mapped) ==# l:root ? l:mapped : l:root
+endfunction
+
+" g:NERDTree and friends exist only once the lazy-loaded plugin is in
+function! s:NerdTreeLoad() abort
+    if !exists('g:NERDTree')
+        call plug#load('nerdtree')
+    endif
+endfunction
+
+" Open the tree at root without resolving it (NERDTree's :NERDTree <dir> would).
+function! s:NerdTreeOpenAt(root) abort
+    call g:NERDTreeCreator.CreateTabTree(g:NERDTreePath.New(a:root).str())
+endfunction
+
+" Reveal `file` in the tab's tree and put the cursor on it, by its path as given.
+" Returns 0 when it's not under the tree root.
+function! s:NerdTreeReveal(file) abort
+    let l:path = g:NERDTreePath.New(a:file)
+    let l:tree = g:NERDTree.ForCurrentTab()
+    if !l:path.isUnder(l:tree.root.path)
+        return 0
+    endif
+    NERDTreeFocus
+    if l:path.isHiddenUnder(b:NERDTree.root.path)
+        call b:NERDTree.ui.setShowHidden(1)
+    endif
+    let l:node = b:NERDTree.root.reveal(l:path)
+    call b:NERDTree.render()
+    call l:node.putCursorHere(1, 0)
+    return 1
 endfunction
 
 function! NerdTreeAtProjectRoot() abort
-    exec 'NERDTree ' . fnameescape(s:NerdTreeProjectRoot())
+    call s:NerdTreeLoad()
+    call s:NerdTreeOpenAt(s:NerdTreeProjectRoot())
 endfunction
 
 " Always rooted at the project root, then reveal the current file in it
 function! NerdTreeFindOrRoot() abort
     let l:root = s:NerdTreeProjectRoot()
-    " g:NERDTree is undefined until the lazy-loaded plugin's first command runs
-    if !exists('g:NERDTree') || !g:NERDTree.ExistsForTab()
-                \ || g:NERDTree.ForCurrentTab().root.path.str() !=# l:root
-        let l:file = expand('%:p')
-        exec 'NERDTree ' . fnameescape(l:root)
+    let l:file = s:NerdTreeBufPath()
+    call s:NerdTreeLoad()
+    if !g:NERDTree.ExistsForTab() || g:NERDTree.ForCurrentTab().root.path.str() !=# l:root
+        call s:NerdTreeOpenAt(l:root)
         if empty(l:file)
             return
         endif
         wincmd p
-    elseif empty(expand('%'))
+    elseif empty(l:file)
         NERDTreeFocus
         return
     endif
-    NERDTreeFind
+    if !filereadable(l:file) || !s:NerdTreeReveal(l:file)
+        NERDTreeFocus
+    endif
 endfunction
 " nnoremap <Leader>F :NERDTree %:p:h<CR>
 " Add '%' for changing root accordingly
@@ -157,6 +228,9 @@ autocmd User NERDTreeInit call s:PinNerdTreeWindow()
 " buffer in a new window without NERDTreeInit, so re-pin it. Otherwise quickfix
 " <CR> may pick the tree as the previous window and open the file there.
 autocmd BufWinEnter NERD_tree_tab_* call s:PinNerdTreeWindow()
+" conceallevel is window-local and NERDTree sets it only when the buffer is built;
+" a new window takes the global 0 (markdown.lua) and shows the ^G delimiters
+autocmd BufWinEnter,WinEnter NERD_tree_* setlocal conceallevel=2 concealcursor=nvic
 
 " Auto-refresh NERDTree root every second, replacing manual R press.
 " Timer only runs while the NERDTree buffer is open.
@@ -169,6 +243,11 @@ autocmd CursorMoved NERD_tree_* let s:nerdtree_last_move = reltimefloat(reltime(
 
 function! s:NerdTreeAutoRefresh(timer) abort
     if reltimefloat(reltime()) - s:nerdtree_last_move < 2
+        return
+    endif
+    " Only while the cursor is in the tree, in normal mode. From another window the
+    " refresh hops into the tree and back, which drops a visual selection there
+    if &filetype !=# 'nerdtree' || mode(1) !=# 'n'
         return
     endif
     silent! NERDTreeRefreshRoot
@@ -412,15 +491,15 @@ function! s:NerdTreeRevealCurrent() abort
     if type(l:tree) != v:t_dict
         return
     endif
-    let l:file = resolve(expand('%:p'))
-    let l:root = substitute(resolve(l:tree.root.path.str()), '/$', '', '')
+    let l:file = s:NerdTreeBufPath()
+    let l:root = substitute(l:tree.root.path.str(), '/$', '', '')
     if !filereadable(l:file) || stridx(l:file, l:root . '/') != 0
         return
     endif
     let s:nerdtree_revealing = 1
     let l:win = win_getid()
     try
-        silent NERDTreeFind
+        silent call s:NerdTreeReveal(l:file)
     finally
         noautocmd call win_gotoid(l:win)
         let s:nerdtree_revealing = 0
