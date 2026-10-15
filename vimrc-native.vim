@@ -1349,13 +1349,13 @@ endfunction
 
 
 " One session per project, named by its slugified full path, e.g.
-" ~/.vim/sessions/Users-me-workspace-myproject.vim
+" ~/do.not.move/vim-sessions/Users-me-workspace-myproject.vim
 " Kept outside the repo: in a git worktree .git is a file, not a dir. Override with g:session_dir.
 function! GetSessionPath()
     let g:gitroot = trim(system("git rev-parse --show-toplevel"))
     let project = isdirectory(g:gitroot) ? g:gitroot : getcwd()
     let slug = substitute(substitute(project, '[^A-Za-z0-9._-]\+', '-', 'g'), '^-\+', '', '')
-    let session_dir = expand(get(g:, 'session_dir', '~/.vim/sessions'))
+    let session_dir = expand(get(g:, 'session_dir', '~/do.not.move/vim-sessions'))
     call mkdir(session_dir, 'p')
     return session_dir . '/' . slug . '.vim'
 endfunction
