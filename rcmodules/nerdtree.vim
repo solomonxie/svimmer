@@ -198,6 +198,7 @@ let s:nerdtree_dim_groups = ['Normal', 'NormalNC', 'EndOfBuffer', 'Directory',
 let s:nerdtree_dim_hl = join(map(copy(s:nerdtree_dim_groups), 'v:val . ":NERDTreeDim"'), ',')
             \ . ',NERDTreeGitDirtyFile:NERDTreeDimDirty,NERDTreeGitDirtyDir:NERDTreeDimDirty'
             \ . ',NERDTreeGitIgnored:NERDTreeDimIgnored'
+            \ . ',NERDTreeSymlink:NERDTreeDim,NERDTreeExec:NERDTreeDim'
             \ . ',CursorLine:NERDTreeDimCursorLine'
 
 function! s:NerdTreeSyncDim() abort
@@ -261,6 +262,8 @@ function! s:NerdTreeGitHighlightColors() abort
     highlight default NERDTreeGitDirtyFile cterm=bold ctermfg=154 gui=bold guifg=#aeee00
     highlight default NERDTreeGitDirtyDir ctermfg=154 guifg=#aeee00
     highlight default NERDTreeGitIgnored ctermfg=243 guifg=#767676
+    highlight default NERDTreeSymlink ctermfg=81 guifg=#5fd7ff
+    highlight default NERDTreeExec ctermfg=141 guifg=#af87ff
 endfunction
 call s:NerdTreeGitHighlightColors()
 autocmd ColorScheme * call s:NerdTreeGitHighlightColors()
@@ -269,7 +272,8 @@ let s:git_dirty = {}
 let s:git_ignored = {}
 let s:git_dirty_key = ''
 let s:git_dirty_at = 0.0
-" '(ign)' after the name of each ignored file/dir (not repeated for what's inside an ignored dir)
+" '(ign)' after the name of each ignored file/dir (not repeated for what's inside an ignored dir),
+" and '(sym)' / '(hard)' / '(exc)' after symlinks, hard-linked files and executables
 let s:git_ignored_ns = has('nvim') ? nvim_create_namespace('nerdtree_git_ignored') : -1
 
 function! s:NerdTreeGitDirtySet(root) abort
@@ -313,8 +317,10 @@ function! s:NerdTreeGitHighlight() abort
     let l:curWin = win_getid()
     noautocmd call win_gotoid(win_getid(g:NERDTree.GetWinNum()))
     let l:dirty = s:NerdTreeGitDirtySet(b:NERDTree.root.path.str())
-    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': [], 'NERDTreeGitIgnored': []}
-    let l:ignLines = []
+    let l:positions = {'NERDTreeGitDirtyFile': [], 'NERDTreeGitDirtyDir': [], 'NERDTreeGitIgnored': [],
+                \ 'NERDTreeSymlink': [], 'NERDTreeExec': []}
+    " line number -> [[' (ign)', group], ...] shown after the name
+    let l:marks = {}
     " Skip when neither the tree nor the git set changed since last time
     let l:sig = b:changedtick . '@' . s:git_dirty_at
     if get(b:, 'nerdtree_git_hl_sig', '') ==# l:sig
@@ -330,7 +336,7 @@ function! s:NerdTreeGitHighlight() abort
     let l:ignoredDirs = {}
     let l:root = substitute(b:NERDTree.root.path.str(), '/$', '', '')
     let l:rootLine = l:ui.getRootLineNum()
-    for l:lnum in empty(l:dirty) && empty(s:git_ignored) ? [] : range(l:rootLine + 1, line('$'))
+    for l:lnum in range(l:rootLine + 1, line('$'))
         let l:line = getline(l:lnum)
         let l:name = l:ui._stripMarkup(l:line)
         if empty(l:name)
@@ -345,10 +351,16 @@ function! s:NerdTreeGitHighlight() abort
             let l:dirs[l:indent] = l:path
             let l:ignoredDirs[l:indent] = l:ignored
         endif
-        if has_key(s:git_ignored, l:path)
-            call add(l:ignLines, l:lnum)
+        let l:kind = s:NerdTreeLinkKind(l:path)
+        if !empty(l:kind)
+            let l:marks[l:lnum] = [[' (' . l:kind . ')', l:kind ==# 'exc' ? 'NERDTreeExec' : 'NERDTreeSymlink']]
         endif
-        let l:group = get(l:dirty, l:path, l:ignored ? 'NERDTreeGitIgnored' : '')
+        if has_key(s:git_ignored, l:path)
+            let l:marks[l:lnum] = get(l:marks, l:lnum, []) + [[' (ign)', 'NERDTreeGitIgnored']]
+        endif
+        " git state wins the name's color; link/exec color only shows on clean files
+        let l:group = get(l:dirty, l:path, l:ignored ? 'NERDTreeGitIgnored'
+                    \ : empty(l:kind) ? '' : l:marks[l:lnum][0][1])
         if empty(l:group)
             continue
         endif
@@ -359,7 +371,7 @@ function! s:NerdTreeGitHighlight() abort
         endif
     endfor
     for l:m in getmatches()
-        if l:m.group =~# '^NERDTreeGit\(Dirty\|Ignored\)'
+        if l:m.group =~# '^NERDTree\(GitDirty\|GitIgnored\|Symlink\|Exec\)'
             call matchdelete(l:m.id)
         endif
     endfor
@@ -371,12 +383,26 @@ function! s:NerdTreeGitHighlight() abort
     endfor
     if s:git_ignored_ns >= 0
         call nvim_buf_clear_namespace(0, s:git_ignored_ns, 0, -1)
-        for l:lnum in l:ignLines
-            call nvim_buf_set_extmark(0, s:git_ignored_ns, l:lnum - 1, 0,
-                        \ {'virt_text': [[' (ign)', 'NERDTreeGitIgnored']], 'virt_text_pos': 'eol'})
+        for [l:lnum, l:text] in items(l:marks)
+            call nvim_buf_set_extmark(0, s:git_ignored_ns, str2nr(l:lnum) - 1, 0,
+                        \ {'virt_text': l:text, 'virt_text_pos': 'eol'})
         endfor
     endif
     noautocmd call win_gotoid(l:curWin)
+endfunction
+
+" 'sym' for a symlink, 'hard' for a file with other hard links to it, 'exc' for an
+" executable file, else ''. getftype() doesn't follow links; nvim's lstat has the link count.
+function! s:NerdTreeLinkKind(path) abort
+    let l:type = getftype(a:path)
+    if l:type ==# 'link'
+        return 'sym'
+    elseif l:type !=# 'file'
+        return ''
+    elseif has('nvim') && get(luaeval('vim.loop.fs_lstat(_A) or {}', a:path), 'nlink', 1) > 1
+        return 'hard'
+    endif
+    return getfperm(a:path) =~# 'x' ? 'exc' : ''
 endfunction
 
 function! s:StartNerdTreeAutoRefresh() abort
