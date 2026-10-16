@@ -307,7 +307,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>P :MarkdownPreview<C
 " plugin defaults, not set by me (insert mode): <M-p>=toggle, <M-e>=fast-wrap, <M-n>=jump, <M-b>=back-insert
 
 "vim/rcmodules/tig.vim
-" map gt
+" map tt
 " plugin defaults, not set by me (buffer-local inside Tig window): e/<C-o>/<C-t>/<C-s>/<C-v>=open entry, <ESC>o/t/s/v=open commit ... see g:tig_explorer_keymap_*
 
 "vim/rcmodules/gitgutter.vim

@@ -1026,7 +1026,7 @@ let g:AutoPairsMapSpace = 0
 "REF: https://github.com/iberianpig/tig-explorer.vim
 Plug 'iberianpig/tig-explorer.vim', {'commit': 'ac49ff1'}  "faster/prettier (tig required)
 
-nnoremap gt :TigStatus<CR>
+nnoremap tt :TigStatus<CR>
 
 
 " ==================== PLUGIN: gitgutter ====================
