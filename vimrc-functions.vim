@@ -336,6 +336,19 @@ function! OpenLink(...)
 endfunction
 
 
+" gx: open the URL under the cursor up to the next space. <cfile> stops at '=', '&', '"' etc. and cut long URLs.
+" Runs `open` without a shell, so '#', '&', '|' in the URL need no escaping.
+function! OpenUrlUnderCursor() abort
+    let url = substitute(expand('<cWORD>'), '^.\{-}\ze\a\+://', '', '')
+    if has('nvim')
+        call jobstart(['open', url], {'detach': v:true})
+    else
+        call job_start(['open', url])
+    endif
+    echo url
+endfunction
+
+
 function! EscapeString(...)
     let text = a:1
     let text = substitute(text, '\\', '\\\\', 'g')
